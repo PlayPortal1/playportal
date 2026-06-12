@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - PlayPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div id="userStatus">New User</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;" id="stageName">Signup Step 1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div class="container">
+    <div class="card" style="max-width: 700px; margin: 0 auto;">
+      
+      <!-- HEADER -->
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0;">7-Step Registration</h1>
+          <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: 700; color: #2563eb;" id="stepNum">1</div>
+            <div style="font-size: 12px; color: #64748b;">of 7</div>
+          </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+          <div id="progressBar" style="height: 100%; background: #2563eb; width: 14.28%; transition: width 0.3s;"></div>
+        </div>
+      </div>
+
+      <!-- STEP TITLE -->
+      <h2 id="stepTitle" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 1.5rem 0;"></h2>
+
+      <!-- STEP CONTENT -->
+      <div id="stepContent" style="margin-bottom: 2rem; min-height: 200px;"></div>
+
+      <!-- BUTTONS -->
+      <div style="display: flex; justify-content: space-between; gap: 1rem; border-top: 2px solid #e2e8f0; padding-top: 2rem;">
+        <button onclick="previousStep()" id="prevBtn" class="btn-secondary" style="display: none;">← PREVIOUS</button>
+        <button onclick="nextStep()" id="nextBtn" class="btn-primary" style="margin-left: auto;">NEXT STEP →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    let currentStep = 1;
+    let formData = {};
+
+    const steps = [
+      {
+        title: "Personal Information",
+        html: `
+          <div class="grid-2">
+            <div>
+              <label>First Name</label>
+              <input type="text" id="firstName" placeholder="John">
+            </div>
+            <div>
+              <label>Last Name</label>
+              <input type="text" id="lastName" placeholder="Smith">
+            </div>
+            <div>
+              <label>Email Address</label>
+              <input type="email" id="email" placeholder="you@example.com">
+            </div>
+            <div>
+              <label>Date of Birth</label>
+              <input type="date" id="dob">
+            </div>
+            <div>
+              <label>Gender</label>
+              <select id="gender">
+                <option>Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+            <div>
+              <label>Password</label>
+              <input type="password" id="password" placeholder="••••••••">
+            </div>
+          </div>
+          <div class="alert-success" style="margin-top: 1rem;">✓ No phone number needed - We'll contact you via email</div>
+        `
+      },
+      {
+        title: "Academic Information",
+        html: `
+          <div class="grid-2">
+            <div>
+              <label>School</label>
+              <input type="text" id="school" placeholder="Lincoln High School">
+            </div>
+            <div>
+              <label>Graduation Year</label>
+              <input type="number" id="gradYear" placeholder="2024">
+            </div>
+            <div>
+              <label>GPA</label>
+              <input type="number" id="gpa" step="0.01" placeholder="3.8">
+            </div>
+            <div>
+              <label>SAT Score</label>
+              <input type="number" id="sat" placeholder="1390">
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label>Academic Achievements</label>
+              <textarea id="achievements" style="height: 100px;" placeholder="National Honor Society, AP Scholar..."></textarea>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Tennis Information",
+        html: `
+          <div class="grid-2">
+            <div>
+              <label>Years Playing Tennis</label>
+              <input type="number" id="yearsPlaying" placeholder="8">
+            </div>
+            <div>
+              <label>Playing Hand</label>
+              <select id="playingHand">
+                <option>Right</option>
+                <option>Left</option>
+              </select>
+            </div>
+            <div>
+              <label>UTR Rating</label>
+              <input type="number" id="utr" step="0.1" placeholder="10.2">
+            </div>
+            <div>
+              <label>WTN Rating</label>
+              <input type="number" id="wtn" step="0.1" placeholder="13.5">
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label>Tennis Achievements</label>
+              <textarea id="tennisAchievements" style="height: 100px;" placeholder="Regional finalist, tournament wins..."></textarea>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Opportunity Type",
+        html: `
+          <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Which opportunity are you seeking?</p>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="border: 2px solid #2563eb; background: #f0f7ff; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('undergraduate')">
+              <input type="radio" name="opportunity" value="undergraduate" checked id="opp1">
+              <label for="opp1" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Undergraduate Playing</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For high school students seeking to play at college</p>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('graduate')">
+              <input type="radio" name="opportunity" value="graduate" id="opp2">
+              <label for="opp2" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Graduate Playing</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For college graduates pursuing graduate degrees</p>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('coach')">
+              <input type="radio" name="opportunity" value="coach" id="opp3">
+              <label for="opp3" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Graduate Assistant Coach</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">Seeking coaching positions while studying</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Email Template",
+        html: `
+          <div>
+            <label>Subject Line</label>
+            <input type="text" id="emailSubject" value="Tennis Prospect - Your Name">
+            <label>Email Body</label>
+            <textarea id="emailBody" style="height: 150px;">Dear Coach,
+
+My name is [Name]. I'm interested in playing tennis at your university. I have a 3.8 GPA and 8 years of competitive experience.
+
+With my UTR rating and tennis achievements, I believe I would be a great fit for your program.
+
+Best regards,
+[Your Name]</textarea>
+          </div>
+        `
+      },
+      {
+        title: "Package Selection",
+        html: `
+          <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Choose your package:</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('basic')">
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">BASIC</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$79</div>
+              <div style="font-size: 12px; color: #64748b;">1 Division</div>
+            </div>
+            <div id="standardPkg" style="border: 3px solid #2563eb; background: #f0f7ff; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('standard')">
+              <div style="font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 0.75rem;">RECOMMENDED</div>
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">STANDARD</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$99</div>
+              <div style="font-size: 12px; color: #64748b;">3 Divisions</div>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('premium')">
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">PREMIUM</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$139</div>
+              <div style="font-size: 12px; color: #64748b;">All 5 Divisions</div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Campaign Summary",
+        html: `
+          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 12px; padding: 2rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📧</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Ready!</h2>
+            <p style="font-size: 14px; color: #1e40af; margin: 0 0 1.5rem 0;">Campaign launches next business day</p>
+            
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
+                <div>
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
+                  <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">Standard</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
+                  <div id="summaryDivisions" style="font-size: 16px; font-weight: 700;">NCAA D1, D2, NAIA</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1rem;">
+              <div style="font-size: 12px; color: #1e40af; line-height: 1.8;">
+                <strong>Next:</strong> Our team will review your profile and create a personalized email. Once approved, you'll proceed to payment.
+              </div>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    function displayStep(stepNum) {
+      currentStep = stepNum;
+      const step = steps[stepNum - 1];
+      
+      document.getElementById('stepNum').textContent = stepNum;
+      document.getElementById('stepTitle').textContent = step.title;
+      document.getElementById('stepContent').innerHTML = step.html;
+      document.getElementById('progressBar').style.width = ((stepNum - 1) / 6 * 100) + '%';
+      document.getElementById('prevBtn').style.display = stepNum === 1 ? 'none' : 'block';
+      document.getElementById('nextBtn').textContent = stepNum === 7 ? 'COMPLETE REGISTRATION ✓' : 'NEXT STEP →';
+      document.getElementById('stageName').textContent = 'Step ' + stepNum + ' of 7';
+    }
+
+    function nextStep() {
+      if (currentStep < 7) {
+        displayStep(currentStep + 1);
+      } else {
+        completeRegistration();
+      }
+    }
+
+    function previousStep() {
+      if (currentStep > 1) {
+        displayStep(currentStep - 1);
+      }
+    }
+
+    function selectOpportunity(value) {
+      document.getElementById('opp1').checked = value === 'undergraduate';
+      document.getElementById('opp2').checked = value === 'graduate';
+      document.getElementById('opp3').checked = value === 'coach';
+    }
+
+    function selectPackage(pkg) {
+      const standard = document.getElementById('standardPkg');
+      standard.style.borderColor = pkg === 'standard' ? '#2563eb' : '#cbd5e1';
+      standard.style.background = pkg === 'standard' ? '#f0f7ff' : 'white';
+      
+      formData.package = pkg;
+      
+      const packages = { basic: 'Basic - 1 Division', standard: 'Standard - 3 Divisions', premium: 'Premium - All Divisions' };
+      document.getElementById('summaryPackage').textContent = packages[pkg];
+    }
+
+    function completeRegistration() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+
+      if (!email || !password || !firstName || !lastName) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      // Create user in Firebase
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const userId = userCredential.user.uid;
+          
+          // Save user data to database
+          firebase.database().ref('users/' + userId).set({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            dob: document.getElementById('dob').value,
+            gender: document.getElementById('gender').value,
+            school: document.getElementById('school').value,
+            gpa: document.getElementById('gpa').value,
+            utr: document.getElementById('utr').value,
+            package: formData.package || 'standard',
+            emailTemplate: document.getElementById('emailBody').value,
+            status: 'pending',
+            createdAt: new Date().toISOString()
+          });
+
+          alert('✓ Registration complete! Email being created by our team. You will receive a notification when ready.');
+          window.location.href = 'login.html';
+        })
+        .catch(error => {
+          alert('Error: ' + error.message);
+        });
+    }
+
+    // Initialize
+    displayStep(1);
+    selectPackage('standard');
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "playportal",
+  "version": "1.0.0",
+  "description": "Tennis Recruiting Platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve",
+    "build": "echo 'No build needed for static site'"
+  },
+  "keywords": ["tennis", "recruiting", "platform"],
+  "author": "PlayPortal",
+  "license": "MIT"
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlayPortal - Tennis Recruiting Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div>Not logged in</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;">Landing Page</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1>Welcome to PlayPortal</h1>
+        <p>Your Personal Tennis Recruiting Platform</p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <p style="font-size: 15px; color: #64748b; line-height: 1.8; margin-bottom: 2rem;">
+          PlayPortal helps you connect with college coaches and showcase your tennis talent to universities that matter.
+        </p>
+
+        <div class="grid-2">
+          <div style="background: #f0f9ff; border-radius: 12px; padding: 2rem; border: 1px solid #bfdbfe;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">📝</div>
+            <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 0.75rem 0;">Build Your Profile</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 1.5rem 0; line-height: 1.6;">
+              Share your academic achievements, tennis rankings, and athletic goals. Our team creates a personalized email template for you.
+            </p>
+            <a href="signup.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Get Started</a>
+          </div>
+
+          <div style="background: #f0f9ff; border-radius: 12px; padding: 2rem; border: 1px solid #bfdbfe;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎯</div>
+            <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 0.75rem 0;">Targeted Outreach</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 1.5rem 0; line-height: 1.6;">
+              Select your divisions and let us handle the rest. Your personalized email reaches hundreds of coaches.
+            </p>
+            <a href="login.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Sign In</a>
+          </div>
+        </div>
+
+        <div style="margin-top: 3rem; background: #f8fafc; border-radius: 12px; padding: 2rem;">
+          <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 1.5rem 0;">How It Works</h2>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+            <div style="text-align: center;">
+              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">1</div>
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Create Account</div>
+              <div style="font-size: 11px; color: #64748b;">Sign up & login</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">2</div>
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Complete Profile</div>
+              <div style="font-size: 11px; color: #64748b;">7 steps, 15 min</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">3</div>
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Email Created</div>
+              <div style="font-size: 11px; color: #64748b;">We write it</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">4</div>
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Pay & Launch</div>
+              <div style="font-size: 11px; color: #64748b;">Campaign begins</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+
+</body>
+</html>

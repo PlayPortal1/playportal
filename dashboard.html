@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - PlayPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div id="userEmail">Not logged in</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;" id="campaignStatus">Campaign Status</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <div class="card">
+      <h1 style="margin-bottom: 0.5rem;">Your Campaign</h1>
+      <p style="color: #64748b; margin-bottom: 2rem;">Track your campaign status and email approval</p>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('pending')">⏳ PENDING</button>
+        <button class="tab-btn" onclick="showTab('approved')">✓ APPROVED</button>
+        <button class="tab-btn" onclick="showTab('payment')">💳 PAYMENT</button>
+      </div>
+
+      <!-- PENDING TAB -->
+      <div id="tab-pending" style="display: block;">
+        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 12px; padding: 2rem; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+          <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Email Template in Progress</h2>
+          <p style="color: #1e40af; font-size: 13px; margin: 0 0 1.5rem 0; line-height: 1.6;">Our team is reviewing your profile and creating a personalized email template. This typically takes 24-48 hours.</p>
+          
+          <div style="background: white; border-radius: 8px; padding: 1rem; text-align: left; margin-bottom: 1.5rem;">
+            <p style="font-size: 12px; font-weight: 600; color: #0f172a; margin: 0 0 0.75rem 0;">✓ Profile Information Received:</p>
+            <ul style="margin: 0; padding-left: 1.5rem; font-size: 11px; color: #475569; line-height: 1.8;">
+              <li id="checkPersonal">Personal Info: [Pending]</li>
+              <li id="checkAcademic">Academic Info: [Pending]</li>
+              <li id="checkTennis">Tennis Info: [Pending]</li>
+              <li id="checkPackage">Package Selected: [Pending]</li>
+            </ul>
+          </div>
+
+          <p style="font-size: 12px; color: #1e40af; margin: 0;">You will be notified via email when your template is ready.</p>
+        </div>
+      </div>
+
+      <!-- APPROVED TAB -->
+      <div id="tab-approved" style="display: none;">
+        <div style="background: #d1fae5; border: 2px solid #6ee7b7; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+          <p style="margin: 0; font-size: 13px; color: #065f46; font-weight: 600;">✓ EMAIL TEMPLATE READY</p>
+        </div>
+
+        <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+          <div style="margin-bottom: 2rem;">
+            <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 0.75rem; text-transform: uppercase;">Subject Line</div>
+            <div style="font-size: 15px; font-weight: 600; color: #0f172a;" id="approvedSubject">Tennis Prospect - Your Name</div>
+          </div>
+
+          <div style="padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+            <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 1rem; text-transform: uppercase;">Email Body</div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.7;" id="approvedBody">
+              Dear Coach,<br><br>
+              My name is [Name]. I'm interested in playing tennis at your university. I have a strong academic record and extensive tennis experience.<br><br>
+              With my UTR rating and achievements, I believe I would be a great fit for your program.<br><br>
+              Best regards,<br>
+              [Your Name]
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; border-radius: 8px; padding: 1.5rem;">
+          <div style="font-size: 13px; color: #065f46; font-weight: 600;">✓ READY TO PROCEED</div>
+          <div style="font-size: 12px; color: #065f46; margin-top: 0.5rem;">Your email is approved and ready. You can now proceed to payment to launch your campaign.</div>
+        </div>
+      </div>
+
+      <!-- PAYMENT TAB -->
+      <div id="tab-payment" style="display: none;">
+        <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+          <div style="margin-bottom: 2rem;">
+            <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 1rem; text-transform: uppercase;">Order Summary</div>
+            
+            <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem;">
+              <div>
+                <div style="font-size: 13px; color: #0f172a; font-weight: 600;" id="paymentPackage">Standard Package</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 0.25rem;" id="paymentDivisions">3 Divisions (D1, D2, NAIA)</div>
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: #2563eb;" id="paymentPrice">$99.00</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; padding: 1rem 0; font-size: 14px; font-weight: 700;">
+              <div>TOTAL</div>
+              <div style="color: #2563eb; font-size: 18px;" id="paymentTotal">$99.00</div>
+            </div>
+          </div>
+
+          <button onclick="proceedToPayment()" class="btn-primary">PROCEED TO PAYPAL PAYMENT</button>
+
+          <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1.5rem; margin-top: 1.5rem;">
+            <div style="font-size: 12px; font-weight: 700; color: #1e40af; margin-bottom: 1rem; text-transform: uppercase;">After Payment You'll Receive:</div>
+            <ul style="margin: 0; padding-left: 1.5rem; color: #1e40af; font-size: 12px; line-height: 1.8;">
+              <li>📧 Email account (e.g., yourname.athlete@gmail.com)</li>
+              <li>🔑 Secure password</li>
+              <li>🚀 Campaign launch date</li>
+              <li>📞 Dedicated support contact</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGOUT BUTTON -->
+      <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+        <button onclick="handleLogout()" style="background: white; color: #dc2626; border: 2px solid #dc2626; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">LOG OUT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    let currentUser = null;
+    let userData = null;
+
+    // Check if user is logged in
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+      document.getElementById('userEmail').textContent = '✓ ' + user.email;
+
+      // Load user data from database
+      firebase.database().ref('users/' + user.uid).once('value')
+        .then(snapshot => {
+          userData = snapshot.val();
+          if (userData) {
+            loadCampaignData();
+          }
+        });
+    });
+
+    function loadCampaignData() {
+      // Check which info is filled in
+      if (userData.firstName) {
+        document.getElementById('checkPersonal').textContent = 'Personal Info: ✓';
+      }
+      if (userData.gpa) {
+        document.getElementById('checkAcademic').textContent = 'Academic Info: ✓';
+      }
+      if (userData.utr) {
+        document.getElementById('checkTennis').textContent = 'Tennis Info: ✓';
+      }
+      if (userData.package) {
+        document.getElementById('checkPackage').textContent = 'Package Selected: ✓ ' + userData.package;
+      }
+
+      // Load approved email if status changes
+      if (userData.emailTemplate) {
+        document.getElementById('approvedBody').textContent = userData.emailTemplate;
+      }
+      if (userData.emailSubject) {
+        document.getElementById('approvedSubject').textContent = userData.emailSubject;
+      }
+
+      // Set payment info based on package
+      const packages = {
+        basic: { name: 'Basic Package', divisions: '1 Division (NCAA D1)', price: '$79.00' },
+        standard: { name: 'Standard Package', divisions: '3 Divisions (D1, D2, NAIA)', price: '$99.00' },
+        premium: { name: 'Premium Package', divisions: 'All 5 Divisions', price: '$139.00' }
+      };
+
+      const pkg = userData.package || 'standard';
+      const pkgInfo = packages[pkg];
+      document.getElementById('paymentPackage').textContent = pkgInfo.name;
+      document.getElementById('paymentDivisions').textContent = pkgInfo.divisions;
+      document.getElementById('paymentPrice').textContent = pkgInfo.price;
+      document.getElementById('paymentTotal').textContent = pkgInfo.price;
+
+      // Update campaign status
+      document.getElementById('campaignStatus').textContent = 'Status: ' + (userData.status || 'Pending');
+    }
+
+    function showTab(tabName) {
+      // Hide all tabs
+      document.getElementById('tab-pending').style.display = 'none';
+      document.getElementById('tab-approved').style.display = 'none';
+      document.getElementById('tab-payment').style.display = 'none';
+
+      // Show selected tab
+      document.getElementById('tab-' + tabName).style.display = 'block';
+
+      // Update button styles
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function proceedToPayment() {
+      alert('✓ PayPal integration is being set up. You will be redirected to PayPal to complete payment.');
+      // TODO: Add PayPal integration here
+    }
+
+    function handleLogout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
+
+</body>
+</html>

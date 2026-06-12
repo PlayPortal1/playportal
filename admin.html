@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Console - PlayPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div id="adminEmail">Admin</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;">Admin Console</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="container">
+    <div style="display: flex; gap: 1.5rem;">
+      
+      <!-- SIDEBAR -->
+      <div style="width: 200px;">
+        <div class="card" style="padding: 0; margin: 0;">
+          <div style="background: var(--color-background-secondary); padding: 1rem; border-bottom: 0.5px solid #e2e8f0;">
+            <div style="font-size: 12px; font-weight: 600; color: #0f172a;">ADMIN MENU</div>
+          </div>
+          <button onclick="switchTab('dashboard')" class="admin-tab active" style="width: 100%; padding: 1rem; background: #2563eb; color: white; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📊 Dashboard</button>
+          <button onclick="switchTab('campaigns')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📧 Campaigns</button>
+          <button onclick="switchTab('users')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">👥 Users</button>
+          <button onclick="handleLogout()" style="width: 100%; padding: 1rem; background: transparent; color: #dc2626; border: none; cursor: pointer; text-align: left; font-size: 12px; font-weight: 600;">🚪 Logout</button>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div style="flex: 1;">
+
+        <!-- DASHBOARD TAB -->
+        <div id="tab-dashboard" class="card">
+          <h1 style="margin-bottom: 0.5rem;">Admin Dashboard</h1>
+          <p style="color: #64748b; margin-bottom: 2rem;">Overview of all campaigns and users</p>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+            <div style="background: #f0f9ff; border-left: 3px solid #2563eb; padding: 1rem; border-radius: 8px;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 0.5rem;">TOTAL USERS</div>
+              <div style="font-size: 20px; font-weight: 700;" id="statUsers">0</div>
+            </div>
+            <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 1rem; border-radius: 8px;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 0.5rem;">ACTIVE CAMPAIGNS</div>
+              <div style="font-size: 20px; font-weight: 700;" id="statActive">0</div>
+            </div>
+            <div style="background: #f3e8ff; border-left: 3px solid #7c3aed; padding: 1rem; border-radius: 8px;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 0.5rem;">PENDING EMAIL</div>
+              <div style="font-size: 20px; font-weight: 700;" id="statPending">0</div>
+            </div>
+            <div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 1rem; border-radius: 8px;">
+              <div style="font-size: 11px; color: #64748b; margin-bottom: 0.5rem;">COMPLETED</div>
+              <div style="font-size: 20px; font-weight: 700;" id="statCompleted">0</div>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
+            <div style="font-size: 12px; font-weight: 600; margin-bottom: 1rem;">RECENT CAMPAIGNS</div>
+            <div style="font-size: 12px; color: #64748b;" id="dashboardRecent">Loading...</div>
+          </div>
+        </div>
+
+        <!-- CAMPAIGNS TAB -->
+        <div id="tab-campaigns" class="card hidden">
+          <h1 style="margin-bottom: 0.5rem;">Campaign Management</h1>
+          <p style="color: #64748b; margin-bottom: 2rem;">View all user campaigns</p>
+
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+            <div style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">
+              <input type="text" placeholder="Search by name or email..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+            </div>
+            <table style="width: 100; border-collapse: collapse; font-size: 12px;" id="campaignsTable">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">User</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">Package</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">Status</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="campaignsList">
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td colspan="4" style="padding: 2rem; text-align: center; color: #64748b;">Loading campaigns...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="tab-users" class="card hidden">
+          <h1 style="margin-bottom: 0.5rem;">User Management</h1>
+          <p style="color: #64748b; margin-bottom: 2rem;">View all registered users</p>
+
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;" id="usersTable">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">Name</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">Email</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">School</th>
+                  <th style="padding: 0.75rem; text-align: left; color: #64748b; font-weight: 600;">GPA</th>
+                </tr>
+              </thead>
+              <tbody id="usersList">
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td colspan="4" style="padding: 2rem; text-align: center; color: #64748b;">Loading users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FOR CAMPAIGN DETAIL -->
+  <div id="campaignModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+    <div class="card" style="max-width: 700px; margin: 2rem auto; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0;">Campaign Detail</h2>
+      
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showDetailTab('profile')">Profile</button>
+        <button class="tab-btn" onclick="showDetailTab('email')">Email</button>
+        <button class="tab-btn" onclick="showDetailTab('credentials')">Credentials</button>
+        <button class="tab-btn" onclick="showDetailTab('status')">Status</button>
+      </div>
+
+      <!-- Profile Tab -->
+      <div id="detail-profile">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 12px; margin-bottom: 2rem;">
+          <div>
+            <div style="color: #64748b; font-weight: 600;">Name</div>
+            <div id="modalName">-</div>
+          </div>
+          <div>
+            <div style="color: #64748b; font-weight: 600;">Email</div>
+            <div id="modalEmail">-</div>
+          </div>
+          <div>
+            <div style="color: #64748b; font-weight: 600;">School</div>
+            <div id="modalSchool">-</div>
+          </div>
+          <div>
+            <div style="color: #64748b; font-weight: 600;">GPA</div>
+            <div id="modalGPA">-</div>
+          </div>
+          <div>
+            <div style="color: #64748b; font-weight: 600;">UTR</div>
+            <div id="modalUTR">-</div>
+          </div>
+          <div>
+            <div style="color: #64748b; font-weight: 600;">Package</div>
+            <div id="modalPackage">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Tab -->
+      <div id="detail-email" style="display: none; margin-bottom: 2rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Subject:</label>
+        <input type="text" id="emailSubjectInput" style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Body:</label>
+        <textarea id="emailBodyInput" style="min-height: 150px; margin-bottom: 1rem;"></textarea>
+        <button onclick="saveEmail()" class="btn-primary">SAVE EMAIL</button>
+      </div>
+
+      <!-- Credentials Tab -->
+      <div id="detail-credentials" style="display: none; margin-bottom: 2rem;">
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Email Address:</label>
+          <input type="email" id="credEmail" placeholder="athlete@gmail.com">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Password:</label>
+          <input type="text" id="credPassword" placeholder="Password">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Provider:</label>
+          <select id="credProvider">
+            <option>Gmail</option>
+            <option>Outlook</option>
+            <option>Yahoo</option>
+          </select>
+        </div>
+        <button onclick="addCredential()" class="btn-primary">ADD CREDENTIAL</button>
+        <div id="credentialsList" style="margin-top: 1rem;"></div>
+      </div>
+
+      <!-- Status Tab -->
+      <div id="detail-status" style="display: none; margin-bottom: 2rem;">
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 0.75rem;">Current Status:</div>
+          <div id="currentStatus" style="font-size: 14px; font-weight: 600;">Pending</div>
+        </div>
+        <button onclick="markCompleted()" class="btn-success">MARK AS COMPLETED</button>
+      </div>
+
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem;">
+        <button onclick="closeCampaignModal()" class="btn-secondary" style="width: 100%;">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    const ADMIN_EMAIL = 'playportal.club@gmail.com';
+    let currentCampaignId = null;
+    let allUsers = {};
+
+    // Check if user is admin
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        alert('Access denied. Admin only.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('adminEmail').textContent = '👨‍💼 ' + user.email;
+      loadAllData();
+    });
+
+    function loadAllData() {
+      firebase.database().ref('users').on('value', snapshot => {
+        allUsers = snapshot.val() || {};
+        updateDashboard();
+        updateCampaignsList();
+        updateUsersList();
+      });
+    }
+
+    function updateDashboard() {
+      let totalUsers = Object.keys(allUsers).length;
+      let active = 0;
+      let pending = 0;
+      let completed = 0;
+
+      Object.values(allUsers).forEach(user => {
+        if (user.status === 'pending') pending++;
+        if (user.status === 'active') active++;
+        if (user.status === 'completed') completed++;
+      });
+
+      document.getElementById('statUsers').textContent = totalUsers;
+      document.getElementById('statActive').textContent = active;
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statCompleted').textContent = completed;
+
+      let recentHtml = `<div>${totalUsers} registered users</div>`;
+      recentHtml += `<div style="margin-top: 0.5rem;">${pending} campaigns pending email creation</div>`;
+      document.getElementById('dashboardRecent').innerHTML = recentHtml;
+    }
+
+    function updateCampaignsList() {
+      let html = '';
+      let count = 0;
+
+      Object.entries(allUsers).forEach(([userId, user]) => {
+        if (count >= 10) return; // Limit to 10
+        
+        const fullName = (user.firstName || '') + ' ' + (user.lastName || '');
+        const statusColor = user.status === 'pending' ? '#fef3c7' : 
+                           user.status === 'active' ? '#d1fae5' : '#dbeafe';
+        const statusText = user.status || 'pending';
+
+        html += `
+          <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 0.75rem;">${fullName}</td>
+            <td style="padding: 0.75rem;">${user.package || '-'}</td>
+            <td style="padding: 0.75rem;">
+              <span style="background: ${statusColor}; color: #0f172a; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 10px;">${statusText}</span>
+            </td>
+            <td style="padding: 0.75rem;">
+              <button onclick="openCampaignModal('${userId}')" style="background: #dbeafe; color: #2563eb; border: none; padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer; font-size: 11px;">View</button>
+            </td>
+          </tr>
+        `;
+        count++;
+      });
+
+      if (!html) {
+        html = '<tr style="border-bottom: 1px solid #e2e8f0;"><td colspan="4" style="padding: 2rem; text-align: center; color: #64748b;">No campaigns yet</td></tr>';
+      }
+
+      document.getElementById('campaignsList').innerHTML = html;
+    }
+
+    function updateUsersList() {
+      let html = '';
+      let count = 0;
+
+      Object.values(allUsers).forEach(user => {
+        if (count >= 10) return;
+        
+        const fullName = (user.firstName || '') + ' ' + (user.lastName || '');
+        html += `
+          <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 0.75rem;">${fullName}</td>
+            <td style="padding: 0.75rem;">${user.email || '-'}</td>
+            <td style="padding: 0.75rem;">${user.school || '-'}</td>
+            <td style="padding: 0.75rem;">${user.gpa || '-'}</td>
+          </tr>
+        `;
+        count++;
+      });
+
+      if (!html) {
+        html = '<tr style="border-bottom: 1px solid #e2e8f0;"><td colspan="4" style="padding: 2rem; text-align: center; color: #64748b;">No users yet</td></tr>';
+      }
+
+      document.getElementById('usersList').innerHTML = html;
+    }
+
+    function switchTab(tabName) {
+      document.getElementById('tab-dashboard').classList.add('hidden');
+      document.getElementById('tab-campaigns').classList.add('hidden');
+      document.getElementById('tab-users').classList.add('hidden');
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+      document.querySelectorAll('.admin-tab').forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = '#0f172a';
+      });
+      event.target.style.background = '#2563eb';
+      event.target.style.color = 'white';
+    }
+
+    function openCampaignModal(userId) {
+      currentCampaignId = userId;
+      const user = allUsers[userId];
+
+      // Fill profile tab
+      document.getElementById('modalName').textContent = (user.firstName || '') + ' ' + (user.lastName || '');
+      document.getElementById('modalEmail').textContent = user.email || '-';
+      document.getElementById('modalSchool').textContent = user.school || '-';
+      document.getElementById('modalGPA').textContent = user.gpa || '-';
+      document.getElementById('modalUTR').textContent = user.utr || '-';
+      document.getElementById('modalPackage').textContent = user.package || '-';
+
+      // Fill email tab
+      document.getElementById('emailSubjectInput').value = user.emailSubject || user.emailTemplate || '';
+      document.getElementById('emailBodyInput').value = user.emailTemplate || '';
+
+      // Fill credentials tab
+      document.getElementById('credentialsList').innerHTML = user.credentials ? 
+        Object.values(user.credentials).map(cred => 
+          `<div style="background: #f8fafc; padding: 0.75rem; margin: 0.5rem 0; border-radius: 4px; font-size: 11px;">
+            ${cred.email} (${cred.provider})
+            <button onclick="deleteCredential('${cred.email}')" style="float: right; background: #fee2e2; color: #991b1b; border: none; padding: 0.25rem 0.5rem; border-radius: 2px; cursor: pointer;">X</button>
+          </div>`
+        ).join('') : '<div style="color: #64748b; font-size: 11px;">No credentials added yet</div>';
+
+      // Fill status tab
+      document.getElementById('currentStatus').textContent = user.status || 'pending';
+
+      document.getElementById('campaignModal').style.display = 'block';
+    }
+
+    function closeCampaignModal() {
+      document.getElementById('campaignModal').style.display = 'none';
+      currentCampaignId = null;
+    }
+
+    function showDetailTab(tabName) {
+      document.getElementById('detail-profile').style.display = tabName === 'profile' ? 'block' : 'none';
+      document.getElementById('detail-email').style.display = tabName === 'email' ? 'block' : 'none';
+      document.getElementById('detail-credentials').style.display = tabName === 'credentials' ? 'block' : 'none';
+      document.getElementById('detail-status').style.display = tabName === 'status' ? 'block' : 'none';
+
+      document.querySelectorAll('#campaignModal .tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function saveEmail() {
+      const subject = document.getElementById('emailSubjectInput').value;
+      const body = document.getElementById('emailBodyInput').value;
+
+      firebase.database().ref('users/' + currentCampaignId).update({
+        emailSubject: subject,
+        emailTemplate: body,
+        status: 'active'
+      }).then(() => {
+        alert('✓ Email saved!');
+        closeCampaignModal();
+      });
+    }
+
+    function addCredential() {
+      const email = document.getElementById('credEmail').value;
+      const password = document.getElementById('credPassword').value;
+      const provider = document.getElementById('credProvider').value;
+
+      if (!email || !password) {
+        alert('Please fill in email and password');
+        return;
+      }
+
+      const credentialKey = email.replace(/[.#$\/\[\]]/g, '_');
+      firebase.database().ref('users/' + currentCampaignId + '/credentials/' + credentialKey).set({
+        email: email,
+        password: password,
+        provider: provider
+      }).then(() => {
+        alert('✓ Credential added!');
+        document.getElementById('credEmail').value = '';
+        document.getElementById('credPassword').value = '';
+        openCampaignModal(currentCampaignId);
+      });
+    }
+
+    function deleteCredential(email) {
+      const credentialKey = email.replace(/[.#$\/\[\]]/g, '_');
+      firebase.database().ref('users/' + currentCampaignId + '/credentials/' + credentialKey).remove();
+      openCampaignModal(currentCampaignId);
+    }
+
+    function markCompleted() {
+      firebase.database().ref('users/' + currentCampaignId).update({
+        status: 'completed'
+      }).then(() => {
+        alert('✓ Campaign marked as completed!');
+        closeCampaignModal();
+      });
+    }
+
+    function handleLogout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('campaignModal');
+      if (event.target === modal) {
+        closeCampaignModal();
+      }
+    }
+  </script>
+
+</body>
+</html>
