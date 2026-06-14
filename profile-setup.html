@@ -631,14 +631,15 @@
     }
 
     window.approveEmailTemplate = function() {
-      update(ref(database, 'users/' + currentUser.uid), {
-        emailApproved: true
-      }).then(() => {
-        alert('✅ Email approved! Moving to campaign...');
-        currentStep++;
-        displayStep();
-      });
-    };
+  update(ref(database, 'users/' + currentUser.uid), {
+    emailApproved: true,
+    currentStep: 7
+  }).then(() => {
+    alert('✅ Email approved! Moving to campaign...');
+    currentStep = 7;
+    displayStep();
+  });
+};
 
     window.rejectEmailTemplate = function() {
       const changes = document.getElementById('emailChanges').value;
