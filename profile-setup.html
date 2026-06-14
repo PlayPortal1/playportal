@@ -101,22 +101,33 @@
     let selectedOpportunity = 'undergraduate';
 
     window.nextStep = function() {
-      if (!validateStep()) return;
-      saveStep();
-      if (currentStep < 7) {
-        currentStep++;
-        displayStep();
-      } else {
-        completeProfile();
-      }
-    };
+  if (!validateStep()) return;
+  saveStep();
+  
+  // Save to Firebase after each step
+  update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
+    console.error('Error saving:', err);
+  });
+  
+  if (currentStep < 7) {
+    currentStep++;
+    displayStep();
+  } else {
+    completeProfile();
+  }
+};
 
     window.previousStep = function() {
-      if (currentStep > 1) {
-        currentStep--;
-        displayStep();
-      }
-    };
+  saveStep();
+  update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
+    console.error('Error saving:', err);
+  });
+  
+  if (currentStep > 1) {
+    currentStep--;
+    displayStep();
+  }
+};
 
     window.selectOpportunity = function(value) {
       selectedOpportunity = value;
