@@ -271,30 +271,26 @@
     }
 
     .carousel {
-      display: block;
-      overflow: hidden;
-      border-radius: 12px;
-      width: 100%;
       position: relative;
+      width: 100%;
+      height: auto;
     }
 
     .testimonial-slide {
-      display: none;
+      position: absolute;
+      width: 100%;
       padding: 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
     }
 
     .testimonial-slide.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.5s ease-in-out;
+      position: relative;
+      opacity: 1;
+      visibility: visible;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
+    
     /* TESTIMONIALS */
     .testimonials {
       background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
@@ -758,12 +754,12 @@
       dotsContainer.appendChild(dot);
     }
 
-    function showSlide(index) {
+    function showSlide(n) {
       slides.forEach(slide => slide.classList.remove('active'));
       document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('active'));
       
-      slides[index].classList.add('active');
-      document.querySelectorAll('.dot')[index].classList.add('active');
+      slides[n].classList.add('active');
+      document.querySelectorAll('.dot')[n].classList.add('active');
     }
 
     function nextSlide() {
@@ -771,12 +767,11 @@
       showSlide(currentSlide);
     }
 
-    function goToSlide(index) {
-      currentSlide = index;
+    function goToSlide(n) {
+      currentSlide = n;
       showSlide(currentSlide);
     }
 
-    // Start carousel
     showSlide(0);
     setInterval(nextSlide, 5000);
   </script>
