@@ -484,40 +484,63 @@
 
       // STEP 6: Email Review
       if (currentStep === 6) {
-        title = 'Email Review (In Progress)';
-        html = `
-          <div style="text-align: center;">
-            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
-              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Your Email is Being Reviewed</h2>
-              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our team is crafting a personalized recruiting email based on your profile.</p>
-              
-              <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
-                <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
-                  <div style="margin-bottom: 1.5rem;">
-                    <strong style="font-size: 16px;">⏱️ 24-48 Hours</strong><br>
-                    <span style="color: #64748b; font-size: 12px;">We'll email you when your email template is ready for review</span>
-                  </div>
-                  <div style="margin-bottom: 1.5rem;">
-                    <strong style="font-size: 16px;">👀 Review & Approve</strong><br>
-                    <span style="color: #64748b; font-size: 12px;">You'll see a preview and can confirm or suggest changes</span>
-                  </div>
-                  <div>
-                    <strong style="font-size: 16px;">🚀 Then Proceed</strong><br>
-                    <span style="color: #64748b; font-size: 12px;">Once approved, you'll move to campaign status and payment</span>
-                  </div>
-                </div>
-              </div>
+  title = 'Email Review';
+  
+  // Check if admin created a template
+  if (userData.emailTemplate && userData.emailTemplate.content) {
+    html = `
+      <div style="text-align: center;">
+        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
+          <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Your Email Template is Ready!</h2>
+          <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Review the template below. You can approve it or suggest changes.</p>
+          
+          <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: left;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; font-size: 13px; color: #475569; line-height: 1.8; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+              ${userData.emailTemplate.content}
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Suggested Changes (Optional)</label>
+              <textarea id="emailChanges" placeholder="If you want to suggest changes, write them here..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 100px;"></textarea>
+            </div>
 
+            <div style="display: flex; gap: 1rem;">
+              <button onclick="rejectEmailTemplate()" class="btn-secondary" style="flex: 1; padding: 0.75rem;">✏️ Suggest Changes</button>
+              <button onclick="approveEmailTemplate()" class="btn-primary" style="flex: 1; padding: 0.75rem;">✅ Approve Template</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // Template not ready yet
+    html = `
+      <div style="text-align: center;">
+        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+          <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Email Template Coming Soon</h2>
+          <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our admin team is creating your personalized recruiting email. You'll receive a notification and email when it's ready for review.</p>
+          
+          <div style="background: white; border-radius: 12px; padding: 2rem;">
+            <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
+              <div style="margin-bottom: 1.5rem;">
+                <strong style="font-size: 16px;">⏱️ Expected: 24-48 Hours</strong><br>
+                <span style="color: #64748b; font-size: 12px;">We're working on crafting the perfect email for you</span>
+              </div>
               <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
-                <div style="font-size: 12px; color: #065f46; line-height: 1.8;">
-                  <strong>📧 Check your email</strong> for updates. You cannot proceed until we notify you that your email is ready!
+                <div style="font-size: 12px; color: #065f46;">
+                  <strong>📧 Check back soon!</strong><br>
+                  Once ready, you'll see the template here and can review or suggest changes.
                 </div>
               </div>
             </div>
           </div>
-        `;
-      }
+        </div>
+      </div>
+    `;
+  }
+}
 
       // STEP 7: Campaign Status
       if (currentStep === 7) {
@@ -562,6 +585,31 @@
         alert('Error: ' + err.message);
       });
     }
+
+    window.approveEmailTemplate = function() {
+  update(ref(database, 'users/' + currentUser.uid), {
+    emailApproved: true
+  }).then(() => {
+    alert('✅ Email approved! Moving to campaign...');
+    currentStep++;
+    displayStep();
+  });
+};
+
+window.rejectEmailTemplate = function() {
+  const changes = document.getElementById('emailChanges').value;
+  if (!changes.trim()) {
+    alert('Please write your suggested changes');
+    return;
+  }
+  update(ref(database, 'users/' + currentUser.uid), {
+    emailSuggestedChanges: changes,
+    emailApprovedAt: new Date().toISOString()
+  }).then(() => {
+    alert('✅ Suggestions sent to admin! They will update the template.');
+    displayStep();
+  });
+};
 
     onAuthStateChanged(auth, user => {
       if (!user) {

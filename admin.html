@@ -543,9 +543,19 @@ window.sendEmailNotification = function(uid, name) {
     alert('Please paste the email template');
     return;
   }
-  alert('✅ Email sent to ' + name + '!\n\nThey will receive a notification to review the template.');
-  // In production, this would send an actual email via your backend
-  closeProfileDetail();
+  
+  // Save template to Firebase for this user
+  set(ref(database, 'users/' + uid + '/emailTemplate'), {
+    content: emailContent,
+    status: 'pending_review',
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    alert('✅ Email template sent to ' + name + '!\n\nThey can now review it when they log in.');
+    closeProfileDetail();
+    loadAllData();
+  }).catch(err => {
+    alert('Error: ' + err.message);
+  });
 };
 
 window.updateStatus = function(uid, newStatus) {
