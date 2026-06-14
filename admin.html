@@ -215,7 +215,7 @@
       document.getElementById(tabName).style.display = 'block';
       event.target.classList.add('active');
 
-      if (tabName === 'campaigns') loadCampaigns();
+      if (tabName === 'campaigns') displayCampaigns(allCampaigns);
       if (tabName === 'templates') loadTemplates();
       if (tabName === 'notifications') loadNotifications();
     };
@@ -264,6 +264,7 @@
     function loadAllData() {
       get(ref(database, 'users')).then(snapshot => {
         allUsers = snapshot.val() || {};
+        allCampaigns = [];
         
         let totalUsers = 0;
         let pending = 0;
