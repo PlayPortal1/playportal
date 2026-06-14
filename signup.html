@@ -100,8 +100,8 @@
             status: 'pending'
           });
 
-          alert('✓ Account created! Now log in to complete your profile.');
-          window.location.href = 'login.html';
+          alert('✓ Account created! Starting your profile...');
+window.location.href = 'profile-setup.html';
         })
         .catch(error => {
           alert('Error: ' + error.message);
