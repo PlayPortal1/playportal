@@ -84,12 +84,13 @@
       }
 
       signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          window.location.href = 'profile-setup.html';
-        })
-        .catch(error => {
-          alert('Login failed: ' + error.message);
-        });
+  .then(userCredential => {
+    if (userCredential.user.email === 'playportal.club@gmail.com') {
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'profile-setup.html';
+    }
+  });
     };
 
     window.handleLogout = function() {
