@@ -55,6 +55,7 @@
           </div>
           <button onclick="switchTab('dashboard')" class="admin-tab" style="width: 100%; padding: 1rem; background: #2563eb; color: white; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📊 Dashboard</button>
           <button onclick="switchTab('campaigns')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📧 Campaigns</button>
+          <button onclick="switchTab('templates')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📝 Email Templates</button>
           <button onclick="handleAdminLogout()" style="width: 100%; padding: 1rem; background: transparent; color: #dc2626; border: none; cursor: pointer; text-align: left; font-size: 12px; font-weight: 600;">🚪 Logout</button>
         </div>
       </div>
@@ -154,7 +155,49 @@
 
       </div>
     </div>
-  </div>
+  <!-- EMAIL TEMPLATES TAB -->
+        <div id="tab-templates" class="card hidden">
+          <h1 style="margin-bottom: 0.5rem;">Email Templates Library</h1>
+          <p style="color: #64748b; margin-bottom: 2rem;">Create and manage reusable email templates</p>
+
+          <div style="margin-bottom: 2rem;">
+            <button onclick="showTemplateForm()" class="btn-primary">+ CREATE NEW TEMPLATE</button>
+          </div>
+
+          <!-- Template Form (hidden by default) -->
+          <div id="templateForm" style="display: none; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+            <h3 style="margin: 0 0 1.5rem 0; font-size: 16px; font-weight: 700;">New Template</h3>
+            
+            <div style="margin-bottom: 1.5rem;">
+              <label>Template Name</label>
+              <input type="text" id="templateName" placeholder="e.g., Generic Recruiting Email">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label>Subject Line</label>
+              <input type="text" id="templateSubject" placeholder="e.g., Tennis Prospect - [ATHLETE_NAME]">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label>Email Body</label>
+              <textarea id="templateBody" style="height: 150px;" placeholder="Dear Coach,
+
+My name is [ATHLETE_NAME]. I'm interested in playing tennis at your university..."></textarea>
+              <div style="font-size: 11px; color: #64748b; margin-top: 0.5rem;">💡 Use [ATHLETE_NAME], [SCHOOL], [GPA], [UTR] as placeholders</div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <button onclick="saveTemplate()" class="btn-primary" style="flex: 1;">SAVE TEMPLATE</button>
+              <button onclick="hideTemplateForm()" class="btn-secondary" style="flex: 1;">CANCEL</button>
+            </div>
+          </div>
+
+          <!-- Templates List -->
+          <div style="display: grid; gap: 1.5rem;" id="templatesList">
+            <div style="text-align: center; color: #64748b; padding: 2rem;">Loading templates...</div>
+          </div>
+        </div>
+    </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -318,7 +361,109 @@
         handleAdminLogout();
       }
     });
-  </script>
+  // EMAIL TEMPLATES FEATURE
+    window.showTemplateForm = function() {
+      document.getElementById('templateForm').style.display = 'block';
+    };
+
+    window.hideTemplateForm = function() {
+      document.getElementById('templateForm').style.display = 'none';
+      document.getElementById('templateName').value = '';
+      document.getElementById('templateSubject').value = '';
+      document.getElementById('templateBody').value = '';
+    };
+
+    window.saveTemplate = function() {
+      const name = document.getElementById('templateName').value;
+      const subject = document.getElementById('templateSubject').value;
+      const body = document.getElementById('templateBody').value;
+
+      if (!name || !subject || !body) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      const templateKey = name.toLowerCase().replace(/\s+/g, '_');
+      
+      const template = {
+        name: name,
+        subject: subject,
+        body: body,
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to Firebase
+      const db = getDatabase(app);
+      const templatesRef = ref(db, 'emailTemplates/' + templateKey);
+      
+      import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js').then(({ set }) => {
+        set(templatesRef, template).then(() => {
+          alert('✓ Template saved!');
+          hideTemplateForm();
+          loadTemplates();
+        });
+      });
+    };
+
+    function loadTemplates() {
+      const db = getDatabase(app);
+      onValue(ref(db, 'emailTemplates'), snapshot => {
+        const templates = snapshot.val() || {};
+        let html = '';
+
+        if (Object.keys(templates).length === 0) {
+          html = '<div style="text-align: center; color: #64748b; padding: 2rem; background: #f8fafc; border-radius: 8px;">No templates yet. Create your first one!</div>';
+        } else {
+          Object.entries(templates).forEach(([key, template]) => {
+            html += `
+              <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                  <div>
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 14px; font-weight: 700;">${template.name}</h3>
+                    <div style="font-size: 12px; color: #64748b;">Subject: ${template.subject}</div>
+                  </div>
+                  <button onclick="deleteTemplate('${key}')" style="background: #fee2e2; color: #991b1b; border: none; padding: 0.5rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">DELETE</button>
+                </div>
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 4px; font-size: 12px; color: #475569; line-height: 1.6; margin-bottom: 1rem;">
+                  ${template.body.substring(0, 100)}...
+                </div>
+                <button onclick="copyTemplate('${template.subject}', '${template.body.replace(/'/g, "\\'")}'); alert('Template copied to clipboard!')" style="background: #dbeafe; color: #2563eb; border: none; padding: 0.5rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">USE THIS TEMPLATE</button>
+              </div>
+            `;
+          });
+        }
+
+        document.getElementById('templatesList').innerHTML = html;
+      });
+    }
+
+    window.deleteTemplate = function(key) {
+      if (confirm('Delete this template?')) {
+        const db = getDatabase(app);
+        const templatesRef = ref(db, 'emailTemplates/' + key);
+        
+        import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js').then(({ remove }) => {
+          remove(templatesRef).then(() => {
+            alert('✓ Template deleted');
+            loadTemplates();
+          });
+        });
+      }
+    };
+
+    window.copyTemplate = function(subject, body) {
+      navigator.clipboard.writeText('SUBJECT: ' + subject + '\n\n' + body);
+    };
+
+    // Load templates when showing that tab
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function(tab) {
+      originalSwitchTab(tab);
+      if (tab === 'templates') {
+        loadTemplates();
+      }
+    };
+    </script>
 
 </body>
 </html>
