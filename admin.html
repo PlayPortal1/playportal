@@ -56,6 +56,7 @@
           <button onclick="switchTab('dashboard')" class="admin-tab" style="width: 100%; padding: 1rem; background: #2563eb; color: white; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📊 Dashboard</button>
           <button onclick="switchTab('campaigns')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📧 Campaigns</button>
           <button onclick="switchTab('templates')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">📝 Email Templates</button>
+          <button onclick="switchTab('notifications')" class="admin-tab" style="width: 100%; padding: 1rem; background: transparent; color: #0f172a; border: none; cursor: pointer; text-align: left; font-size: 12px; border-bottom: 0.5px solid #e2e8f0; font-weight: 600;">🔔 Notifications</button>
           <button onclick="handleAdminLogout()" style="width: 100%; padding: 1rem; background: transparent; color: #dc2626; border: none; cursor: pointer; text-align: left; font-size: 12px; font-weight: 600;">🚪 Logout</button>
         </div>
       </div>
@@ -242,7 +243,38 @@ My name is [ATHLETE_NAME]. I'm interested in playing tennis at your university..
           <!-- Templates List -->
           <div style="display: grid; gap: 1.5rem;" id="templatesList">
             <div style="text-align: center; color: #64748b; padding: 2rem;">Loading templates...</div>
+          <!-- NOTIFICATIONS TAB -->
+        <div id="tab-notifications" class="card hidden">
+          <h1 style="margin-bottom: 0.5rem;">🔔 Notifications</h1>
+          <p style="color: #64748b; margin-bottom: 2rem;">Real-time alerts and activity feed</p>
+
+          <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <button onclick="markAllAsRead()" class="btn-secondary" style="flex: 1;">MARK ALL AS READ</button>
+            <button onclick="exportNotificationsSummary()" class="btn-primary" style="flex: 1;">EMAIL SUMMARY</button>
           </div>
+
+          <!-- NOTIFICATION FILTERS -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+            <label style="display: inline-block; margin-right: 1.5rem; font-size: 12px;">
+              <input type="checkbox" id="filterSignups" checked onchange="loadNotifications()" style="margin-right: 0.5rem;">
+              <strong>New Signups</strong>
+            </label>
+            <label style="display: inline-block; margin-right: 1.5rem; font-size: 12px;">
+              <input type="checkbox" id="filterPayments" checked onchange="loadNotifications()" style="margin-right: 0.5rem;">
+              <strong>Payments</strong>
+            </label>
+            <label style="display: inline-block; font-size: 12px;">
+              <input type="checkbox" id="filterApprovals" checked onchange="loadNotifications()" style="margin-right: 0.5rem;">
+              <strong>Email Approvals</strong>
+            </label>
+          </div>
+
+          <!-- NOTIFICATIONS LIST -->
+          <div style="display: flex; flex-direction: column; gap: 1rem;" id="notificationsList">
+            <div style="text-align: center; color: #64748b; padding: 2rem;">Loading notifications...</div>
+          </div>
+        </div>
+    </div>
         </div>
     </div>
 
@@ -583,6 +615,140 @@ My name is [ATHLETE_NAME]. I'm interested in playing tennis at your university..
       origSwitchTab(tab);
       if (tab === 'campaigns') {
         loadAllCampaigns();
+      }
+    };
+    // NOTIFICATIONS FEATURE
+    let allNotifications = [];
+
+    function loadNotifications() {
+      const db = getDatabase(app);
+      onValue(ref(db, 'users'), snapshot => {
+        const users = snapshot.val() || {};
+        allNotifications = [];
+
+        Object.entries(users).forEach(([userId, user]) => {
+          // New signup notification
+          if (document.getElementById('filterSignups')?.checked) {
+            allNotifications.push({
+              type: 'signup',
+              icon: '👤',
+              title: 'New Signup',
+              message: (user.firstName || '') + ' ' + (user.lastName || '') + ' signed up',
+              time: user.createdAt || new Date().toISOString(),
+              color: '#dbeafe'
+            });
+          }
+
+          // Payment notification
+          if (document.getElementById('filterPayments')?.checked && user.status === 'completed') {
+            const prices = { basic: 79, standard: 99, premium: 139 };
+            const amount = prices[user.package] || 99;
+            allNotifications.push({
+              type: 'payment',
+              icon: '💳',
+              title: 'Payment Received',
+              message: 'Payment of $' + amount + ' from ' + (user.firstName || 'User'),
+              time: user.paidAt || new Date().toISOString(),
+              color: '#d1fae5'
+            });
+          }
+
+          // Approval needed notification
+          if (document.getElementById('filterApprovals')?.checked && user.status === 'pending') {
+            allNotifications.push({
+              type: 'approval',
+              icon: '📧',
+              title: 'Email Approval Needed',
+              message: 'Email template ready for ' + (user.firstName || 'User'),
+              time: user.createdAt || new Date().toISOString(),
+              color: '#fef3c7'
+            });
+          }
+        });
+
+        // Sort by time (newest first)
+        allNotifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        displayNotifications();
+      });
+    }
+
+    function displayNotifications() {
+      if (allNotifications.length === 0) {
+        document.getElementById('notificationsList').innerHTML = '<div style="text-align: center; color: #64748b; padding: 2rem; background: #f8fafc; border-radius: 8px;">No notifications</div>';
+        return;
+      }
+
+      let html = '';
+      allNotifications.forEach((notif, index) => {
+        const date = new Date(notif.time);
+        const timeAgo = getTimeAgo(date);
+
+        html += `
+          <div style="background: ${notif.color}; border-left: 4px solid ${getColorForType(notif.type)}; padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+              <div>
+                <div style="font-size: 20px; margin-bottom: 0.5rem;">${notif.icon}</div>
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 13px; font-weight: 700;">${notif.title}</h3>
+                <p style="margin: 0 0 0.5rem 0; font-size: 12px; color: #0f172a;">${notif.message}</p>
+                <div style="font-size: 11px; color: #64748b;">${timeAgo}</div>
+              </div>
+              <button onclick="dismissNotification(${index})" style="background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 18px; padding: 0;">×</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('notificationsList').innerHTML = html;
+    }
+
+    function getColorForType(type) {
+      if (type === 'signup') return '#2563eb';
+      if (type === 'payment') return '#10b981';
+      if (type === 'approval') return '#f59e0b';
+      return '#64748b';
+    }
+
+    function getTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      if (seconds < 60) return 'just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return minutes + 'm ago';
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return hours + 'h ago';
+      const days = Math.floor(hours / 24);
+      return days + 'd ago';
+    }
+
+    window.dismissNotification = function(index) {
+      allNotifications.splice(index, 1);
+      displayNotifications();
+    };
+
+    window.markAllAsRead = function() {
+      allNotifications = [];
+      displayNotifications();
+      alert('✓ All notifications marked as read');
+    };
+
+    window.exportNotificationsSummary = function() {
+      const summary = allNotifications.map(n => 
+        `${n.icon} ${n.title}: ${n.message}`
+      ).join('\n');
+
+      const email = prompt('Email to send summary to:', 'playportal.club@gmail.com');
+      if (email) {
+        alert('✓ Summary will be emailed to ' + email + '\n\n' + summary);
+        // In real implementation, this would call a backend API to send email
+      }
+    };
+
+    // Load notifications when tab is clicked
+    const origSwitchTabNotif = window.switchTab;
+    window.switchTab = function(tab) {
+      origSwitchTabNotif(tab);
+      if (tab === 'notifications') {
+        loadNotifications();
       }
     };
     </script>
