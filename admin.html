@@ -343,6 +343,8 @@
     html = '<p style="color: #64748b;">No campaigns</p>';
   } else {
     list.forEach(campaign => {
+      const user = allUsers[campaign.uid];
+      const isPaid = user && user.status === 'completed';
       const statusColor = campaign.status === 'pending' ? '#dbeafe' : campaign.status === 'active' ? '#dcfce7' : '#fef3c7';
       const statusText = campaign.status === 'pending' ? 'Pending Email' : campaign.status === 'active' ? 'Active' : 'Completed';
       
@@ -352,9 +354,12 @@
              onmouseout="this.style.boxShadow='none'"
              onclick="openProfileDetail('${campaign.uid}')">
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700;">${campaign.name}</h3>
-              <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${campaign.email}</p>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700;">${campaign.name}</h3>
+                <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${campaign.email}</p>
+              </div>
+              ${isPaid ? '<div style="font-size: 20px;">✅</div>' : ''}
             </div>
             <div style="background: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 11px; font-weight: 700;">${statusText}</div>
           </div>
@@ -517,11 +522,41 @@ window.openProfileDetail = function(uid) {
         </div>
 
         <!-- STATUS UPDATE -->
-        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem;">
+        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
           <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
           <div style="display: flex; gap: 1rem;">
             <button onclick="updateStatus('${uid}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Email Approved</button>
             <button onclick="markEmailsSent('${uid}', '${fullName}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Emails Sent</button>
+          </div>
+        </div>
+
+        <!-- STATUS UPDATE -->
+        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
+          <div style="display: flex; gap: 1rem;">
+            <button onclick="updateStatus('${uid}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Email Approved</button>
+            <button onclick="markEmailsSent('${uid}', '${fullName}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Emails Sent</button>
+          </div>
+        </div>
+
+        <!-- CREDENTIALS SECTION -->
+        <div style="background: #f3e8ff; border: 2px solid #d8b4fe; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🔐 Credentials</h3>
+          
+          <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Email Address</label>
+              <input type="text" id="credEmail-${uid}" placeholder="athlete@gmail.com" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Password</label>
+              <input type="text" id="credPassword-${uid}" placeholder="Secure password" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+            </div>
+            <button onclick="saveCredential('${uid}')" style="width: 100%; padding: 0.75rem; background: #a855f7; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">+ ADD CREDENTIAL</button>
+          </div>
+
+          <div id="credentialsList-${uid}" style="margin-top: 1rem;">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">Loading credentials...</p>
           </div>
         </div>
 
@@ -530,6 +565,11 @@ window.openProfileDetail = function(uid) {
   `;
 
   document.body.insertAdjacentHTML('beforeend', detailHtml);
+  loadCredentials(uid);
+};
+
+  document.body.insertAdjacentHTML('beforeend', detailHtml);
+  loadCredentials(uid);
 };
 
 window.closeProfileDetail = function() {
@@ -582,6 +622,62 @@ window.markEmailsSent = function(uid, name) {
     closeProfileDetail();
     loadAllData();
   });
+};
+
+window.saveCredential = function(uid) {
+  const email = document.getElementById('credEmail-' + uid).value.trim();
+  const password = document.getElementById('credPassword-' + uid).value.trim();
+  
+  if (!email || !password) {
+    alert('Please fill in both email and password');
+    return;
+  }
+  
+  const credentialId = Date.now();
+  update(ref(database, 'users/' + uid + '/credentials/' + credentialId), {
+    email: email,
+    password: password,
+    addedAt: new Date().toISOString()
+  }).then(() => {
+    document.getElementById('credEmail-' + uid).value = '';
+    document.getElementById('credPassword-' + uid).value = '';
+    loadCredentials(uid);
+  }).catch(err => {
+    alert('Error saving credential: ' + err.message);
+  });
+};
+
+window.loadCredentials = function(uid) {
+  get(ref(database, 'users/' + uid + '/credentials')).then(snapshot => {
+    const credentials = snapshot.val() || {};
+    let html = '';
+    
+    if (Object.keys(credentials).length === 0) {
+      html = '<p style="color: #64748b; font-size: 12px; margin: 0;">No credentials added yet</p>';
+    } else {
+      Object.keys(credentials).forEach(credId => {
+        const cred = credentials[credId];
+        html += `
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1;">
+              <div style="font-size: 12px; font-weight: 600; color: #0f172a;">${cred.email}</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 0.25rem; font-family: monospace;">${cred.password}</div>
+            </div>
+            <button onclick="deleteCredential('${uid}', '${credId}')" style="padding: 0.5rem 0.75rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">🗑️</button>
+          </div>
+        `;
+      });
+    }
+    document.getElementById('credentialsList-' + uid).innerHTML = html;
+  });
+};
+
+window.deleteCredential = function(uid, credId) {
+  if (confirm('Delete this credential?')) {
+    remove(ref(database, 'users/' + uid + '/credentials/' + credId)).then(() => {
+      loadCredentials(uid);
+    });
+  }
 };
 
     onAuthStateChanged(auth, user => {
