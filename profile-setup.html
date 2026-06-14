@@ -172,16 +172,23 @@
       }
 
       if (step === 5) {
-        if (!userData.package) {
-          alert('Please select a package');
-          return false;
-        }
-        const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
-        if (userData.package !== 'premium' && checked === 0) {
-          alert('Please select at least one division');
-          return false;
-        }
-      }
+  if (!userData.package) {
+    alert('Please select a package');
+    return false;
+  }
+  
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+  
+  if (userData.package === 'basic' && checked !== 1) {
+    alert('❌ Basic package: Please select exactly 1 division');
+    return false;
+  }
+  
+  if (userData.package === 'standard' && checked !== 3) {
+    alert('❌ Standard package: Please select exactly 3 divisions');
+    return false;
+  }
+}
 
       if (step === 6) {
         alert('⏳ Your email is being reviewed by our team. You cannot proceed until it\'s approved. We\'ll notify you via email when it\'s ready!');
