@@ -84,10 +84,7 @@
 
       signInWithEmailAndPassword(auth, email, password)
         .then(userCredential => {
-          alert('✓ Login successful!');
-          document.getElementById('loginScreen').classList.add('hidden');
-          document.getElementById('dashboardScreen').classList.remove('hidden');
-          document.getElementById('userEmail').textContent = 'Welcome, ' + userCredential.user.email;
+          window.location.href = 'profile-setup.html';
         })
         .catch(error => {
           alert('Login failed: ' + error.message);

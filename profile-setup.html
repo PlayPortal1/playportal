@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Profile - PlayPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div id="userStatus">Profile Setup</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;" id="stageName">Step 1 of 7</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card" style="max-width: 700px; margin: 0 auto;">
+      
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0;">Complete Your Profile</h1>
+          <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: 700; color: #2563eb;" id="stepNum">1</div>
+            <div style="font-size: 12px; color: #64748b;">of 7</div>
+          </div>
+        </div>
+
+        <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+          <div id="progressBar" style="height: 100%; background: #2563eb; width: 14.28%; transition: width 0.3s;"></div>
+        </div>
+      </div>
+
+      <h2 id="stepTitle" style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 1.5rem 0;"></h2>
+
+      <div id="stepContent" style="margin-bottom: 2rem; min-height: 200px;"></div>
+
+      <div style="display: flex; justify-content: space-between; gap: 1rem; border-top: 2px solid #e2e8f0; padding-top: 2rem;">
+        <button onclick="previousStep()" id="prevBtn" class="btn-secondary" style="display: none;">← PREVIOUS</button>
+        <button onclick="nextStep()" id="nextBtn" class="btn-primary" style="margin-left: auto;">NEXT STEP →</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+      authDomain: "playportal-bf6d4.firebaseapp.com",
+      projectId: "playportal-bf6d4",
+      storageBucket: "playportal-bf6d4.firebasestorage.app",
+      messagingSenderId: "419889829572",
+      appId: "1:419889829572:web:f341cf03579997830c5b91"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    let currentStep = 1;
+    let currentUser = null;
+    let userData = null;
+    let selectedOpportunity = 'undergraduate';
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = user;
+      document.getElementById('userStatus').textContent = '✓ ' + user.email;
+      loadUserData();
+    });
+
+    function loadUserData() {
+      get(ref(database, 'users/' + currentUser.uid)).then(snapshot => {
+        userData = snapshot.val() || {};
+        displayStep(1);
+      });
+    }
+
+    const steps = [
+      {
+        title: "Personal Information",
+        html: `
+          <div class="grid-2">
+            <div>
+              <label>First Name</label>
+              <input type="text" id="firstName" placeholder="John">
+            </div>
+            <div>
+              <label>Last Name</label>
+              <input type="text" id="lastName" placeholder="Smith">
+            </div>
+            <div>
+              <label>Date of Birth</label>
+              <input type="date" id="dob">
+            </div>
+            <div>
+              <label>Gender</label>
+              <select id="gender">
+                <option>Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+          </div>
+        `,
+        validate: () => {
+          const firstName = document.getElementById('firstName').value;
+          const lastName = document.getElementById('lastName').value;
+          const dob = document.getElementById('dob').value;
+          const gender = document.getElementById('gender').value;
+          
+          if (!firstName || !lastName || !dob || gender === 'Select Gender') {
+            alert('Please fill in all fields');
+            return false;
+          }
+          return true;
+        },
+        save: () => {
+          userData.firstName = document.getElementById('firstName').value;
+          userData.lastName = document.getElementById('lastName').value;
+          userData.dob = document.getElementById('dob').value;
+          userData.gender = document.getElementById('gender').value;
+        }
+      },
+
+      {
+        title: "Opportunity Type",
+        html: `
+          <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Which opportunity are you seeking?</p>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="border: 2px solid #2563eb; background: #f0f7ff; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('undergraduate')">
+              <input type="radio" name="opportunity" value="undergraduate" checked id="opp1">
+              <label for="opp1" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Undergraduate Playing</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For high school students seeking to play at college</p>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('transfer')">
+              <input type="radio" name="opportunity" value="transfer" id="opp2">
+              <label for="opp2" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Transfer Playing</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For college students transferring to another school</p>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('graduate')">
+              <input type="radio" name="opportunity" value="graduate" id="opp3">
+              <label for="opp3" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Graduate Playing</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For college graduates pursuing graduate degrees</p>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('coach')">
+              <input type="radio" name="opportunity" value="coach" id="opp4">
+              <label for="opp4" style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Graduate Assistant Coach</label>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">Seeking coaching positions while studying</p>
+            </div>
+          </div>
+        `,
+        validate: () => {
+          return true;
+        },
+        save: () => {
+          userData.opportunityType = selectedOpportunity;
+        }
+      },
+
+      {
+        title: "Academic Information",
+        html: () => {
+          if (selectedOpportunity === 'undergraduate') {
+            return `
+              <div class="grid-2">
+                <div>
+                  <label>High School</label>
+                  <input type="text" id="school" placeholder="Lincoln High School">
+                </div>
+                <div>
+                  <label>Graduation Year</label>
+                  <input type="number" id="gradYear" placeholder="2024">
+                </div>
+                <div>
+                  <label>GPA</label>
+                  <input type="number" id="gpa" step="0.01" placeholder="3.8">
+                </div>
+                <div>
+                  <label>SAT Score</label>
+                  <input type="number" id="sat" placeholder="1390">
+                </div>
+              </div>
+            `;
+          } else if (selectedOpportunity === 'transfer') {
+            return `
+              <div class="grid-2">
+                <div>
+                  <label>Current University</label>
+                  <input type="text" id="school" placeholder="University of California">
+                </div>
+                <div>
+                  <label>Graduation Year</label>
+                  <input type="number" id="gradYear" placeholder="2024">
+                </div>
+                <div>
+                  <label>GPA</label>
+                  <input type="number" id="gpa" step="0.01" placeholder="3.8">
+                </div>
+              </div>
+            `;
+          } else {
+            return `
+              <div class="grid-2">
+                <div>
+                  <label>University</label>
+                  <input type="text" id="school" placeholder="University Name">
+                </div>
+                <div>
+                  <label>Graduation Year</label>
+                  <input type="number" id="gradYear" placeholder="2024">
+                </div>
+                <div>
+                  <label>GPA</label>
+                  <input type="number" id="gpa" step="0.01" placeholder="3.8">
+                </div>
+              </div>
+            `;
+          }
+        },
+        validate: () => {
+          const school = document.getElementById('school').value;
+          const gradYear = document.getElementById('gradYear').value;
+          const gpa = document.getElementById('gpa').value;
+
+          if (!school || !gradYear || !gpa) {
+            alert('Please fill in all fields');
+            return false;
+          }
+          return true;
+        },
+        save: () => {
+          userData.school = document.getElementById('school').value;
+          userData.gradYear = document.getElementById('gradYear').value;
+          userData.gpa = document.getElementById('gpa').value;
+          if (selectedOpportunity === 'undergraduate') {
+            userData.sat = document.getElementById('sat').value;
+          }
+        }
+      },
+
+      {
+        title: "Tennis Information",
+        html: `
+          <div class="grid-2">
+            <div>
+              <label>Years Playing Tennis</label>
+              <input type="number" id="yearsPlaying" placeholder="8">
+            </div>
+            <div>
+              <label>Playing Hand</label>
+              <select id="playingHand">
+                <option>Right</option>
+                <option>Left</option>
+              </select>
+            </div>
+            <div>
+              <label>UTR Rating</label>
+              <input type="number" id="utr" step="0.1" placeholder="10.2">
+            </div>
+            <div>
+              <label>WTN Rating</label>
+              <input type="number" id="wtn" step="0.1" placeholder="13.5">
+            </div>
+          </div>
+        `,
+        validate: () => {
+          const yearsPlaying = document.getElementById('yearsPlaying').value;
+          const utr = document.getElementById('utr').value;
+          const wtn = document.getElementById('wtn').value;
+
+          if (!yearsPlaying || !utr || !wtn) {
+            alert('Please fill in all fields');
+            return false;
+          }
+          return true;
+        },
+        save: () => {
+          userData.yearsPlaying = document.getElementById('yearsPlaying').value;
+          userData.playingHand = document.getElementById('playingHand').value;
+          userData.utr = document.getElementById('utr').value;
+          userData.wtn = document.getElementById('wtn').value;
+        }
+      },
+
+      {
+        title: "Email Template",
+        html: `
+          <div style="text-align: center;">
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+              
+              <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
+              
+              <h2 style="font-size: 24px; font-weight: 800; color: #1d4ed8; margin: 0 0 1rem 0;">We're Creating Your Email</h2>
+              
+              <p style="font-size: 15px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">
+                Our team is reviewing your profile and setting up the email content within our software to be sent out to coaches.
+              </p>
+
+              <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+                <div style="font-size: 14px; color: #0f172a; line-height: 1.8;">
+                  <div style="margin-bottom: 1rem;">
+                    <strong>📋 What We're Doing:</strong><br>
+                    <span style="color: #64748b; font-size: 13px;">Analyzing your academics, tennis achievements, and goals</span>
+                  </div>
+                  <div style="margin-bottom: 1rem;">
+                    <strong>✍️ What We're Writing:</strong><br>
+                    <span style="color: #64748b; font-size: 13px;">A personalized email that highlights YOUR unique story</span>
+                  </div>
+                  <div>
+                    <strong>⏱️ Expected Timeline:</strong><br>
+                    <span style="color: #64748b; font-size: 13px;">24-48 hours (we'll email you when it's ready)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px; text-align: left;">
+                <div style="font-size: 13px; color: #065f46; line-height: 1.7;">
+                  <strong>📧 You Will Receive:</strong><br>
+                  ✓ Email when your template is ready<br>
+                  ✓ Preview to review and approve<br>
+                  ✓ Option to request changes<br>
+                  ✓ Go live when you're happy with it
+                </div>
+              </div>
+
+              <p style="font-size: 12px; color: #64748b; margin-top: 2rem; margin-bottom: 0;">Check your email regularly for our update. We're working hard to make your message stand out! 🚀</p>
+            </div>
+          </div>
+        `,
+        validate: () => true,
+        save: () => {}
+      },
+
+      {
+        title: "Package Selection",
+        html: `
+          <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Choose your package:</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('basic')">
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">BASIC</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$99</div>
+              <div style="font-size: 12px; color: #64748b;">1 Division</div>
+            </div>
+            <div id="standardPkg" style="border: 3px solid #2563eb; background: #f0f7ff; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('standard')">
+              <div style="font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 0.75rem;">RECOMMENDED</div>
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">STANDARD</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$150</div>
+              <div style="font-size: 12px; color: #64748b;">3 Divisions</div>
+            </div>
+            <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('premium')">
+              <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">PREMIUM</div>
+              <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$215</div>
+              <div style="font-size: 12px; color: #64748b;">All 5 Divisions</div>
+            </div>
+          </div>
+
+          <div id="divisionSelection" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+            <label style="display: block; font-weight: 700; margin-bottom: 1rem;">Select which divisions to contact:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="div-d1" value="d1" style="margin-right: 0.5rem;">
+                NCAA D1
+              </label>
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="div-d2" value="d2" style="margin-right: 0.5rem;">
+                NCAA D2
+              </label>
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="div-d3" value="d3" style="margin-right: 0.5rem;">
+                NCAA D3
+              </label>
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="div-naia" value="naia" style="margin-right: 0.5rem;">
+                NAIA
+              </label>
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="div-juco" value="juco" style="margin-right: 0.5rem;">
+                JUCO
+              </label>
+            </div>
+          </div>
+        `,
+        validate: () => {
+          const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+          if (checked === 0) {
+            alert('Please select at least one division');
+            return false;
+          }
+          return true;
+        },
+        save: () => {
+          const selectedDivisions = [];
+          document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedDivisions.push(checkbox.value);
+          });
+          userData.selectedDivisions = selectedDivisions;
+        }
+      },
+
+      {
+        title: "Campaign Summary",
+        html: `
+          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 12px; padding: 2rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📧</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Ready!</h2>
+            <p style="font-size: 14px; color: #1e40af; margin: 0 0 1.5rem 0;">Campaign launches next business day</p>
+            
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
+                <div>
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
+                  <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">Standard</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
+                  <div id="summaryDivisions" style="font-size: 16px; font-weight: 700;">NCAA D1, D2, NAIA</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1rem;">
+              <div style="font-size: 12px; color: #1e40af; line-height: 1.8;">
+                <strong>Next:</strong> We're reviewing your profile and setting up the email content within our software. Once ready, we'll notify you to proceed with payment.
+              </div>
+            </div>
+          </div>
+        `,
+        validate: () => true,
+        save: () => {}
+      }
+    ];
+
+    window.selectOpportunity = function(value) {
+      selectedOpportunity = value;
+      document.getElementById('opp1').checked = value === 'undergraduate';
+      document.getElementById('opp2').checked = value === 'transfer';
+      document.getElementById('opp3').checked = value === 'graduate';
+      document.getElementById('opp4').checked = value === 'coach';
+    };
+
+    window.selectPackage = function(pkg) {
+      const standard = document.getElementById('standardPkg');
+      standard.style.borderColor = pkg === 'standard' ? '#2563eb' : '#cbd5e1';
+      standard.style.background = pkg === 'standard' ? '#f0f7ff' : 'white';
+      userData.package = pkg;
+      updateSummary();
+    };
+
+    function updateSummary() {
+      const packages = { 
+        basic: { name: 'Basic - 1 Division', divisions: 'Selected divisions' },
+        standard: { name: 'Standard - 3 Divisions', divisions: 'Selected divisions' },
+        premium: { name: 'Premium - All Divisions', divisions: 'All 5 divisions' }
+      };
+      const pkg = userData.package || 'standard';
+      const pkgInfo = packages[pkg];
+      document.getElementById('summaryPackage').textContent = pkgInfo.name;
+      
+      if (pkg === 'premium') {
+        document.getElementById('summaryDivisions').textContent = 'NCAA D1, D2, D3, NAIA, JUCO';
+      } else {
+        const selected = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value.toUpperCase()).join(', ');
+        document.getElementById('summaryDivisions').textContent = selected || 'Select divisions';
+      }
+    }
+
+    function displayStep(stepNum) {
+      currentStep = stepNum;
+      const step = steps[stepNum - 1];
+      
+      document.getElementById('stepNum').textContent = stepNum;
+      document.getElementById('stepTitle').textContent = step.title;
+      
+      const html = typeof step.html === 'function' ? step.html() : step.html;
+      document.getElementById('stepContent').innerHTML = html;
+      
+      document.getElementById('progressBar').style.width = ((stepNum - 1) / 6 * 100) + '%';
+      document.getElementById('prevBtn').style.display = stepNum === 1 ? 'none' : 'block';
+      document.getElementById('nextBtn').textContent = stepNum === 7 ? 'COMPLETE & PAY →' : 'NEXT STEP →';
+      document.getElementById('stageName').textContent = 'Step ' + stepNum + ' of 7';
+
+      // Pre-fill fields if data exists
+      if (stepNum === 1 && userData.firstName) {
+        setTimeout(() => {
+          document.getElementById('firstName').value = userData.firstName || '';
+          document.getElementById('lastName').value = userData.lastName || '';
+          document.getElementById('dob').value = userData.dob || '';
+          document.getElementById('gender').value = userData.gender || '';
+        }, 100);
+      }
+
+      if (stepNum === 6) {
+        updateSummary();
+      }
+
+      // Show/hide division selection for packages
+      if (stepNum === 6) {
+        const divSelection = document.getElementById('divisionSelection');
+        if (userData.package === 'premium') {
+          divSelection.style.display = 'none';
+        } else {
+          divSelection.style.display = 'block';
+          if (userData.package === 'basic') {
+            // Basic: only 1 division
+            document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+              cb.parentElement.style.display = i === 0 ? 'flex' : 'none';
+            });
+          }
+        }
+      }
+    }
+
+    window.nextStep = function() {
+      const step = steps[currentStep - 1];
+      
+      if (!step.validate()) {
+        return;
+      }
+
+      step.save();
+
+      if (currentStep < 7) {
+        displayStep(currentStep + 1);
+      } else {
+        completeProfile();
+      }
+    };
+
+    window.previousStep = function() {
+      if (currentStep > 1) {
+        displayStep(currentStep - 1);
+      }
+    };
+
+    function completeProfile() {
+      update(ref(database, 'users/' + currentUser.uid), userData).then(() => {
+        alert('✓ Profile complete! Proceeding to payment...');
+        window.location.href = 'payment.html';
+      });
+    }
+  </script>
+
+</body>
+</html>
