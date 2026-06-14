@@ -262,6 +262,27 @@
       line-height: 1.6;
     }
 
+    /* CAROUSEL */
+    .carousel-container {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .carousel {
+      display: flex;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .testimonial-slide {
+      min-width: 100%;
+      display: flex;
+      align-items: center;
+      transition: transform 0.5s ease-in-out;
+      padding: 2rem;
+    }
+
     /* TESTIMONIALS */
     .testimonials {
       background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
@@ -272,12 +293,6 @@
     .testimonials .section-title {
       color: #1e40af;
       margin-bottom: 3rem;
-    }
-
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
     }
 
     .testimonial {
@@ -312,6 +327,28 @@
     .testimonial-school {
       font-size: 12px;
       color: #64748b;
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #ff6b35;
+      width: 30px;
+      border-radius: 5px;
     }
 
     /* PRICING */
@@ -521,7 +558,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-number">$99</div>
-        <div class="stat-label">Standard Package</div>
+        <div class="stat-label">Starting Price</div>
         <div class="stat-desc">Way cheaper than recruiters</div>
       </div>
       <div class="stat-card">
@@ -570,29 +607,86 @@
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
+  <!-- TESTIMONIALS CAROUSEL -->
   <section class="testimonials">
-    <h2 class="section-title">Success Stories</h2>
+    <h2 class="section-title">Athletes Getting Recruited Worldwide</h2>
     
-    <div class="testimonial-grid">
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"I didn't know where to start with recruiting. PlayPortal made it so simple. I got contacted by 3 D1 schools within a week!"</p>
-        <div class="testimonial-author">Sarah M.</div>
-        <div class="testimonial-school">Committed to UCLA</div>
+    <div class="carousel-container">
+      <div class="carousel" id="testimonialCarousel">
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"I didn't know where to start with recruiting. PlayPortal made it so simple. Got contacted by coaches from my dream schools!"</p>
+            <div class="testimonial-author">🇺🇸 Sarah Mitchell</div>
+            <div class="testimonial-school">Got recruited to D1 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"Cheaper than expensive recruiting services and SO much better. I had full control of my recruiting journey. Highly recommend!"</p>
+            <div class="testimonial-author">🇨🇦 Marcus Johnson</div>
+            <div class="testimonial-school">Got recruited to D2 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"PlayPortal put me in control. No middlemen, no BS. Just me, the coaches, and my opportunity. It changed everything!"</p>
+            <div class="testimonial-author">🇬🇧 Emma Thompson</div>
+            <div class="testimonial-school">Got recruited to D1 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"Coming from Spain, I didn't think I'd get noticed. PlayPortal connected me with coaches. Living my dream now!"</p>
+            <div class="testimonial-author">🇪🇸 Carlos Rodriguez</div>
+            <div class="testimonial-school">Got recruited to D1 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"The personalized email made all the difference. Within 2 weeks I had multiple scholarship offers. PlayPortal is the real deal!"</p>
+            <div class="testimonial-author">🇦🇺 Liam Chen</div>
+            <div class="testimonial-school">Got recruited to NAIA program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"My family couldn't afford expensive recruiting help. PlayPortal made it accessible. Now I'm playing college tennis!"</p>
+            <div class="testimonial-author">🇧🇷 Isabella Santos</div>
+            <div class="testimonial-school">Got recruited to D3 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"Simple. Fast. Effective. Played for 3 coaches within a month. This platform is a game changer for athletes like us!"</p>
+            <div class="testimonial-author">🇲🇽 Diego Flores</div>
+            <div class="testimonial-school">Got recruited to D2 program</div>
+          </div>
+        </div>
+
+        <div class="testimonial-slide">
+          <div class="testimonial">
+            <div class="stars">★★★★★</div>
+            <p class="testimonial-text">"As an international athlete, I was scared. PlayPortal made recruiting simple and affordable. Best decision ever!"</p>
+            <div class="testimonial-author">🇳🇿 Sophie Williams</div>
+            <div class="testimonial-school">Got recruited to D1 program</div>
+          </div>
+        </div>
       </div>
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"Way cheaper than working with an expensive recruiting service. I got the same results for a fraction of the price."</p>
-        <div class="testimonial-author">Marcus J.</div>
-        <div class="testimonial-school">Committed to University of Michigan</div>
-      </div>
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"PlayPortal put me in control of my recruiting. No middlemen, no BS. Just me, the coaches, and my opportunity."</p>
-        <div class="testimonial-author">Emma T.</div>
-        <div class="testimonial-school">Committed to Stanford</div>
-      </div>
+
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
   </section>
 
@@ -603,7 +697,7 @@
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-title">BASIC</div>
-        <div class="price-amount">$79</div>
+        <div class="price-amount">$99</div>
         <div class="price-desc">1 Division</div>
         <ul class="price-features">
           <li>1 Division (NCAA D1 only)</li>
@@ -617,7 +711,7 @@
 
       <div class="price-card featured">
         <div class="price-title">STANDARD</div>
-        <div class="price-amount">$99</div>
+        <div class="price-amount">$150</div>
         <div class="price-desc">3 Divisions</div>
         <ul class="price-features">
           <li>3 Divisions (D1, D2, NAIA)</li>
@@ -632,7 +726,7 @@
 
       <div class="price-card">
         <div class="price-title">PREMIUM</div>
-        <div class="price-amount">$139</div>
+        <div class="price-amount">$215</div>
         <div class="price-desc">All Divisions</div>
         <ul class="price-features">
           <li>All 5 Divisions</li>
@@ -661,6 +755,45 @@
   <footer>
     <p>PlayPortal © 2024 | Empower Your Recruiting Journey | Questions? Contact playportal.club@gmail.com</p>
   </footer>
+
+  <script>
+    // CAROUSEL AUTO-LOOP
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const totalSlides = slides.length;
+    const carousel = document.getElementById('testimonialCarousel');
+    const dotsContainer = document.getElementById('carouselDots');
+
+    // Create dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+      dotsContainer.appendChild(dot);
+    }
+
+    function updateCarousel() {
+      carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // Update dots
+      document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateCarousel();
+    }
+
+    // Auto-loop every 5 seconds
+    setInterval(nextSlide, 5000);
+  </script>
 
 </body>
 </html>
