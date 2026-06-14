@@ -101,33 +101,32 @@
     let selectedOpportunity = 'undergraduate';
 
     window.nextStep = function() {
-  if (!validateStep()) return;
-  saveStep();
-  
-  // Save to Firebase after each step
-  update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
-    console.error('Error saving:', err);
-  });
-  
-  if (currentStep < 7) {
-    currentStep++;
-    displayStep();
-  } else {
-    completeProfile();
-  }
-};
+      if (!validateStep()) return;
+      saveStep();
+      
+      update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
+        console.error('Error saving:', err);
+      });
+      
+      if (currentStep < 7) {
+        currentStep++;
+        displayStep();
+      } else {
+        completeProfile();
+      }
+    };
 
     window.previousStep = function() {
-  saveStep();
-  update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
-    console.error('Error saving:', err);
-  });
-  
-  if (currentStep > 1) {
-    currentStep--;
-    displayStep();
-  }
-};
+      saveStep();
+      update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
+        console.error('Error saving:', err);
+      });
+      
+      if (currentStep > 1) {
+        currentStep--;
+        displayStep();
+      }
+    };
 
     window.selectOpportunity = function(value) {
       selectedOpportunity = value;
@@ -183,23 +182,23 @@
       }
 
       if (step === 5) {
-  if (!userData.package) {
-    alert('Please select a package');
-    return false;
-  }
-  
-  const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
-  
-  if (userData.package === 'basic' && checked !== 1) {
-    alert('❌ Basic package: Please select exactly 1 division');
-    return false;
-  }
-  
-  if (userData.package === 'standard' && checked !== 3) {
-    alert('❌ Standard package: Please select exactly 3 divisions');
-    return false;
-  }
-}
+        if (!userData.package) {
+          alert('Please select a package');
+          return false;
+        }
+        
+        const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+        
+        if (userData.package === 'basic' && checked !== 1) {
+          alert('❌ Basic package: Please select exactly 1 division');
+          return false;
+        }
+        
+        if (userData.package === 'standard' && checked !== 3) {
+          alert('❌ Standard package: Please select exactly 3 divisions');
+          return false;
+        }
+      }
 
       if (step === 6) {
         alert('⏳ Your email is being reviewed by our team. You cannot proceed until it\'s approved. We\'ll notify you via email when it\'s ready!');
@@ -484,134 +483,134 @@
 
       // STEP 6: Email Review
       if (currentStep === 6) {
-  title = 'Email Review';
-  
-  // Check if admin created a template
-  if (userData.emailTemplate && userData.emailTemplate.content) {
-    html = `
-      <div style="text-align: center;">
-        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
-          <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
-          <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Your Email Template is Ready!</h2>
-          <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Review the template below. You can approve it or suggest changes.</p>
-          
-          <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: left;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; font-size: 13px; color: #475569; line-height: 1.8; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
-              ${userData.emailTemplate.content}
-            </div>
-            
-            <div style="margin-bottom: 1.5rem;">
-              <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Suggested Changes (Optional)</label>
-              <textarea id="emailChanges" placeholder="If you want to suggest changes, write them here..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 100px;"></textarea>
-            </div>
+        title = 'Email Review';
+        
+        if (userData.emailTemplate && userData.emailTemplate.content) {
+          html = `
+            <div style="text-align: center;">
+              <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Your Email Template is Ready!</h2>
+                <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Review the template below. You can approve it or suggest changes.</p>
+                
+                <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: left;">
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; font-size: 13px; color: #475569; line-height: 1.8; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+                    ${userData.emailTemplate.content}
+                  </div>
+                  
+                  <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Suggested Changes (Optional)</label>
+                    <textarea id="emailChanges" placeholder="If you want to suggest changes, write them here..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 100px;"></textarea>
+                  </div>
 
-            <div style="display: flex; gap: 1rem;">
-              <button onclick="rejectEmailTemplate()" class="btn-secondary" style="flex: 1; padding: 0.75rem;">✏️ Suggest Changes</button>
-              <button onclick="approveEmailTemplate()" class="btn-primary" style="flex: 1; padding: 0.75rem;">✅ Approve Template</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    // Template not ready yet
-    html = `
-      <div style="text-align: center;">
-        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
-          <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
-          <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Email Template Coming Soon</h2>
-          <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our admin team is creating your personalized recruiting email. You'll receive a notification and email when it's ready for review.</p>
-          
-          <div style="background: white; border-radius: 12px; padding: 2rem;">
-            <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
-              <div style="margin-bottom: 1.5rem;">
-                <strong style="font-size: 16px;">⏱️ Expected: 24-48 Hours</strong><br>
-                <span style="color: #64748b; font-size: 12px;">We're working on crafting the perfect email for you</span>
-              </div>
-              <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
-                <div style="font-size: 12px; color: #065f46;">
-                  <strong>📧 Check back soon!</strong><br>
-                  Once ready, you'll see the template here and can review or suggest changes.
+                  <div style="display: flex; gap: 1rem;">
+                    <button onclick="rejectEmailTemplate()" class="btn-secondary" style="flex: 1; padding: 0.75rem;">✏️ Suggest Changes</button>
+                    <button onclick="approveEmailTemplate()" class="btn-primary" style="flex: 1; padding: 0.75rem;">✅ Approve Template</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-}
+          `;
+        } else {
+          html = `
+            <div style="text-align: center;">
+              <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Email Template Coming Soon</h2>
+                <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our admin team is creating your personalized recruiting email. You'll receive a notification and email when it's ready for review.</p>
+                
+                <div style="background: white; border-radius: 12px; padding: 2rem;">
+                  <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
+                    <div style="margin-bottom: 1.5rem;">
+                      <strong style="font-size: 16px;">⏱️ Expected: 24-48 Hours</strong><br>
+                      <span style="color: #64748b; font-size: 12px;">We're working on crafting the perfect email for you</span>
+                    </div>
+                    <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
+                      <div style="font-size: 12px; color: #065f46;">
+                        <strong>📧 Check back soon!</strong><br>
+                        Once ready, you'll see the template here and can review or suggest changes.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
 
       // STEP 7: Campaign Status
       if (currentStep === 7) {
-  title = 'Campaign Status';
-  
-  // Check if admin sent emails
-  if (userData.emailsSent) {
-    html = `
-      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
-        <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Complete!</h2>
-        <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Emails have been sent to coaches. You can now proceed to payment.</p>
+        title = 'Campaign Status';
         
-        <div style="background: white; border-radius: 12px; padding: 1.5rem;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
-            <div>
-              <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
-              <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">Standard - $150</div>
-            </div>
-            <div>
-              <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
-              <div id="summaryDivisions" style="font-size: 14px; font-weight: 700;">D1, D2, NAIA</div>
-            </div>
-          </div>
-        </div>
+        if (userData.emailsSent) {
+          html = `
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Complete!</h2>
+              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Emails have been sent to coaches. You can now proceed to payment.</p>
+              
+              <div style="background: white; border-radius: 12px; padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
+                  <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
+                    <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">Standard - $150</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
+                    <div id="summaryDivisions" style="font-size: 14px; font-weight: 700;">D1, D2, NAIA</div>
+                  </div>
+                </div>
+              </div>
 
-        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
-          <div style="font-size: 12px; color: #065f46;">
-            <strong>✅ All set!</strong> Your campaign has been sent. Proceed to complete your payment.
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    // Waiting for admin
-    html = `
-      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
-        <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Campaign In Progress</h2>
-        <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Your email is being sent to coaches. Waiting for admin confirmation...</p>
-        
-        <div style="background: white; border-radius: 12px; padding: 2rem;">
-          <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
-            <div style="margin-bottom: 1.5rem;">
-              <strong style="font-size: 16px;">📧 Emails Sending</strong><br>
-              <span style="color: #64748b; font-size: 12px;">Your personalized email is being sent to coaches</span>
-            </div>
-            <div style="margin-bottom: 1.5rem;">
-              <strong style="font-size: 16px;">⏱️ Almost There</strong><br>
-              <span style="color: #64748b; font-size: 12px;">Admin will confirm when emails are sent</span>
-            </div>
-            <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
-              <div style="font-size: 12px; color: #065f46;">
-                <strong>📧 Once complete,</strong> you'll receive an email and can proceed to payment.
+              <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+                <div style="font-size: 12px; color: #065f46;">
+                  <strong>✅ All set!</strong> Your campaign has been sent. Proceed to complete your payment.
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  document.getElementById('nextBtn').disabled = !userData.emailsSent;
-  if (!userData.emailsSent) {
-    document.getElementById('nextBtn').style.opacity = '0.5';
-    document.getElementById('nextBtn').style.cursor = 'not-allowed';
-  } else {
-    document.getElementById('nextBtn').style.opacity = '1';
-    document.getElementById('nextBtn').style.cursor = 'pointer';
-  }
-}
+          `;
+        } else {
+          html = `
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Campaign In Progress</h2>
+              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Your email is being sent to coaches. Waiting for admin confirmation...</p>
+              
+              <div style="background: white; border-radius: 12px; padding: 2rem;">
+                <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
+                  <div style="margin-bottom: 1.5rem;">
+                    <strong style="font-size: 16px;">📧 Emails Sending</strong><br>
+                    <span style="color: #64748b; font-size: 12px;">Your personalized email is being sent to coaches</span>
+                  </div>
+                  <div style="margin-bottom: 1.5rem;">
+                    <strong style="font-size: 16px;">⏱️ Almost There</strong><br>
+                    <span style="color: #64748b; font-size: 12px;">Admin will confirm when emails are sent</span>
+                  </div>
+                  <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
+                    <div style="font-size: 12px; color: #065f46;">
+                      <strong>📧 Once complete,</strong> you'll receive an email and can proceed to payment.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        
+        document.getElementById('nextBtn').disabled = !userData.emailsSent;
+        if (!userData.emailsSent) {
+          document.getElementById('nextBtn').style.opacity = '0.5';
+          document.getElementById('nextBtn').style.cursor = 'not-allowed';
+        } else {
+          document.getElementById('nextBtn').style.opacity = '1';
+          document.getElementById('nextBtn').style.cursor = 'pointer';
+        }
+      }
+
+      document.getElementById('stepTitle').textContent = title;
+      document.getElementById('stepContent').innerHTML = html;
+    }
 
     function completeProfile() {
       update(ref(database, 'users/' + currentUser.uid), userData).then(() => {
@@ -623,29 +622,29 @@
     }
 
     window.approveEmailTemplate = function() {
-  update(ref(database, 'users/' + currentUser.uid), {
-    emailApproved: true
-  }).then(() => {
-    alert('✅ Email approved! Moving to campaign...');
-    currentStep++;
-    displayStep();
-  });
-};
+      update(ref(database, 'users/' + currentUser.uid), {
+        emailApproved: true
+      }).then(() => {
+        alert('✅ Email approved! Moving to campaign...');
+        currentStep++;
+        displayStep();
+      });
+    };
 
-window.rejectEmailTemplate = function() {
-  const changes = document.getElementById('emailChanges').value;
-  if (!changes.trim()) {
-    alert('Please write your suggested changes');
-    return;
-  }
-  update(ref(database, 'users/' + currentUser.uid), {
-    emailSuggestedChanges: changes,
-    emailApprovedAt: new Date().toISOString()
-  }).then(() => {
-    alert('✅ Suggestions sent to admin! They will update the template.');
-    displayStep();
-  });
-};
+    window.rejectEmailTemplate = function() {
+      const changes = document.getElementById('emailChanges').value;
+      if (!changes.trim()) {
+        alert('Please write your suggested changes');
+        return;
+      }
+      update(ref(database, 'users/' + currentUser.uid), {
+        emailSuggestedChanges: changes,
+        emailApprovedAt: new Date().toISOString()
+      }).then(() => {
+        alert('✅ Suggestions sent to admin! They will update the template.');
+        displayStep();
+      });
+    };
 
     onAuthStateChanged(auth, user => {
       if (!user) {
