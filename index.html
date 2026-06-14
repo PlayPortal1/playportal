@@ -271,20 +271,28 @@
     }
 
     .carousel {
-      display: flex;
+      display: block;
       overflow: hidden;
       border-radius: 12px;
       width: 100%;
+      position: relative;
     }
 
     .testimonial-slide {
-      flex: 0 0 100%;
+      display: none;
+      padding: 2rem;
+    }
+
+    .testimonial-slide.active {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.5s ease-in-out;
-      padding: 2rem;
-      min-width: 100%;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     /* TESTIMONIALS */
@@ -737,11 +745,9 @@
   </footer>
 
   <script>
-    // CAROUSEL AUTO-LOOP
     let currentSlide = 0;
     const slides = document.querySelectorAll('.testimonial-slide');
     const totalSlides = slides.length;
-    const carousel = document.getElementById('testimonialCarousel');
     const dotsContainer = document.getElementById('carouselDots');
 
     // Create dots
@@ -752,29 +758,26 @@
       dotsContainer.appendChild(dot);
     }
 
-    function updateCarousel() {
-      carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('active'));
       
-      // Update dots
-      document.querySelectorAll('.dot').forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentSlide);
-      });
+      slides[index].classList.add('active');
+      document.querySelectorAll('.dot')[index].classList.add('active');
     }
 
     function nextSlide() {
       currentSlide = (currentSlide + 1) % totalSlides;
-      updateCarousel();
+      showSlide(currentSlide);
     }
 
     function goToSlide(index) {
       currentSlide = index;
-      updateCarousel();
+      showSlide(currentSlide);
     }
 
-    // Initialize first slide
-    updateCarousel();
-
-    // Auto-loop every 5 seconds
+    // Start carousel
+    showSlide(0);
     setInterval(nextSlide, 5000);
   </script>
 
