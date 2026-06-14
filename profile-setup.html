@@ -242,48 +242,94 @@
       document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
       
       let nextBtnText = 'NEXT STEP →';
-      if (currentStep === 5) nextBtnText = 'SELECT PACKAGE →';
-      if (currentStep === 6) nextBtnText = 'NEXT STEP →';
-      if (currentStep === 7) nextBtnText = 'COMPLETE & PAY →';
-      
-      document.getElementById('nextBtn').textContent = nextBtnText;
-      document.getElementById('nextBtn').disabled = currentStep === 6;
-      if (currentStep === 6) {
-        document.getElementById('nextBtn').style.opacity = '0.5';
-        document.getElementById('nextBtn').style.cursor = 'not-allowed';
-      }
+      if (currentStep === 5) {
+  title = 'Select Your Package';
+  html = `
+    <p style="font-size: 14px; color: #475569; margin-bottom: 2rem;">Choose your package:</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+      <!-- BASIC PACKAGE -->
+      <div style="border: ${userData.package === 'basic' ? '3px solid #ff6b35' : '2px solid #cbd5e1'}; background: ${userData.package === 'basic' ? '#fff7ed' : 'white'}; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectPackage('basic')">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">BASIC</div>
+        <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$99</div>
+        <div style="font-size: 12px; color: #64748b;">1 Division</div>
+      </div>
 
-      let title = '';
-      let html = '';
+      <!-- STANDARD PACKAGE -->
+      <div style="border: ${userData.package === 'standard' ? '3px solid #ff6b35' : '2px solid #cbd5e1'}; background: ${userData.package === 'standard' ? '#fff7ed' : 'white'}; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('standard')">
+        <div style="font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 0.75rem;">RECOMMENDED</div>
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">STANDARD</div>
+        <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$150</div>
+        <div style="font-size: 12px; color: #64748b;">3 Divisions</div>
+      </div>
 
-      if (currentStep === 1) {
-        title = 'Personal Information';
-        html = `
-          <div class="grid-2">
-            <div>
-              <label>First Name</label>
-              <input type="text" id="firstName" placeholder="John" value="${userData.firstName || ''}">
-            </div>
-            <div>
-              <label>Last Name</label>
-              <input type="text" id="lastName" placeholder="Smith" value="${userData.lastName || ''}">
-            </div>
-            <div>
-              <label>Date of Birth</label>
-              <input type="date" id="dob" value="${userData.dob || ''}">
-            </div>
-            <div>
-              <label>Gender</label>
-              <select id="gender">
-                <option ${userData.gender === 'Select Gender' || !userData.gender ? 'selected' : ''}>Select Gender</option>
-                <option ${userData.gender === 'Male' ? 'selected' : ''}>Male</option>
-                <option ${userData.gender === 'Female' ? 'selected' : ''}>Female</option>
-              </select>
-            </div>
-          </div>
-        `;
-      }
+      <!-- PREMIUM PACKAGE -->
+      <div style="border: ${userData.package === 'premium' ? '3px solid #ff6b35' : '2px solid #cbd5e1'}; background: ${userData.package === 'premium' ? '#fff7ed' : 'white'}; border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer;" onclick="selectPackage('premium')">
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">PREMIUM</div>
+        <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$215</div>
+        <div style="font-size: 12px; color: #64748b;">All Divisions</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 0.75rem;">(NCAA D1, NCAA D2, NCAA D3, NAIA, JUCO)</div>
+      </div>
+    </div>
 
+    <!-- DIVISION DROPDOWNS -->
+    ${userData.package === 'basic' ? `
+      <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+        <label style="display: block; font-weight: 700; margin-bottom: 1rem;">Select division to contact:</label>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d1" ${userData.selectedDivisions?.includes('d1') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 1</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d2" ${userData.selectedDivisions?.includes('d2') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 2</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d3" ${userData.selectedDivisions?.includes('d3') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 3</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="naia" ${userData.selectedDivisions?.includes('naia') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NAIA</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="juco" ${userData.selectedDivisions?.includes('juco') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">JUCO</span>
+          </label>
+        </div>
+      </div>
+    ` : ''}
+
+    ${userData.package === 'standard' ? `
+      <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+        <label style="display: block; font-weight: 700; margin-bottom: 1rem;">Select divisions to contact:</label>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d1" ${userData.selectedDivisions?.includes('d1') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 1</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d2" ${userData.selectedDivisions?.includes('d2') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 2</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="d3" ${userData.selectedDivisions?.includes('d3') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NCAA DIVISION 3</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="naia" ${userData.selectedDivisions?.includes('naia') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">NAIA</span>
+          </label>
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="checkbox" value="juco" ${userData.selectedDivisions?.includes('juco') ? 'checked' : ''} style="margin-right: 0.75rem; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-size: 13px;">JUCO</span>
+          </label>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
       if (currentStep === 2) {
         title = 'Opportunity Type';
         html = `
