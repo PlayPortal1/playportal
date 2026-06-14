@@ -262,9 +262,11 @@
     };
 
     function loadAllData() {
-      get(ref(database, 'users')).then(snapshot => {
-        allUsers = snapshot.val() || {};
-        allCampaigns = [];
+  console.log('loadAllData called');
+  get(ref(database, 'users')).then(snapshot => {
+    console.log('Firebase data received:', snapshot.val());
+    allUsers = snapshot.val() || {};
+    allCampaigns = [];
         
         let totalUsers = 0;
         let pending = 0;
