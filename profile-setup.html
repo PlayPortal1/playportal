@@ -103,6 +103,13 @@
     window.nextStep = function() {
       if (!validateStep()) return;
       saveStep();
+
+      // Save currentStep to Firebase
+  update(ref(database, 'users/' + currentUser.uid), {
+    currentStep: currentStep < 7 ? currentStep + 1 : 7
+  }).catch(err => {
+    console.error('Error saving step:', err);
+  });
       
       update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
         console.error('Error saving:', err);
@@ -647,21 +654,44 @@
     };
 
     onAuthStateChanged(auth, user => {
-      if (!user) {
-        window.location.href = 'login.html';
-        return;
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = user;
+  document.getElementById('userEmail').textContent = '✓ ' + user.email;
+  
+  get(ref(database, 'users/' + user.uid)).then(snapshot => {
+    userData = snapshot.val() || {};
+    if (userData.opportunityType) {
+      selectedOpportunity = userData.opportunityType;
+    }
+    
+    // Auto-resume to last step
+    if (userData.currentStep) {
+      currentStep = userData.currentStep;
+    } else {
+      // Determine step based on completed data
+      if (userData.emailsSent) {
+        currentStep = 7;
+      } else if (userData.emailApproved) {
+        currentStep = 7;
+      } else if (userData.emailTemplate) {
+        currentStep = 6;
+      } else if (userData.selectedDivisions) {
+        currentStep = 5;
+      } else if (userData.wtn) {
+        currentStep = 4;
+      } else if (userData.gpa) {
+        currentStep = 3;
+      } else if (userData.opportunityType) {
+        currentStep = 2;
       }
-      currentUser = user;
-      document.getElementById('userEmail').textContent = '✓ ' + user.email;
-      
-      get(ref(database, 'users/' + user.uid)).then(snapshot => {
-        userData = snapshot.val() || {};
-        if (userData.opportunityType) {
-          selectedOpportunity = userData.opportunityType;
-        }
-        displayStep();
-      });
-    });
+    }
+    
+    displayStep();
+  });
+});
   </script>
 
 </body>
