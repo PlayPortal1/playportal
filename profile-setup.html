@@ -52,18 +52,18 @@
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
-  authDomain: "playportal-bf6d4.firebaseapp.com",
-  projectId: "playportal-bf6d4",
-  storageBucket: "playportal-bf6d4.firebasestorage.app",
-  messagingSenderId: "419889829572",
-  appId: "1:419889829572:web:f341cf03579997830c5b91",
-  databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
-};
+      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+      authDomain: "playportal-bf6d4.firebaseapp.com",
+      projectId: "playportal-bf6d4",
+      storageBucket: "playportal-bf6d4.firebasestorage.app",
+      messagingSenderId: "419889829572",
+      appId: "1:419889829572:web:f341cf03579997830c5b91",
+      databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
 
     let currentStep = 1;
     let currentUser = null;
@@ -98,7 +98,26 @@ const database = getDatabase(app);
     window.selectPackage = function(pkg) {
       userData.package = pkg;
       updatePackageDisplay(pkg);
-      updateSummary();
+      showDivisionDropdown(pkg);
+    };
+
+    window.toggleDivisions = function(pkg) {
+      const dropdown = document.getElementById('divisionDropdown-' + pkg);
+      if (dropdown.style.display === 'none') {
+        dropdown.style.display = 'block';
+      } else {
+        dropdown.style.display = 'none';
+      }
+    };
+
+    window.selectDivision = function(division) {
+      const selected = document.getElementById('selectedDivisions');
+      const current = selected.textContent;
+      if (current.includes(division)) {
+        selected.textContent = current.replace(division + ', ', '').replace(division, '');
+      } else {
+        selected.textContent = (current ? current + ', ' : '') + division;
+      }
     };
 
     function updatePackageDisplay(pkg) {
@@ -114,14 +133,12 @@ const database = getDatabase(app);
       });
     }
 
-    function updateSummary() {
-      const packageNames = {
-        basic: 'Basic - 1 Division ($99)',
-        standard: 'Standard - 3 Divisions ($150)',
-        premium: 'Premium - All Divisions ($215)'
-      };
-      const pkg = userData.package || 'standard';
-      document.getElementById('summaryPackage').textContent = packageNames[pkg];
+    function showDivisionDropdown(pkg) {
+      if (pkg === 'premium') {
+        document.getElementById('divisionSelection').style.display = 'none';
+      } else {
+        document.getElementById('divisionSelection').style.display = 'block';
+      }
     }
 
     function validateStep() {
@@ -151,12 +168,21 @@ const database = getDatabase(app);
         }
       }
 
-      if (step === 6) {
+      if (step === 5) {
+        if (!userData.package) {
+          alert('Please select a package');
+          return false;
+        }
         const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
-        if (checked === 0) {
+        if (userData.package !== 'premium' && checked === 0) {
           alert('Please select at least one division');
           return false;
         }
+      }
+
+      if (step === 6) {
+        alert('⏳ Your email is being reviewed by our team. You cannot proceed until it\'s approved. We\'ll notify you via email when it\'s ready!');
+        return false;
       }
 
       return true;
@@ -180,8 +206,15 @@ const database = getDatabase(app);
         userData.school = document.getElementById('school').value;
         userData.gradYear = document.getElementById('gradYear').value;
         userData.gpa = document.getElementById('gpa').value;
+        userData.academicAchievements = document.getElementById('achievements')?.value || '';
+        
         if (selectedOpportunity === 'undergraduate') {
           userData.sat = document.getElementById('sat').value || '';
+        } else if (selectedOpportunity === 'transfer') {
+          userData.currentDegree = document.getElementById('currentDegree').value || '';
+        } else {
+          userData.degreeStudied = document.getElementById('degreeStudied').value || '';
+          userData.degreeWantToStudy = document.getElementById('degreeWantToStudy').value || '';
         }
       }
       
@@ -190,14 +223,15 @@ const database = getDatabase(app);
         userData.playingHand = document.getElementById('playingHand').value;
         userData.utr = document.getElementById('utr').value;
         userData.wtn = document.getElementById('wtn').value;
+        userData.tennisAchievements = document.getElementById('tennisAchievements').value || '';
       }
 
-      if (step === 6) {
+      if (step === 5) {
         const selected = [];
         document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
           selected.push(cb.value);
         });
-        userData.selectedDivisions = selected;
+        userData.selectedDivisions = userData.package === 'premium' ? ['d1', 'd2', 'd3', 'naia', 'juco'] : selected;
       }
     }
 
@@ -206,7 +240,18 @@ const database = getDatabase(app);
       document.getElementById('stepLabel').textContent = 'Step ' + currentStep + ' of 7';
       document.getElementById('progressBar').style.width = ((currentStep - 1) / 6 * 100) + '%';
       document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
-      document.getElementById('nextBtn').textContent = currentStep === 7 ? 'COMPLETE & PAY →' : 'NEXT STEP →';
+      
+      let nextBtnText = 'NEXT STEP →';
+      if (currentStep === 5) nextBtnText = 'SELECT PACKAGE →';
+      if (currentStep === 6) nextBtnText = 'NEXT STEP →';
+      if (currentStep === 7) nextBtnText = 'COMPLETE & PAY →';
+      
+      document.getElementById('nextBtn').textContent = nextBtnText;
+      document.getElementById('nextBtn').disabled = currentStep === 6;
+      if (currentStep === 6) {
+        document.getElementById('nextBtn').style.opacity = '0.5';
+        document.getElementById('nextBtn').style.cursor = 'not-allowed';
+      }
 
       let title = '';
       let html = '';
@@ -247,7 +292,7 @@ const database = getDatabase(app);
             <div style="border: 2px solid #2563eb; background: #f0f7ff; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('undergraduate')">
               <input type="radio" name="opportunity" value="undergraduate" ${selectedOpportunity === 'undergraduate' ? 'checked' : ''}>
               <label style="cursor: pointer; margin: 0; text-transform: none; font-weight: 700; display: inline; margin-left: 0.5rem;">Undergraduate Playing</label>
-              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For high school students seeking to play at college</p>
+              <p style="font-size: 12px; color: #64748b; margin: 0.5rem 0 0 1.5rem;">For high school students</p>
             </div>
             <div style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; cursor: pointer;" onclick="selectOpportunity('transfer')">
               <input type="radio" name="opportunity" value="transfer" ${selectedOpportunity === 'transfer' ? 'checked' : ''}>
@@ -271,8 +316,28 @@ const database = getDatabase(app);
       if (currentStep === 3) {
         title = 'Academic Information';
         let schoolLabel = 'High School';
-        if (selectedOpportunity === 'transfer') schoolLabel = 'Current University';
-        if (selectedOpportunity !== 'undergraduate') schoolLabel = 'University';
+        let extraField = '';
+        
+        if (selectedOpportunity === 'transfer') {
+          schoolLabel = 'Current University';
+          extraField = `
+            <div>
+              <label>Degree You're Studying</label>
+              <input type="text" id="currentDegree" placeholder="e.g., Business Administration" value="${userData.currentDegree || ''}">
+            </div>
+          `;
+        } else if (selectedOpportunity === 'graduate' || selectedOpportunity === 'coach') {
+          extraField = `
+            <div>
+              <label>Degree You Studied</label>
+              <input type="text" id="degreeStudied" placeholder="e.g., Economics" value="${userData.degreeStudied || ''}">
+            </div>
+            <div>
+              <label>Degree You Want to Study</label>
+              <input type="text" id="degreeWantToStudy" placeholder="e.g., MBA" value="${userData.degreeWantToStudy || ''}">
+            </div>
+          `;
+        }
         
         html = `
           <div class="grid-2">
@@ -294,6 +359,11 @@ const database = getDatabase(app);
               <input type="number" id="sat" placeholder="1390" value="${userData.sat || ''}">
             </div>
             ` : ''}
+            ${extraField}
+            <div style="grid-column: 1 / -1;">
+              <label>Academic Achievements</label>
+              <textarea id="achievements" style="height: 100px;" placeholder="Honors, awards, relevant courses...">${userData.academicAchievements || ''}</textarea>
+            </div>
           </div>
         `;
       }
@@ -321,31 +391,16 @@ const database = getDatabase(app);
               <label>WTN Rating</label>
               <input type="number" id="wtn" step="0.1" placeholder="13.5" value="${userData.wtn || ''}">
             </div>
-          </div>
-        `;
-      }
-
-      if (currentStep === 5) {
-        title = 'Email Template';
-        html = `
-          <div style="text-align: center;">
-            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
-              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">We're Creating Your Email</h2>
-              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our team is reviewing your profile and setting up email content to be sent to coaches.</p>
-              <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
-                <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
-                  <div style="margin-bottom: 1rem;"><strong>📋 24-48 hours</strong></div>
-                  <div style="color: #64748b;">You'll be notified when your email is ready to review</div>
-                </div>
-              </div>
+            <div style="grid-column: 1 / -1;">
+              <label>Tennis Achievements</label>
+              <textarea id="tennisAchievements" style="height: 100px;" placeholder="Tournament wins, rankings, titles, records...">${userData.tennisAchievements || ''}</textarea>
             </div>
           </div>
         `;
       }
 
-      if (currentStep === 6) {
-        title = 'Package & Divisions';
+      if (currentStep === 5) {
+        title = 'Select Your Package';
         html = `
           <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Choose your package:</p>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
@@ -364,46 +419,94 @@ const database = getDatabase(app);
               <div style="font-size: 16px; font-weight: 700; margin-bottom: 0.75rem;">PREMIUM</div>
               <div style="font-size: 24px; font-weight: 800; color: #2563eb; margin-bottom: 0.5rem;">$215</div>
               <div style="font-size: 12px; color: #64748b;">All Divisions</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 0.75rem;">(D1, D2, D3, NAIA, JUCO)</div>
             </div>
           </div>
 
-          <div id="divisionSelection" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;" ${userData.package === 'premium' ? 'style="display: none;"' : ''}>
-            <label style="display: block; font-weight: 700; margin-bottom: 1rem;">Select divisions:</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-              <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" value="d1" ${userData.selectedDivisions?.includes('d1') ? 'checked' : ''} style="margin-right: 0.5rem;">
-                NCAA D1
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" value="d2" ${userData.selectedDivisions?.includes('d2') ? 'checked' : ''} style="margin-right: 0.5rem;">
-                NCAA D2
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" value="d3" ${userData.selectedDivisions?.includes('d3') ? 'checked' : ''} style="margin-right: 0.5rem;">
-                NCAA D3
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" value="naia" ${userData.selectedDivisions?.includes('naia') ? 'checked' : ''} style="margin-right: 0.5rem;">
-                NAIA
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" value="juco" ${userData.selectedDivisions?.includes('juco') ? 'checked' : ''} style="margin-right: 0.5rem;">
-                JUCO
-              </label>
+          <div id="divisionSelection" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;" style="display: none;">
+            <label style="display: block; font-weight: 700; margin-bottom: 1rem;">Select divisions you want to contact:</label>
+            
+            <div style="margin-bottom: 1rem;">
+              <button onclick="toggleDivisions('basic')" style="width: 100%; padding: 0.75rem; background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 6px; cursor: pointer; font-weight: 600; color: #2563eb;">▼ Choose Divisions for Basic</button>
+              <div id="divisionDropdown-basic" style="display: none; margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                <label style="display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer;">
+                  <input type="checkbox" value="d1" style="margin-right: 0.5rem;">
+                  NCAA D1
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <button onclick="toggleDivisions('standard')" style="width: 100%; padding: 0.75rem; background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 6px; cursor: pointer; font-weight: 600; color: #2563eb;">▼ Choose Divisions for Standard</button>
+              <div id="divisionDropdown-standard" style="display: none; margin-top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem;">
+                <label style="display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer;">
+                  <input type="checkbox" value="d1" style="margin-right: 0.5rem;">
+                  NCAA D1
+                </label>
+                <label style="display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer;">
+                  <input type="checkbox" value="d2" style="margin-right: 0.5rem;">
+                  NCAA D2
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                  <input type="checkbox" value="naia" style="margin-right: 0.5rem;">
+                  NAIA
+                </label>
+              </div>
+            </div>
+
+            <div style="background: #dbeafe; border-left: 3px solid #2563eb; padding: 1rem; border-radius: 6px;">
+              <div style="font-size: 12px; color: #1e40af;"><strong>Selected:</strong> <span id="selectedDivisions">None yet</span></div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (currentStep === 6) {
+        title = 'Email Review (In Progress)';
+        document.getElementById('nextBtn').disabled = true;
+        html = `
+          <div style="text-align: center;">
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 3rem 2rem;">
+              <div style="font-size: 4rem; margin-bottom: 1rem;">✉️</div>
+              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 1rem 0;">Your Email is Being Reviewed</h2>
+              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0; line-height: 1.8;">Our team is crafting a personalized recruiting email based on your profile.</p>
+              
+              <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+                <div style="font-size: 13px; color: #0f172a; line-height: 1.8;">
+                  <div style="margin-bottom: 1.5rem;">
+                    <strong style="font-size: 16px;">⏱️ 24-48 Hours</strong><br>
+                    <span style="color: #64748b; font-size: 12px;">We'll email you when your email template is ready for review</span>
+                  </div>
+                  <div style="margin-bottom: 1.5rem;">
+                    <strong style="font-size: 16px;">👀 Review & Approve</strong><br>
+                    <span style="color: #64748b; font-size: 12px;">You'll see a preview and can confirm or suggest changes</span>
+                  </div>
+                  <div>
+                    <strong style="font-size: 16px;">🚀 Then Proceed</strong><br>
+                    <span style="color: #64748b; font-size: 12px;">Once approved, you'll move to campaign status and payment</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
+                <div style="font-size: 12px; color: #065f46; line-height: 1.8;">
+                  <strong>📧 Check your email</strong> for updates. You cannot proceed until we notify you that your email is ready!
+                </div>
+              </div>
             </div>
           </div>
         `;
       }
 
       if (currentStep === 7) {
-        title = 'Campaign Summary';
+        title = 'Campaign Status';
         html = `
-          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 12px; padding: 2rem; text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📧</div>
-            <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Ready!</h2>
-            <p style="font-size: 14px; color: #1e40af; margin: 0 0 1.5rem 0;">Launching next business day</p>
+          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is In Progress</h2>
+            <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Your email is being sent to coaches. Once complete, you can proceed to payment.</p>
             
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
                 <div>
                   <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
@@ -411,14 +514,14 @@ const database = getDatabase(app);
                 </div>
                 <div>
                   <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
-                  <div id="summaryDivisions" style="font-size: 16px; font-weight: 700;">Selected divisions</div>
+                  <div id="summaryDivisions" style="font-size: 14px; font-weight: 700;">D1, D2, NAIA</div>
                 </div>
               </div>
             </div>
 
             <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1rem;">
               <div style="font-size: 12px; color: #1e40af; line-height: 1.8;">
-                <strong>Next:</strong> We're reviewing your profile and setting up the email content within our software. Once ready, we'll notify you to proceed with payment.
+                <strong>📧 We'll notify you via email</strong> when emails have been sent to all coaches. Then you can proceed with payment!
               </div>
             </div>
           </div>
@@ -448,6 +551,9 @@ const database = getDatabase(app);
       
       get(ref(database, 'users/' + user.uid)).then(snapshot => {
         userData = snapshot.val() || {};
+        if (userData.opportunityType) {
+          selectedOpportunity = userData.opportunityType;
+        }
         displayStep();
       });
     });
