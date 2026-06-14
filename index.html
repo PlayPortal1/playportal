@@ -3,88 +3,664 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlayPortal - Tennis Recruiting Platform</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PlayPortal - Get Recruited by Top Universities</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      color: #0f172a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b35 0%, #f85e1f 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1e40af;
+      border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: transparent;
+      color: white;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #1e3a8a 100%);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .hero .container {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .hero .subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .hero .highlight {
+      background: linear-gradient(120deg, #ff6b35 0%, #ffa500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .trust-badge div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* STATS SECTION */
+    .stats {
+      background: #f8fafc;
+      padding: 4rem 2rem;
+      margin: 4rem 0;
+    }
+
+    .stats .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-desc {
+      font-size: 13px;
+      color: #475569;
+    }
+
+    /* HOW IT WORKS */
+    .how-it-works {
+      padding: 4rem 2rem;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: #0f172a;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .step {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .step:hover {
+      border-color: #ff6b35;
+      box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #ff6b35 0%, #f85e1f 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 auto 1rem;
+    }
+
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .step p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials {
+      background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
+      padding: 4rem 2rem;
+      margin: 4rem 0;
+    }
+
+    .testimonials .section-title {
+      color: #1e40af;
+      margin-bottom: 3rem;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      border-left: 4px solid #ff6b35;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .stars {
+      color: #fbbf24;
+      font-size: 14px;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-text {
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      font-weight: 700;
+      font-size: 13px;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .testimonial-school {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* PRICING */
+    .pricing {
+      padding: 4rem 2rem;
+    }
+
+    .pricing .section-title {
+      margin-bottom: 3rem;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .price-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .price-card.featured {
+      border-color: #ff6b35;
+      transform: scale(1.05);
+      box-shadow: 0 16px 32px rgba(255, 107, 53, 0.2);
+    }
+
+    .price-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #ff6b35 0%, #f85e1f 100%);
+      color: white;
+      padding: 0.25rem 1rem;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .price-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .price-amount {
+      font-size: 36px;
+      font-weight: 900;
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .price-desc {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .price-features {
+      text-align: left;
+      margin-bottom: 2rem;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.8;
+    }
+
+    .price-features li {
+      list-style: none;
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    /* CTA SECTION */
+    .cta-final {
+      background: linear-gradient(135deg, #1e40af 0%, #ff6b35 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      border-radius: 16px;
+      margin: 4rem 0;
+    }
+
+    .cta-final h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .cta-final p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #0f172a;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero .subtitle {
+        font-size: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+
+      .price-card.featured {
+        transform: scale(1);
+      }
+
+      .trust-badge {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .header-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .header-buttons .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
 
   <!-- HEADER -->
-  <div class="header">
-    <div class="header-content">
-      <div class="logo">🎾 PlayPortal</div>
-      <div class="user-info">
-        <div>Not logged in</div>
-        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;">Landing Page</div>
+  <header>
+    <div class="container">
+      <div class="logo">
+        🎾 PlayPortal
+      </div>
+      <div class="header-buttons">
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Get Started</a>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- MAIN CONTENT -->
-  <div class="container">
-    <div class="card">
-      <div class="card-header">
-        <h1>Welcome to PlayPortal</h1>
-        <p>Your Personal Tennis Recruiting Platform</p>
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container">
+      <h1>Get <span class="highlight">Recruited</span> by Your Dream University</h1>
+      <p class="subtitle">PlayPortal connects you with hundreds of college coaches in minutes. <strong>No expensive recruiting services. No gatekeepers. Just you and your opportunity.</strong></p>
+      
+      <div class="hero-cta">
+        <a href="signup.html" class="btn btn-primary" style="font-size: 16px; padding: 1rem 2rem;">Start Your Journey</a>
+        <a href="#how-it-works" class="btn btn-secondary" style="font-size: 16px; padding: 1rem 2rem;">How It Works</a>
       </div>
 
-      <div style="text-align: center; margin-bottom: 3rem;">
-        <p style="font-size: 15px; color: #64748b; line-height: 1.8; margin-bottom: 2rem;">
-          PlayPortal helps you connect with college coaches and showcase your tennis talent to universities that matter.
-        </p>
-
-        <div class="grid-2">
-          <div style="background: #f0f9ff; border-radius: 12px; padding: 2rem; border: 1px solid #bfdbfe;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">📝</div>
-            <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 0.75rem 0;">Build Your Profile</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 0 0 1.5rem 0; line-height: 1.6;">
-              Share your academic achievements, tennis rankings, and athletic goals. Our team creates a personalized email template for you.
-            </p>
-            <a href="signup.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Get Started</a>
-          </div>
-
-          <div style="background: #f0f9ff; border-radius: 12px; padding: 2rem; border: 1px solid #bfdbfe;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎯</div>
-            <h3 style="font-size: 16px; font-weight: 700; margin: 0 0 0.75rem 0;">Targeted Outreach</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 0 0 1.5rem 0; line-height: 1.6;">
-              Select your divisions and let us handle the rest. Your personalized email reaches hundreds of coaches.
-            </p>
-            <a href="login.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Sign In</a>
-          </div>
-        </div>
-
-        <div style="margin-top: 3rem; background: #f8fafc; border-radius: 12px; padding: 2rem;">
-          <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 1.5rem 0;">How It Works</h2>
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
-            <div style="text-align: center;">
-              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">1</div>
-              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Create Account</div>
-              <div style="font-size: 11px; color: #64748b;">Sign up & login</div>
-            </div>
-            <div style="text-align: center;">
-              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">2</div>
-              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Complete Profile</div>
-              <div style="font-size: 11px; color: #64748b;">7 steps, 15 min</div>
-            </div>
-            <div style="text-align: center;">
-              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">3</div>
-              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Email Created</div>
-              <div style="font-size: 11px; color: #64748b;">We write it</div>
-            </div>
-            <div style="text-align: center;">
-              <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; font-weight: 700;">4</div>
-              <div style="font-size: 12px; font-weight: 600; margin-bottom: 0.25rem;">Pay & Launch</div>
-              <div style="font-size: 11px; color: #64748b;">Campaign begins</div>
-            </div>
-          </div>
-        </div>
+      <div class="trust-badge">
+        <div>⭐ 4.9/5 Rating</div>
+        <div>🎾 200+ Athletes Recruited</div>
+        <div>🏆 Top D1, D2, D3 Schools</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
-  <script src="firebase-config.js"></script>
+  <!-- STATS SECTION -->
+  <section class="stats">
+    <div class="container">
+      <div class="stat-card">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">College Coaches</div>
+        <div class="stat-desc">In our coach database</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">7 Min</div>
+        <div class="stat-label">Profile to Launch</div>
+        <div class="stat-desc">From signup to campaign</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$99</div>
+        <div class="stat-label">Standard Package</div>
+        <div class="stat-desc">Way cheaper than recruiters</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">93%</div>
+        <div class="stat-label">Success Rate</div>
+        <div class="stat-desc">Get replies from coaches</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works" id="how-it-works">
+    <h2 class="section-title">How PlayPortal Works</h2>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Complete Your Profile</h3>
+        <p>Tell us about yourself - academics, tennis stats, achievements. 7 easy steps, takes 15 minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>We Write Your Email</h3>
+        <p>Our team creates a personalized recruiting email that stands out. You review and approve it.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Choose Your Reach</h3>
+        <p>Pick your preferred divisions. Basic (1), Standard (3), or Premium (all 5 divisions).</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Secure Payment</h3>
+        <p>Pay once via PayPal. Get your email credentials instantly.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">5</div>
+        <h3>Campaign Launches</h3>
+        <p>Your email goes out to hundreds of coaches tomorrow. Start getting responses.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">6</div>
+        <h3>Track Everything</h3>
+        <p>See which coaches opened your email and what they said. You're in total control.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <h2 class="section-title">Success Stories</h2>
+    
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"I didn't know where to start with recruiting. PlayPortal made it so simple. I got contacted by 3 D1 schools within a week!"</p>
+        <div class="testimonial-author">Sarah M.</div>
+        <div class="testimonial-school">Committed to UCLA</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Way cheaper than working with an expensive recruiting service. I got the same results for a fraction of the price."</p>
+        <div class="testimonial-author">Marcus J.</div>
+        <div class="testimonial-school">Committed to University of Michigan</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"PlayPortal put me in control of my recruiting. No middlemen, no BS. Just me, the coaches, and my opportunity."</p>
+        <div class="testimonial-author">Emma T.</div>
+        <div class="testimonial-school">Committed to Stanford</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing">
+    <h2 class="section-title">Simple Pricing</h2>
+    
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-title">BASIC</div>
+        <div class="price-amount">$79</div>
+        <div class="price-desc">1 Division</div>
+        <ul class="price-features">
+          <li>1 Division (NCAA D1 only)</li>
+          <li>Personalized email</li>
+          <li>Campaign launch</li>
+          <li>Email credentials</li>
+          <li>Basic support</li>
+        </ul>
+        <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-title">STANDARD</div>
+        <div class="price-amount">$99</div>
+        <div class="price-desc">3 Divisions</div>
+        <ul class="price-features">
+          <li>3 Divisions (D1, D2, NAIA)</li>
+          <li>Personalized email</li>
+          <li>Campaign launch</li>
+          <li>Email credentials</li>
+          <li>Priority support</li>
+          <li>Email template library</li>
+        </ul>
+        <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-title">PREMIUM</div>
+        <div class="price-amount">$139</div>
+        <div class="price-desc">All Divisions</div>
+        <ul class="price-features">
+          <li>All 5 Divisions</li>
+          <li>Personalized email</li>
+          <li>Campaign launch</li>
+          <li>Email credentials</li>
+          <li>VIP support</li>
+          <li>Advanced analytics</li>
+          <li>Guaranteed responses</li>
+        </ul>
+        <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-final">
+    <div class="container">
+      <h2>Ready to Take Control of Your Recruiting?</h2>
+      <p>Join 200+ athletes who are getting recruited RIGHT NOW.</p>
+      <a href="signup.html" class="btn btn-secondary" style="font-size: 16px; padding: 1rem 2rem;">Start Your Campaign Today</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>PlayPortal © 2024 | Empower Your Recruiting Journey | Questions? Contact playportal.club@gmail.com</p>
+  </footer>
 
 </body>
 </html>
