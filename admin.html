@@ -183,7 +183,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    import { getDatabase, ref, get, set, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
@@ -521,7 +521,7 @@ window.openProfileDetail = function(uid) {
           <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
           <div style="display: flex; gap: 1rem;">
             <button onclick="updateStatus('${uid}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Email Approved</button>
-            <button onclick="updateStatus('${uid}', 'completed')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Emails Sent</button>
+            <button onclick="markEmailsSent('${uid}', '${fullName}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Emails Sent</button>
           </div>
         </div>
 
@@ -568,6 +568,17 @@ window.updateStatus = function(uid, newStatus) {
     [statuses[newStatus]]: true
   }).then(() => {
     alert('✅ Status updated!');
+    closeProfileDetail();
+    loadAllData();
+  });
+};
+
+window.markEmailsSent = function(uid, name) {
+  update(ref(database, 'users/' + uid), {
+    emailsSent: true,
+    emailsSentAt: new Date().toISOString()
+  }).then(() => {
+    alert('✅ Marked as sent! ' + name + ' can now proceed to payment.');
     closeProfileDetail();
     loadAllData();
   });
