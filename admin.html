@@ -5,83 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Console - PlayPortal</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    .admin-sidebar {
-      background: #1e40af;
-      color: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-    }
-    .sidebar-item {
-      padding: 0.75rem 1rem;
-      margin: 0.5rem 0;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .sidebar-item:hover, .sidebar-item.active {
-      background: rgba(255,107,53,1);
-    }
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .kpi-card {
-      background: white;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .kpi-number {
-      font-size: 32px;
-      font-weight: 800;
-      color: #2563eb;
-      margin: 0.5rem 0;
-    }
-    .kpi-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #64748b;
-      text-transform: uppercase;
-    }
-    .profile-card {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .status-pending {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-    .status-active {
-      background: #dcfce7;
-      color: #15803d;
-    }
-    .status-completed {
-      background: #fef3c7;
-      color: #92400e;
-    }
-  </style>
 </head>
 <body>
 
@@ -89,79 +12,168 @@
     <div class="header-content">
       <div class="logo">🎾 PlayPortal</div>
       <div class="user-info">
-        <div id="adminEmail">Admin</div>
-        <button onclick="logout()" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 12px;">LOGOUT</button>
+        <div id="userEmail">Admin</div>
+        <button onclick="logout()" class="btn-secondary" style="padding: 0.5rem 1.5rem; border-radius: 6px;">🚪 Logout</button>
       </div>
     </div>
   </div>
 
-  <div class="container">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <h1 style="margin-bottom: 2rem;">Admin Console</h1>
+  <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    
+    <!-- SIDEBAR -->
+    <div style="background: white; border-radius: 12px; padding: 2rem; height: fit-content; border: 1px solid #e2e8f0;">
+      <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 1.5rem; text-transform: uppercase;">Navigation</div>
+      
+      <div class="sidebar-btn active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+      <div class="sidebar-btn" onclick="switchTab('campaigns')">📧 Campaigns</div>
+      <div class="sidebar-btn" onclick="switchTab('templates')">📝 Email Templates</div>
+      <div class="sidebar-btn" onclick="switchTab('notifications')">🔔 Notifications</div>
 
-      <!-- SIDEBAR TABS -->
-      <div class="admin-sidebar">
-        <div class="sidebar-item active" onclick="showTab('dashboard')">📊 Dashboard</div>
-        <div class="sidebar-item" onclick="showTab('pending')">📧 Pending Emails</div>
-        <div class="sidebar-item" onclick="showTab('active')">🚀 Active Campaigns</div>
-        <div class="sidebar-item" onclick="showTab('completed')">✅ Completed</div>
-      </div>
+      <style>
+        .sidebar-btn {
+          padding: 0.75rem 1rem;
+          margin-bottom: 0.5rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 13px;
+          border: 2px solid transparent;
+          transition: all 0.3s;
+        }
+        .sidebar-btn:hover {
+          background: #f0f7ff;
+          color: #2563eb;
+        }
+        .sidebar-btn.active {
+          background: #2563eb;
+          color: white;
+          border-color: #2563eb;
+        }
+      </style>
+    </div>
 
+    <!-- MAIN CONTENT -->
+    <div>
       <!-- DASHBOARD TAB -->
-      <div id="dashboard-tab" class="tab-content">
-        <h2 style="margin-bottom: 1.5rem;">Overview</h2>
-        
+      <div id="dashboard" class="tab">
+        <h1 style="margin-bottom: 2rem; font-size: 28px;">Dashboard</h1>
+
         <!-- KPI CARDS -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Total Users</div>
-            <div class="kpi-number" id="totalUsers">0</div>
-            <div style="font-size: 12px; color: #64748b;">Registered athletes</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+          <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #93c5fd;">
+            <div style="font-size: 12px; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">TOTAL USERS</div>
+            <div style="font-size: 32px; font-weight: 800; color: #1e40af;" id="kpi-total">0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Registered athletes</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Pending Email</div>
-            <div class="kpi-number" id="pendingCount">0</div>
-            <div style="font-size: 12px; color: #64748b;">Waiting for approval</div>
+
+          <div style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #f472b6;">
+            <div style="font-size: 12px; font-weight: 700; color: #be185d; margin-bottom: 0.5rem;">PENDING APPROVAL</div>
+            <div style="font-size: 32px; font-weight: 800; color: #be185d;" id="kpi-pending">0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Waiting for email</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Active Campaigns</div>
-            <div class="kpi-number" id="activeCount">0</div>
-            <div style="font-size: 12px; color: #64748b;">Being sent now</div>
+
+          <div style="background: linear-gradient(135deg, #dffcf0 0%, #bbf7d0 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #86efac;">
+            <div style="font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 0.5rem;">ACTIVE CAMPAIGNS</div>
+            <div style="font-size: 32px; font-weight: 800; color: #15803d;" id="kpi-active">0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Sending now</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Total Revenue</div>
-            <div class="kpi-number" id="totalRevenue">$0</div>
-            <div style="font-size: 12px; color: #64748b;">From packages</div>
+
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #fbbf24;">
+            <div style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">TOTAL REVENUE</div>
+            <div style="font-size: 32px; font-weight: 800; color: #92400e;" id="kpi-revenue">$0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">From packages</div>
           </div>
         </div>
 
         <!-- RECENT SIGNUPS -->
-        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Recent Signups</h3>
-        <div id="recentSignups">
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem;">
+          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 1.5rem;">Recent Signups</h2>
+          <div id="recent-signups">
+            <p style="color: #64748b;">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPAIGNS TAB -->
+      <div id="campaigns" class="tab" style="display: none;">
+        <h1 style="margin-bottom: 2rem; font-size: 28px;">Manage Campaigns</h1>
+
+        <!-- FILTER -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: #64748b;">Filter by Status</label>
+              <select id="filter-status" onchange="filterCampaigns()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-top: 0.5rem;">
+                <option value="">All Status</option>
+                <option value="pending">Pending Email</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: #64748b;">Search by Email</label>
+              <input type="text" id="filter-email" onkeyup="filterCampaigns()" placeholder="athlete@email.com" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-top: 0.5rem;">
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button onclick="filterCampaigns()" class="btn-primary" style="width: 100%; padding: 0.75rem;">🔍 Search</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAMPAIGNS LIST -->
+        <div id="campaigns-list">
           <p style="color: #64748b;">Loading...</p>
         </div>
       </div>
 
-      <!-- PENDING EMAILS TAB -->
-      <div id="pending-tab" class="tab-content" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Profiles Waiting for Email</h2>
-        <div id="pendingProfiles">
-          <p style="color: #64748b;">Loading...</p>
+      <!-- EMAIL TEMPLATES TAB -->
+      <div id="templates" class="tab" style="display: none;">
+        <h1 style="margin-bottom: 2rem; font-size: 28px;">Email Templates</h1>
+
+        <!-- CREATE NEW TEMPLATE -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 1.5rem;">Create New Template</h2>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Template Name</label>
+            <input type="text" id="template-name" placeholder="e.g., D1 Recruitment Email" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email Subject</label>
+            <input type="text" id="template-subject" placeholder="e.g., Tennis Prospect - Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email Body</label>
+            <textarea id="template-body" placeholder="Use [ATHLETE_NAME], [SCHOOL], [GPA], [UTR] for placeholders" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 200px; font-family: monospace; font-size: 12px;"></textarea>
+            <div style="font-size: 11px; color: #64748b; margin-top: 0.5rem;">Available placeholders: [ATHLETE_NAME], [SCHOOL], [GPA], [UTR], [OPPORTUNITY_TYPE]</div>
+          </div>
+
+          <button onclick="saveTemplate()" class="btn-primary" style="padding: 0.75rem 2rem;">💾 Save Template</button>
+        </div>
+
+        <!-- SAVED TEMPLATES -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem;">
+          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 1.5rem;">Saved Templates</h2>
+          <div id="templates-list">
+            <p style="color: #64748b;">Loading...</p>
+          </div>
         </div>
       </div>
 
-      <!-- ACTIVE CAMPAIGNS TAB -->
-      <div id="active-tab" class="tab-content" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Active Campaigns</h2>
-        <div id="activeCampaigns">
-          <p style="color: #64748b;">Loading...</p>
-        </div>
-      </div>
+      <!-- NOTIFICATIONS TAB -->
+      <div id="notifications" class="tab" style="display: none;">
+        <h1 style="margin-bottom: 2rem; font-size: 28px;">Notifications</h1>
 
-      <!-- COMPLETED TAB -->
-      <div id="completed-tab" class="tab-content" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Completed Campaigns</h2>
-        <div id="completedCampaigns">
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+          <button onclick="filterNotifications('all')" class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 12px;">All</button>
+          <button onclick="filterNotifications('signup')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">New Signups</button>
+          <button onclick="filterNotifications('pending')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Pending Email</button>
+          <button onclick="filterNotifications('active')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Active Campaigns</button>
+        </div>
+
+        <div id="notifications-list">
           <p style="color: #64748b;">Loading...</p>
         </div>
       </div>
@@ -171,7 +183,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
@@ -187,225 +199,264 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
+    let allUsers = {};
+    let allCampaigns = [];
+
     window.logout = function() {
       signOut(auth).then(() => {
         window.location.href = 'login.html';
       });
     };
 
-    window.showTab = function(tabName) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.style.display = 'none';
+    window.switchTab = function(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
+      document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabName).style.display = 'block';
+      event.target.classList.add('active');
+
+      if (tabName === 'campaigns') loadCampaigns();
+      if (tabName === 'templates') loadTemplates();
+      if (tabName === 'notifications') loadNotifications();
+    };
+
+    window.saveTemplate = function() {
+      const name = document.getElementById('template-name').value;
+      const subject = document.getElementById('template-subject').value;
+      const body = document.getElementById('template-body').value;
+
+      if (!name || !subject || !body) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      set(ref(database, 'templates/' + Date.now()), {
+        name: name,
+        subject: subject,
+        body: body,
+        createdAt: new Date().toISOString()
+      }).then(() => {
+        alert('✓ Template saved!');
+        document.getElementById('template-name').value = '';
+        document.getElementById('template-subject').value = '';
+        document.getElementById('template-body').value = '';
+        loadTemplates();
       });
-      document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.classList.remove('active');
+    };
+
+    window.filterCampaigns = function() {
+      const status = document.getElementById('filter-status').value;
+      const email = document.getElementById('filter-email').value.toLowerCase();
+
+      let filtered = allCampaigns.filter(c => {
+        if (status && c.status !== status) return false;
+        if (email && !c.email.toLowerCase().includes(email)) return false;
+        return true;
       });
 
-      // Show selected tab
-      if (tabName === 'dashboard') {
-        document.getElementById('dashboard-tab').style.display = 'block';
-        event.target.classList.add('active');
-      } else if (tabName === 'pending') {
-        document.getElementById('pending-tab').style.display = 'block';
-        event.target.classList.add('active');
-      } else if (tabName === 'active') {
-        document.getElementById('active-tab').style.display = 'block';
-        event.target.classList.add('active');
-      } else if (tabName === 'completed') {
-        document.getElementById('completed-tab').style.display = 'block';
-        event.target.classList.add('active');
+      displayCampaigns(filtered);
+    };
+
+    window.filterNotifications = function(type) {
+      loadNotifications(type);
+    };
+
+    function loadAllData() {
+      get(ref(database, 'users')).then(snapshot => {
+        allUsers = snapshot.val() || {};
+        
+        let totalUsers = 0;
+        let pending = 0;
+        let active = 0;
+        let revenue = 0;
+        let recentList = [];
+
+        const packagePrice = { basic: 99, standard: 150, premium: 215 };
+
+        Object.keys(allUsers).forEach(uid => {
+          const user = allUsers[uid];
+          totalUsers++;
+
+          if (user.package) revenue += packagePrice[user.package] || 0;
+
+          const name = (user.firstName || '') + ' ' + (user.lastName || '');
+          const campaignData = {
+            uid: uid,
+            name: name.trim(),
+            email: user.email,
+            package: user.package || 'N/A',
+            opportunity: user.opportunityType || 'N/A',
+            status: !user.emailApproved ? 'pending' : user.emailsSent ? 'completed' : 'active',
+            createdAt: user.createdAt
+          };
+
+          allCampaigns.push(campaignData);
+
+          if (!user.emailApproved) pending++;
+          else if (user.emailApproved && !user.emailsSent) active++;
+
+          if (user.createdAt) recentList.push(campaignData);
+        });
+
+        recentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        recentList = recentList.slice(0, 5);
+
+        document.getElementById('kpi-total').textContent = totalUsers;
+        document.getElementById('kpi-pending').textContent = pending;
+        document.getElementById('kpi-active').textContent = active;
+        document.getElementById('kpi-revenue').textContent = '$' + revenue;
+
+        displayRecentSignups(recentList);
+        displayCampaigns(allCampaigns);
+      });
+    }
+
+    function displayRecentSignups(list) {
+      let html = '';
+      if (list.length === 0) {
+        html = '<p style="color: #64748b;">No signups yet</p>';
+      } else {
+        list.forEach(user => {
+          html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e2e8f0;">
+              <div>
+                <div style="font-weight: 600;">${user.name}</div>
+                <div style="font-size: 12px; color: #64748b;">${user.email}</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 12px; font-weight: 600; color: #2563eb;">${user.package}</div>
+                <div style="font-size: 11px; color: #64748b;">${user.opportunity}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('recent-signups').innerHTML = html;
+    }
+
+    function displayCampaigns(list) {
+      let html = '';
+      if (list.length === 0) {
+        html = '<p style="color: #64748b;">No campaigns</p>';
+      } else {
+        list.forEach(campaign => {
+          const statusColor = campaign.status === 'pending' ? '#dbeafe' : campaign.status === 'active' ? '#dcfce7' : '#fef3c7';
+          const statusText = campaign.status === 'pending' ? 'Pending Email' : campaign.status === 'active' ? 'Active' : 'Completed';
+          
+          html += `
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="margin: 0; font-size: 16px; font-weight: 700;">${campaign.name}</h3>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${campaign.email}</p>
+                </div>
+                <div style="background: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 11px; font-weight: 700;">${statusText}</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+                <div><strong>Package:</strong> ${campaign.package}</div>
+                <div><strong>Opportunity:</strong> ${campaign.opportunity}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('campaigns-list').innerHTML = html;
+    }
+
+    function loadTemplates() {
+      get(ref(database, 'templates')).then(snapshot => {
+        const templates = snapshot.val() || {};
+        let html = '';
+
+        if (Object.keys(templates).length === 0) {
+          html = '<p style="color: #64748b;">No templates created yet</p>';
+        } else {
+          Object.keys(templates).forEach(key => {
+            const template = templates[key];
+            html += `
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 14px; font-weight: 700;">${template.name}</h3>
+                <p style="margin: 0; font-size: 12px; color: #64748b; white-space: pre-wrap; font-family: monospace;">${template.subject}</p>
+                <button onclick="deleteTemplate('${key}')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ Delete</button>
+              </div>
+            `;
+          });
+        }
+        document.getElementById('templates-list').innerHTML = html;
+      });
+    }
+
+    window.deleteTemplate = function(key) {
+      if (confirm('Delete this template?')) {
+        remove(ref(database, 'templates/' + key)).then(() => {
+          loadTemplates();
+        });
       }
     };
+
+    function loadNotifications(filter = 'all') {
+      let html = '';
+      let notifications = [];
+
+      Object.keys(allUsers).forEach(uid => {
+        const user = allUsers[uid];
+        
+        if (filter === 'signup' || filter === 'all') {
+          notifications.push({
+            type: 'signup',
+            message: `New signup: ${user.firstName} ${user.lastName}`,
+            time: user.createdAt,
+            icon: '👤'
+          });
+        }
+        if ((filter === 'pending' || filter === 'all') && !user.emailApproved) {
+          notifications.push({
+            type: 'pending',
+            message: `${user.firstName} ${user.lastName} waiting for email`,
+            time: user.createdAt,
+            icon: '📧'
+          });
+        }
+        if ((filter === 'active' || filter === 'all') && user.emailApproved && !user.emailsSent) {
+          notifications.push({
+            type: 'active',
+            message: `${user.firstName} ${user.lastName} campaign active`,
+            time: user.createdAt,
+            icon: '🚀'
+          });
+        }
+      });
+
+      notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      if (notifications.length === 0) {
+        html = '<p style="color: #64748b;">No notifications</p>';
+      } else {
+        notifications.forEach(notif => {
+          html += `
+            <div style="background: white; border-left: 4px solid #2563eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-size: 24px;">${notif.icon}</span>
+                <div style="flex: 1;">
+                  <p style="margin: 0; font-size: 13px; font-weight: 600;">${notif.message}</p>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 11px; color: #64748b;">Just now</p>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('notifications-list').innerHTML = html;
+    }
 
     onAuthStateChanged(auth, user => {
       if (!user || user.email !== 'playportal.club@gmail.com') {
         window.location.href = 'login.html';
         return;
       }
-
-      document.getElementById('adminEmail').textContent = '✓ ' + user.email;
+      document.getElementById('userEmail').textContent = '✓ ' + user.email;
       loadAllData();
     });
-
-    function loadAllData() {
-      get(ref(database, 'users')).then(snapshot => {
-        const users = snapshot.val() || {};
-        
-        let totalUsers = 0;
-        let pendingProfiles = [];
-        let activeProfiles = [];
-        let completedProfiles = [];
-        let totalRevenue = 0;
-        let recentSignups = [];
-
-        Object.keys(users).forEach(userId => {
-          const user = users[userId];
-          totalUsers++;
-
-          // Calculate revenue
-          const packagePrice = {
-            basic: 99,
-            standard: 150,
-            premium: 215
-          };
-          if (user.package) {
-            totalRevenue += packagePrice[user.package] || 0;
-          }
-
-          // Organize by status
-          const fullName = (user.firstName || '') + ' ' + (user.lastName || '');
-          const profileData = {
-            id: userId,
-            name: fullName.trim(),
-            email: user.email,
-            package: user.package || 'N/A',
-            opportunity: user.opportunityType || 'N/A',
-            gpa: user.gpa,
-            utr: user.utr,
-            createdAt: user.createdAt
-          };
-
-          if (!user.emailApproved) {
-            pendingProfiles.push(profileData);
-          } else if (user.emailApproved && !user.emailsSent) {
-            activeProfiles.push(profileData);
-          } else if (user.emailsSent) {
-            completedProfiles.push(profileData);
-          }
-
-          // Recent signups (last 10)
-          if (user.createdAt) {
-            recentSignups.push(profileData);
-          }
-        });
-
-        recentSignups.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        recentSignups = recentSignups.slice(0, 10);
-
-        // Update KPIs
-        document.getElementById('totalUsers').textContent = totalUsers;
-        document.getElementById('pendingCount').textContent = pendingProfiles.length;
-        document.getElementById('activeCount').textContent = activeProfiles.length;
-        document.getElementById('totalRevenue').textContent = '$' + totalRevenue;
-
-        // Display pending profiles
-        displayPendingProfiles(pendingProfiles);
-        displayActiveProfiles(activeProfiles);
-        displayCompletedProfiles(completedProfiles);
-        displayRecentSignups(recentSignups);
-      });
-    }
-
-    function displayPendingProfiles(profiles) {
-      const container = document.getElementById('pendingProfiles');
-      if (profiles.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">No pending profiles</p>';
-        return;
-      }
-
-      let html = '';
-      profiles.forEach(profile => {
-        html += `
-          <div class="profile-card">
-            <div class="profile-header">
-              <div>
-                <h3 style="margin: 0; font-size: 16px;">${profile.name}</h3>
-                <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${profile.email}</p>
-              </div>
-              <span class="status-badge status-pending">PENDING EMAIL</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px; margin-bottom: 1rem;">
-              <div><strong>Package:</strong> ${profile.package}</div>
-              <div><strong>Opportunity:</strong> ${profile.opportunity}</div>
-              <div><strong>GPA:</strong> ${profile.gpa || 'N/A'}</div>
-              <div><strong>UTR:</strong> ${profile.utr || 'N/A'}</div>
-            </div>
-            <button onclick="alert('Email creation panel coming soon!')" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 12px;">✏️ Create Email</button>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    function displayActiveProfiles(profiles) {
-      const container = document.getElementById('activeCampaigns');
-      if (profiles.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">No active campaigns</p>';
-        return;
-      }
-
-      let html = '';
-      profiles.forEach(profile => {
-        html += `
-          <div class="profile-card">
-            <div class="profile-header">
-              <div>
-                <h3 style="margin: 0; font-size: 16px;">${profile.name}</h3>
-                <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${profile.email}</p>
-              </div>
-              <span class="status-badge status-active">SENDING</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px; margin-bottom: 1rem;">
-              <div><strong>Package:</strong> ${profile.package}</div>
-              <div><strong>Opportunity:</strong> ${profile.opportunity}</div>
-            </div>
-            <button onclick="alert('Mark as completed')" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 12px;">✅ Emails Sent</button>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    function displayCompletedProfiles(profiles) {
-      const container = document.getElementById('completedCampaigns');
-      if (profiles.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">No completed campaigns</p>';
-        return;
-      }
-
-      let html = '';
-      profiles.forEach(profile => {
-        html += `
-          <div class="profile-card">
-            <div class="profile-header">
-              <div>
-                <h3 style="margin: 0; font-size: 16px;">${profile.name}</h3>
-                <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${profile.email}</p>
-              </div>
-              <span class="status-badge status-completed">COMPLETED</span>
-            </div>
-            <div style="font-size: 13px;">
-              <strong>Package:</strong> ${profile.package}
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    function displayRecentSignups(profiles) {
-      const container = document.getElementById('recentSignups');
-      if (profiles.length === 0) {
-        container.innerHTML = '<p style="color: #64748b;">No signups yet</p>';
-        return;
-      }
-
-      let html = '<div style="display: grid; gap: 0.75rem;">';
-      profiles.forEach(profile => {
-        html += `
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <div style="font-weight: 600;">${profile.name}</div>
-              <div style="font-size: 12px; color: #64748b;">${profile.email}</div>
-            </div>
-            <div style="font-size: 12px; color: #64748b;">${profile.package}</div>
-          </div>
-        `;
-      });
-      html += '</div>';
-      container.innerHTML = html;
-    }
   </script>
 
 </body>
