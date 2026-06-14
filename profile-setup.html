@@ -52,17 +52,18 @@
     import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
-      authDomain: "playportal-bf6d4.firebaseapp.com",
-      projectId: "playportal-bf6d4",
-      storageBucket: "playportal-bf6d4.firebasestorage.app",
-      messagingSenderId: "419889829572",
-      appId: "1:419889829572:web:f341cf03579997830c5b91"
-    };
+  apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+  authDomain: "playportal-bf6d4.firebaseapp.com",
+  projectId: "playportal-bf6d4",
+  storageBucket: "playportal-bf6d4.firebasestorage.app",
+  messagingSenderId: "419889829572",
+  appId: "1:419889829572:web:f341cf03579997830c5b91",
+  databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
     let currentStep = 1;
     let currentUser = null;
