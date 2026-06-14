@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - PlayPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎾 PlayPortal</div>
+      <div class="user-info">
+        <div id="userEmail">Not logged in</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;">Payment</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+      
+      <h1 style="margin-bottom: 0.5rem;">Complete Your Payment</h1>
+      <p style="color: #64748b; margin-bottom: 2rem;">Secure payment via PayPal</p>
+
+      <!-- ORDER SUMMARY -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+        <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">Order Summary</h3>
+        
+        <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem;">
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: #0f172a;" id="packageName">Standard Package</div>
+            <div style="font-size: 11px; color: #64748b;" id="packageDivisions">3 Divisions (D1, D2, NAIA)</div>
+          </div>
+          <div style="font-weight: 700; color: #2563eb;" id="packagePrice">$99.00</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700;">
+          <div>TOTAL</div>
+          <div style="color: #2563eb; font-size: 18px;" id="totalPrice">$99.00</div>
+        </div>
+      </div>
+
+      <!-- PAYPAL BUTTON -->
+      <div id="paypal-button-container" style="margin-bottom: 2rem;"></div>
+
+      <!-- BENEFITS -->
+      <div style="background: #f0f9ff; border-left: 4px solid #2563eb; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="margin: 0 0 1rem 0; font-size: 13px; font-weight: 700; color: #1e40af;">✓ What You Get After Payment:</h3>
+        <ul style="margin: 0; padding-left: 1.5rem; color: #1e40af; font-size: 12px; line-height: 1.8;">
+          <li>📧 Dedicated email account (e.g., yourname.athlete@gmail.com)</li>
+          <li>🔑 Secure password & login credentials</li>
+          <li>🚀 Campaign launches next business day</li>
+          <li>📞 Personal support from our team</li>
+          <li>📊 Track email opens & coach responses</li>
+        </ul>
+      </div>
+
+      <!-- BACK BUTTON -->
+      <div style="margin-top: 2rem; text-align: center;">
+        <button onclick="window.history.back()" style="background: white; color: #2563eb; border: 1px solid #2563eb; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">← GO BACK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.paypal.com/sdk/js?client-id=AQfxQgiqnkvASRYzXi0lN7fR2Jqh8Tz95X5usM5ajnHA1x6xznyuUey8bH0t3g9E_y3MHXeQHuobZin4"></script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+      authDomain: "playportal-bf6d4.firebaseapp.com",
+      projectId: "playportal-bf6d4",
+      storageBucket: "playportal-bf6d4.firebasestorage.app",
+      messagingSenderId: "419889829572",
+      appId: "1:419889829572:web:f341cf03579997830c5b91"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    let currentUser = null;
+    let userData = null;
+    const packagePrices = {
+      basic: 79,
+      standard: 99,
+      premium: 139
+    };
+
+    // Check authentication
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        alert('Please log in first');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+      document.getElementById('userEmail').textContent = '✓ ' + user.email;
+
+      // Load user data and setup PayPal
+      get(ref(database, 'users/' + user.uid)).then(snapshot => {
+        userData = snapshot.val();
+        if (userData) {
+          setupPayment();
+        }
+      });
+    });
+
+    function setupPayment() {
+      const pkg = userData.package || 'standard';
+      const price = packagePrices[pkg];
+      const packageInfo = {
+        basic: { name: 'Basic Package', divisions: '1 Division (NCAA D1)' },
+        standard: { name: 'Standard Package', divisions: '3 Divisions (D1, D2, NAIA)' },
+        premium: { name: 'Premium Package', divisions: 'All 5 Divisions' }
+      };
+
+      const pkgInfo = packageInfo[pkg];
+      document.getElementById('packageName').textContent = pkgInfo.name;
+      document.getElementById('packageDivisions').textContent = pkgInfo.divisions;
+      document.getElementById('packagePrice').textContent = '$' + price + '.00';
+      document.getElementById('totalPrice').textContent = '$' + price + '.00';
+
+      // PayPal button
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: price.toString()
+              },
+              description: pkgInfo.name
+            }]
+          });
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(orderData) {
+            completePayment(orderData);
+          });
+        },
+        onError: function(err) {
+          alert('Payment error: ' + err);
+        }
+      }).render('#paypal-button-container');
+    }
+
+    function completePayment(orderData) {
+      // Generate random credentials
+      const domains = ['gmail.com', 'yahoo.com', 'outlook.com'];
+      const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+      const firstName = (userData.firstName || 'athlete').toLowerCase();
+      const emailAccount = firstName + '.' + Date.now() + '@' + randomDomain;
+      const password = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+      // Update user data
+      update(ref(database, 'users/' + currentUser.uid), {
+        status: 'completed',
+        paymentId: orderData.id,
+        emailAccount: emailAccount,
+        emailPassword: password,
+        paidAt: new Date().toISOString(),
+        credentials: {
+          main: {
+            email: emailAccount,
+            password: password,
+            provider: randomDomain.split('.')[0].toUpperCase()
+          }
+        }
+      }).then(() => {
+        // Show success and credentials
+        showSuccessScreen(emailAccount, password);
+      }).catch(error => {
+        alert('Error saving payment: ' + error.message);
+      });
+    }
+
+    function showSuccessScreen(email, password) {
+      document.querySelector('.card').innerHTML = `
+        <div style="text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+          <h1 style="margin: 0 0 0.5rem 0; color: #10b981;">Payment Successful!</h1>
+          <p style="color: #64748b; margin: 0 0 2rem 0;">Your campaign is ready to launch</p>
+
+          <div style="background: #d1fae5; border: 2px solid #6ee7b7; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+            <h3 style="color: #065f46; margin: 0 0 1.5rem 0;">Your Campaign Credentials</h3>
+            
+            <div style="background: white; border-radius: 8px; padding: 1.5rem; text-align: left; margin-bottom: 1.5rem;">
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Email Account</div>
+                <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all;">${email}</div>
+                <button onclick="copyToClipboard('${email}')" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
+              </div>
+
+              <div>
+                <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Password</div>
+                <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all; font-family: monospace;">${password}</div>
+                <button onclick="copyToClipboard('${password}')" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
+              </div>
+            </div>
+
+            <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+              <div style="font-size: 12px; color: #065f46; line-height: 1.6;">
+                <strong>📧 Email Instructions:</strong><br>
+                1. Go to ${randomDomain} and log in with these credentials<br>
+                2. Your personalized email template is ready to send<br>
+                3. Campaign launches tomorrow morning<br>
+                4. Check back here for coach responses
+              </div>
+            </div>
+
+            <button onclick="window.location.href='dashboard.html'" class="btn-primary">GO TO DASHBOARD</button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.copyToClipboard = function(text) {
+      navigator.clipboard.writeText(text);
+      alert('✓ Copied to clipboard!');
+    };
+  </script>
+
+</body>
+</html>
