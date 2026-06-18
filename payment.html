@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment - PlayPortal</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -24,7 +25,7 @@
     <div class="card" style="max-width: 600px; margin: 0 auto;">
       
       <h1 style="margin-bottom: 0.5rem;">Complete Your Payment</h1>
-      <p style="color: #64748b; margin-bottom: 2rem;">Secure payment via PayPal</p>
+      <p style="color: #64748b; margin-bottom: 2rem;">Choose your payment method - PayPal or Debit Card</p>
 
       <!-- ORDER SUMMARY -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
@@ -44,17 +45,32 @@
         </div>
       </div>
 
+      <!-- PAYMENT METHOD TABS -->
+      <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <button onclick="switchPaymentMethod('paypal')" id="paypalTab" style="flex: 1; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">💳 PayPal</button>
+        <button onclick="switchPaymentMethod('stripe')" id="stripeTab" style="flex: 1; padding: 0.75rem; background: #e2e8f0; color: #2563eb; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">💰 Debit Card</button>
+      </div>
+
       <!-- PAYPAL BUTTON -->
-      <div id="paypal-button-container" style="margin-bottom: 2rem;"></div>
+      <div id="paypal-container" style="display: block;">
+        <div id="paypal-button-container" style="margin-bottom: 2rem;"></div>
+      </div>
+
+      <!-- STRIPE FORM -->
+      <div id="stripe-container" style="display: none;">
+        <div id="card-element" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;"></div>
+        <div id="card-errors" style="color: #dc2626; margin-bottom: 1rem; font-size: 13px;"></div>
+        <button onclick="processStripePayment()" id="stripe-button" style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1rem;">PAY NOW</button>
+      </div>
 
       <!-- BENEFITS -->
       <div style="background: #f0f9ff; border-left: 4px solid #2563eb; padding: 1.5rem; border-radius: 8px;">
         <h3 style="margin: 0 0 1rem 0; font-size: 13px; font-weight: 700; color: #1e40af;">✓ What You Get After Payment:</h3>
         <ul style="margin: 0; padding-left: 1.5rem; color: #1e40af; font-size: 12px; line-height: 1.8;">
-  <li>📧 Dedicated email account (e.g., yourname.athlete@gmail.com)</li>
-  <li>🔑 Secure password & login credentials</li>
-  <li>🚀 Hundreds of emails sent to college coaches</li>
-</ul>   
+          <li>📧 Dedicated email account (e.g., yourname.athlete@gmail.com)</li>
+          <li>🔑 Secure password & login credentials</li>
+          <li>🚀 Hundreds of emails sent to college coaches</li>
+        </ul>   
       </div>
 
       <!-- BACK BUTTON -->
@@ -87,11 +103,20 @@
 
     let currentUser = null;
     let userData = null;
+    let stripe = null;
+    let elements = null;
+    let cardElement = null;
+    
     const packagePrices = {
       basic: 99,
       standard: 150,
       premium: 215
     };
+
+    // Initialize Stripe
+    stripe = Stripe('pk_live_51TjbhQHDQZrEEQQ9qSqscOhbbArdC9pNmrNUlEhRKs6K3pxkQ1cQA2X5GjX1n1vAdaJEO2zUvgUERX4JT8lVlXUy00iW2U41vV');
+    elements = stripe.elements();
+    cardElement = elements.create('card');
 
     // Check authentication
     onAuthStateChanged(auth, user => {
@@ -104,7 +129,7 @@
       currentUser = user;
       document.getElementById('userEmail').textContent = '✓ ' + user.email;
 
-      // Load user data and setup PayPal
+      // Load user data and setup payments
       get(ref(database, 'users/' + user.uid)).then(snapshot => {
         userData = snapshot.val();
         if (userData) {
@@ -149,34 +174,87 @@
           alert('Payment error: ' + err);
         }
       }).render('#paypal-button-container');
+
+      // Mount Stripe card element
+      cardElement.mount('#card-element');
+      cardElement.addEventListener('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
     }
+
+    window.switchPaymentMethod = function(method) {
+      if (method === 'paypal') {
+        document.getElementById('paypal-container').style.display = 'block';
+        document.getElementById('stripe-container').style.display = 'none';
+        document.getElementById('paypalTab').style.background = '#2563eb';
+        document.getElementById('paypalTab').style.color = 'white';
+        document.getElementById('stripeTab').style.background = '#e2e8f0';
+        document.getElementById('stripeTab').style.color = '#2563eb';
+      } else {
+        document.getElementById('paypal-container').style.display = 'none';
+        document.getElementById('stripe-container').style.display = 'block';
+        document.getElementById('paypalTab').style.background = '#e2e8f0';
+        document.getElementById('paypalTab').style.color = '#2563eb';
+        document.getElementById('stripeTab').style.background = '#2563eb';
+        document.getElementById('stripeTab').style.color = 'white';
+      }
+    };
+
+    window.processStripePayment = async function() {
+      document.getElementById('stripe-button').disabled = true;
+      document.getElementById('stripe-button').textContent = 'Processing...';
+
+      const { token, error } = await stripe.createToken(cardElement);
+
+      if (error) {
+        document.getElementById('card-errors').textContent = error.message;
+        document.getElementById('stripe-button').disabled = false;
+        document.getElementById('stripe-button').textContent = 'PAY NOW';
+        return;
+      }
+
+      // Send token to backend (for now, just complete payment)
+      completePayment({ id: token.id, source: 'stripe' });
+    };
 
     function completePayment(orderData) {
-  // Load credentials from Firebase (admin provided)
-  get(ref(database, 'users/' + currentUser.uid + '/credentials')).then(snapshot => {
-    const credentialsData = snapshot.val() || {};
-    const credentialsArray = Object.values(credentialsData);
+      // Load credentials from Firebase (admin provided)
+      get(ref(database, 'users/' + currentUser.uid + '/credentials')).then(snapshot => {
+        const credentialsData = snapshot.val() || {};
+        const credentialsArray = Object.values(credentialsData);
 
-    if (credentialsArray.length === 0) {
-      alert('⚠️ No credentials found. Please ask admin to add credentials.');
-      return;
+        if (credentialsArray.length === 0) {
+          alert('⚠️ No credentials found. Please ask admin to add credentials.');
+          document.getElementById('stripe-button').disabled = false;
+          document.getElementById('stripe-button').textContent = 'PAY NOW';
+          return;
+        }
+
+        // Mark user as paid
+        update(ref(database, 'users/' + currentUser.uid), {
+          status: 'completed',
+          paymentId: orderData.id,
+          paymentMethod: orderData.source || 'paypal',
+          paidAt: new Date().toISOString()
+        }).then(() => {
+          // Show success with admin-provided credentials
+          showSuccessScreen(credentialsArray);
+        }).catch(error => {
+          alert('Error saving payment: ' + error.message);
+          document.getElementById('stripe-button').disabled = false;
+          document.getElementById('stripe-button').textContent = 'PAY NOW';
+        });
+      }).catch(error => {
+        alert('Error loading credentials: ' + error.message);
+        document.getElementById('stripe-button').disabled = false;
+        document.getElementById('stripe-button').textContent = 'PAY NOW';
+      });
     }
-
-    // Mark user as paid
-    update(ref(database, 'users/' + currentUser.uid), {
-      status: 'completed',
-      paymentId: orderData.id,
-      paidAt: new Date().toISOString()
-    }).then(() => {
-      // Show success with admin-provided credentials
-      showSuccessScreen(credentialsArray);
-    }).catch(error => {
-      alert('Error saving payment: ' + error.message);
-    });
-  }).catch(error => {
-    alert('Error loading credentials: ' + error.message);
-  });
-}
 
     function showSuccessScreen(credentialsArray) {
       document.querySelector('.card').innerHTML = `
