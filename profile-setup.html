@@ -563,11 +563,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
                   <div>
                     <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">PACKAGE</div>
-                    <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">Standard - $150</div>
+                    <div id="summaryPackage" style="font-size: 16px; font-weight: 700;">${userData.package === 'basic' ? 'Basic - $99' : userData.package === 'premium' ? 'Premium - $215' : 'Standard - $150'}</div>
                   </div>
                   <div>
                     <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 0.5rem;">DIVISIONS</div>
-                    <div id="summaryDivisions" style="font-size: 14px; font-weight: 700;">D1, D2, NAIA</div>
+                    <div id="summaryDivisions" style="font-size: 14px; font-weight: 700;">${userData.selectedDivisions?.join(', ').toUpperCase() || 'N/A'}</div>
                   </div>
                 </div>
               </div>
