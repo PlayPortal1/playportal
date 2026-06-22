@@ -24,17 +24,19 @@
       <h1 style="font-size: 28px; font-weight: 700; text-align: center; margin: 0 0 0.5rem 0;">Sign In</h1>
       <p style="text-align: center; color: #64748b; margin: 0 0 2rem 0;">Enter your credentials</p>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label>Email Address</label>
-        <input type="email" id="loginEmail" placeholder="test@example.com">
-      </div>
+      <form onsubmit="handleLogin(event)">
+        <div style="margin-bottom: 1.5rem;">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="test@example.com">
+        </div>
 
-      <div style="margin-bottom: 2rem;">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••">
-      </div>
+        <div style="margin-bottom: 2rem;">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
 
-      <button onclick="handleLogin()" class="btn-primary">SIGN IN</button>
+        <button type="submit" class="btn-primary">SIGN IN</button>
+      </form>
 
       <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
         <span style="font-size: 12px; color: #64748b;">Don't have an account? </span>
@@ -76,7 +78,9 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    window.handleLogin = function() {
+    window.handleLogin = function(event) {
+      if (event) event.preventDefault();
+      
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
 

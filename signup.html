@@ -24,27 +24,29 @@
       <h1 style="font-size: 28px; font-weight: 700; text-align: center; margin: 0 0 0.5rem 0;">Join PlayPortal</h1>
       <p style="text-align: center; color: #64748b; margin: 0 0 2rem 0;">Start your recruiting journey in 60 seconds</p>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label>First Name</label>
-        <input type="text" id="firstName" placeholder="John">
-      </div>
+      <form onsubmit="createAccount(event)">
+        <div style="margin-bottom: 1.5rem;">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="John">
+        </div>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label>Last Name</label>
-        <input type="text" id="lastName" placeholder="Smith">
-      </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Smith">
+        </div>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="you@example.com">
-      </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com">
+        </div>
 
-      <div style="margin-bottom: 2rem;">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="••••••••">
-      </div>
+        <div style="margin-bottom: 2rem;">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••">
+        </div>
 
-      <button onclick="createAccount()" class="btn-primary">CREATE ACCOUNT</button>
+        <button type="submit" class="btn-primary">CREATE ACCOUNT</button>
+      </form>
 
       <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
         <span style="font-size: 12px; color: #64748b;">Already have an account? </span>
@@ -78,7 +80,9 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    window.createAccount = function() {
+    window.createAccount = function(event) {
+      if (event) event.preventDefault();
+      
       const firstName = document.getElementById('firstName').value;
       const lastName = document.getElementById('lastName').value;
       const email = document.getElementById('email').value;
