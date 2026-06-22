@@ -7,7 +7,14 @@
     "dev": "serve",
     "build": "echo 'No build needed for static site'"
   },
-  "keywords": ["tennis", "recruiting", "platform"],
+  "keywords": [
+    "tennis",
+    "recruiting",
+    "platform"
+  ],
   "author": "PlayPortal",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "stripe": "^22.2.2"
+  }
 }

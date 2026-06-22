@@ -1,0 +1,39 @@
+[debug] [2026-06-18T16:11:48.960Z] ----------------------------------------------------------------------
+[debug] [2026-06-18T16:11:48.962Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\edu99\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login --reauth
+[debug] [2026-06-18T16:11:48.962Z] CLI Version:   15.21.0
+[debug] [2026-06-18T16:11:48.963Z] Platform:      win32
+[debug] [2026-06-18T16:11:48.963Z] Node Version:  v24.17.0
+[debug] [2026-06-18T16:11:48.963Z] Detected Agent: unknown
+[debug] [2026-06-18T16:11:48.963Z] Time:          Thu Jun 18 2026 17:11:48 GMT+0100 (Western European Summer Time)
+[debug] [2026-06-18T16:11:48.963Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=568904369&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
+[debug] [2026-06-18T16:11:56.009Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2026-06-18T16:11:56.009Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-06-18T16:11:56.335Z] Token Fetch Error: FirebaseError: FetchError: Invalid response body while trying to fetch https://accounts.google.com/o/oauth2/token: Premature close
+    at RetryOperation._fn (C:\Users\edu99\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:317:88)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2026-06-18T16:11:56.337Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-06-18T16:11:56.337Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"ad505af5-9ec5-483b-9b6d-8de4f9b910e4"}
+[debug] [2026-06-18T16:11:56.967Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-06-18T16:11:56.967Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"HY3KHEPFlnFW4C4Lk2CSA7nfxh8vvtPltUQ1AJ-Vq1Q"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    AD505
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=kFCjF3j_nvHA7fT4weMFTNztf8djdwmLrOMpaPK5FOU&session=ad505af5-9ec5-483b-9b6d-8de4f9b910e4&attest=HY3KHEPFlnFW4C4Lk2CSA7nfxh8vvtPltUQ1AJ-Vq1Q
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 

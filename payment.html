@@ -206,21 +206,53 @@
     };
 
     window.processStripePayment = async function() {
-      document.getElementById('stripe-button').disabled = true;
-      document.getElementById('stripe-button').textContent = 'Processing...';
+  document.getElementById('stripe-button').disabled = true;
+  document.getElementById('stripe-button').textContent = 'Processing...';
 
-      const { token, error } = await stripe.createToken(cardElement);
+  const price = packagePrices[userData.package || 'standard'];
 
-      if (error) {
-        document.getElementById('card-errors').textContent = error.message;
-        document.getElementById('stripe-button').disabled = false;
-        document.getElementById('stripe-button').textContent = 'PAY NOW';
-        return;
+  try {
+    // Create Payment Intent on backend
+    const response = await fetch('/api/stripe-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: price,
+        currency: 'usd',
+        description: (userData.package || 'standard') + ' Package'
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error);
+    }
+
+    // Confirm payment with Stripe
+    const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+      payment_method: {
+        card: cardElement,
+        billing_details: { email: currentUser.email }
       }
+    });
 
-      // Send token to backend (for now, just complete payment)
-      completePayment({ id: token.id, source: 'stripe' });
-    };
+    if (error) {
+      document.getElementById('card-errors').textContent = error.message;
+      document.getElementById('stripe-button').disabled = false;
+      document.getElementById('stripe-button').textContent = 'PAY NOW';
+      return;
+    }
+
+    // Payment successful
+    completePayment({ id: paymentIntent.id, source: 'stripe' });
+
+  } catch (error) {
+    document.getElementById('card-errors').textContent = error.message;
+    document.getElementById('stripe-button').disabled = false;
+    document.getElementById('stripe-button').textContent = 'PAY NOW';
+  }
+};
 
     function completePayment(orderData) {
       // Load credentials from Firebase (admin provided)
