@@ -90,6 +90,20 @@ button {
   transition: all 0.2s;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: #2563eb;
   color: white;
@@ -97,9 +111,24 @@ button {
   margin-top: 1rem;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #1e40af;
 }
+
+/*
+  Optional: to match the orange brand CTA on the homepage,
+  swap .btn-primary to this instead:
+
+  .btn-primary {
+    background: linear-gradient(135deg, #ff6b35 0%, #f85e1f 100%);
+    color: white;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #f85e1f 0%, #e5511a 100%);
+  }
+*/
 
 .btn-secondary {
   background: white;
@@ -107,7 +136,7 @@ button {
   border: 2px solid #2563eb;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: #f0f7ff;
 }
 
@@ -116,7 +145,7 @@ button {
   color: white;
 }
 
-.btn-success:hover {
+.btn-success:hover:not(:disabled) {
   background: #059669;
 }
 
@@ -195,6 +224,16 @@ label {
   border-radius: 6px;
   color: #92400e;
   font-size: 13px;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border-left: 3px solid #ef4444;
+  padding: 1rem;
+  border-radius: 6px;
+  color: #b91c1c;
+  font-size: 13px;
+  margin-bottom: 1rem;
 }
 
 /* TABS */

@@ -11,8 +11,8 @@
   <div class="header">
     <div class="header-content">
       <a href="index.html" style="text-decoration: none; cursor: pointer;">
-  <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
-</a>
+        <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
+      </a>
       <div class="user-info">
         <div>Create Your Account</div>
       </div>
@@ -24,38 +24,47 @@
       <h1 style="font-size: 28px; font-weight: 700; text-align: center; margin: 0 0 0.5rem 0;">Join PlayPortal</h1>
       <p style="text-align: center; color: #64748b; margin: 0 0 2rem 0;">Start your recruiting journey in 60 seconds</p>
 
+      <div id="formError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 13px; color: #b91c1c;"></div>
+
       <form onsubmit="createAccount(event)">
         <div style="margin-bottom: 1.5rem;">
-          <label>First Name</label>
-          <input type="text" id="firstName" placeholder="John">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" placeholder="John" autocomplete="given-name" required>
         </div>
 
         <div style="margin-bottom: 1.5rem;">
-          <label>Last Name</label>
-          <input type="text" id="lastName" placeholder="Smith">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" placeholder="Smith" autocomplete="family-name" required>
         </div>
 
         <div style="margin-bottom: 1.5rem;">
-          <label>Email Address</label>
-          <input type="email" id="email" placeholder="you@example.com">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
         </div>
 
-        <div style="margin-bottom: 2rem;">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="••••••••">
+        <div style="margin-bottom: 0.5rem;">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" minlength="6" required>
         </div>
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 2rem;">At least 6 characters.</div>
 
-        <button type="submit" class="btn-primary">CREATE ACCOUNT</button>
+        <button type="submit" class="btn-primary" id="submitBtn">CREATE ACCOUNT</button>
       </form>
 
-      <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
+      <p style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 1rem; line-height: 1.6;">
+        By creating an account, you agree to our
+        <a href="terms.html" style="color: #2563eb;">Terms of Service</a> and
+        <a href="privacy.html" style="color: #2563eb;">Privacy Policy</a>.
+      </p>
+
+      <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
         <span style="font-size: 12px; color: #64748b;">Already have an account? </span>
         <a href="login.html" style="color: #2563eb; text-decoration: underline; cursor: pointer; font-weight: 600;">Sign in</a>
       </div>
 
       <div style="background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 1rem; margin-top: 2rem; text-align: center;">
         <div style="font-size: 12px; color: #1e40af; line-height: 1.6;">
-          After creating your account, you'll log in and complete your profile in just 7 easy steps.
+          <strong>What happens next:</strong> you'll complete your player profile in 7 easy steps (about 15 minutes), choose your plan, and your campaign launches within 24 hours.
         </div>
       </div>
     </div>
@@ -80,37 +89,72 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
+    function showError(message) {
+      const box = document.getElementById('formError');
+      box.textContent = message;
+      box.style.display = 'block';
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function friendlyError(error) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          return 'An account with this email already exists. Try signing in instead.';
+        case 'auth/invalid-email':
+          return 'That email address doesn\'t look right. Please check it and try again.';
+        case 'auth/weak-password':
+          return 'Your password is too weak. Use at least 6 characters.';
+        case 'auth/network-request-failed':
+          return 'Connection problem. Check your internet and try again.';
+        default:
+          return 'Something went wrong creating your account. Please try again.';
+      }
+    }
+
     window.createAccount = function(event) {
       if (event) event.preventDefault();
-      
-      const firstName = document.getElementById('firstName').value;
-      const lastName = document.getElementById('lastName').value;
-      const email = document.getElementById('email').value;
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
+      const btn = document.getElementById('submitBtn');
+      const errorBox = document.getElementById('formError');
+
+      errorBox.style.display = 'none';
 
       if (!firstName || !lastName || !email || !password) {
-        alert('Please fill in all fields');
+        showError('Please fill in all fields.');
         return;
       }
+
+      if (password.length < 6) {
+        showError('Your password must be at least 6 characters.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'CREATING ACCOUNT...';
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(userCredential => {
           const userId = userCredential.user.uid;
-          
-          // Save basic info
-          set(ref(database, 'users/' + userId), {
+
+          return set(ref(database, 'users/' + userId), {
             firstName: firstName,
             lastName: lastName,
             email: email,
             createdAt: new Date().toISOString(),
             status: 'pending'
           });
-
-          alert('✓ Account created! Starting your profile...');
-window.location.href = 'profile-setup.html';
+        })
+        .then(() => {
+          window.location.href = 'profile-setup.html';
         })
         .catch(error => {
-          alert('Error: ' + error.message);
+          btn.disabled = false;
+          btn.textContent = 'CREATE ACCOUNT';
+          showError(friendlyError(error));
         });
     };
   </script>
