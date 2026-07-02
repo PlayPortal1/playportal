@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlayPortal - Get Recruited by Top Universities</title>
+  <title>PlayPortal - Get Recruited to Play College Tennis</title>
+  <meta name="description" content="PlayPortal puts your tennis profile in front of 500+ US college coaches across all divisions. Personalized recruiting campaigns from $99 — no expensive recruiting agencies.">
   <style>
     * {
       margin: 0;
@@ -46,6 +47,24 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .header-nav a.nav-link {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .header-nav a.nav-link:hover {
+      color: #ffa500;
     }
 
     .header-buttons {
@@ -262,6 +281,59 @@
       line-height: 1.6;
     }
 
+    /* SAMPLE EMAIL */
+    .sample-email {
+      background: #f8fafc;
+      padding: 4rem 2rem;
+    }
+
+    .sample-email .container {
+      max-width: 800px;
+    }
+
+    .sample-email .section-subtitle {
+      text-align: center;
+      font-size: 15px;
+      color: #64748b;
+      margin: -2rem auto 2.5rem;
+      max-width: 600px;
+    }
+
+    .email-preview {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .email-preview-header {
+      background: #f1f5f9;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .email-preview-header div {
+      margin-bottom: 0.25rem;
+    }
+
+    .email-preview-header strong {
+      color: #0f172a;
+    }
+
+    .email-preview-body {
+      padding: 1.5rem;
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.8;
+    }
+
+    .email-preview-body p {
+      margin-bottom: 1rem;
+    }
+
     /* CAROUSEL */
     .carousel-container {
       position: relative;
@@ -447,6 +519,89 @@
       font-weight: 700;
     }
 
+    .pricing-note {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .pricing-note a {
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    /* FAQ */
+    .faq {
+      background: #f8fafc;
+      padding: 4rem 2rem;
+    }
+
+    .faq .container {
+      max-width: 800px;
+    }
+
+    .faq-item {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .faq-item.open {
+      border-color: #ff6b35;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1.25rem 1.5rem;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-family: inherit;
+    }
+
+    .faq-question .faq-icon {
+      color: #ff6b35;
+      font-size: 20px;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 0 1.5rem 1.25rem;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    .faq-answer-inner a {
+      color: #1e40af;
+      font-weight: 600;
+    }
+
     /* CTA SECTION */
     .cta-final {
       background: linear-gradient(135deg, #1e40af 0%, #ff6b35 100%);
@@ -473,9 +628,68 @@
     footer {
       background: #0f172a;
       color: white;
-      padding: 2rem;
-      text-align: center;
+      padding: 3rem 2rem 2rem;
       font-size: 12px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 0 auto 2rem;
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-brand .footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-brand p {
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-col h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-col a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .footer-col a:hover {
+      color: #ff6b35;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      color: #64748b;
+      border-top: 1px solid #1e293b;
+      padding-top: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     /* MOBILE RESPONSIVE */
@@ -505,14 +719,16 @@
         gap: 1rem;
       }
 
-      .header-buttons {
-        flex-direction: column;
-        width: 100%;
+      .header-nav .nav-link {
+        display: none;
       }
 
-      .header-buttons .btn {
-        width: 100%;
-        text-align: center;
+      .header-buttons {
+        flex-direction: row;
+      }
+
+      .footer-content {
+        flex-direction: column;
       }
     }
   </style>
@@ -523,30 +739,35 @@
   <header>
     <div class="container">
       <a href="index.html" style="text-decoration: none; cursor: pointer;">
-  <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
-</a>
-      <div class="header-buttons">
-        <a href="login.html" class="btn btn-secondary">Sign In</a>
-        <a href="signup.html" class="btn btn-primary">Get Started</a>
-      </div>
+        <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
+      </a>
+      <nav class="header-nav">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <div class="header-buttons">
+          <a href="login.html" class="btn btn-secondary">Sign In</a>
+          <a href="signup.html" class="btn btn-primary">Get Started</a>
+        </div>
+      </nav>
     </div>
   </header>
 
   <!-- HERO SECTION -->
   <section class="hero">
     <div class="container">
-      <h1>Get <span class="highlight">Recruited</span> by Your Dream University</h1>
-      <p class="subtitle">PlayPortal connects you with hundreds of college coaches in minutes. <strong>No expensive recruiting services. No gatekeepers. Just you and your opportunity.</strong></p>
-      
+      <h1>Get <span class="highlight">Recruited</span> to Play College Tennis</h1>
+      <p class="subtitle">PlayPortal puts your tennis profile directly in front of hundreds of US college coaches. <strong>No expensive recruiting agencies. No gatekeepers. Just you and your opportunity.</strong></p>
+
       <div class="hero-cta">
         <a href="signup.html" class="btn btn-primary" style="font-size: 16px; padding: 1rem 2rem;">Start Your Journey</a>
         <a href="#how-it-works" class="btn btn-secondary" style="font-size: 16px; padding: 1rem 2rem;">How It Works</a>
       </div>
 
       <div class="trust-badge">
-        <div>⭐ 4.9/5 Rating</div>
-        <div>🎾 200+ Athletes Recruited</div>
-        <div>🏆 Top D1, D2, D3 Schools</div>
+        <div>🎾 200+ Tennis Athletes Recruited</div>
+        <div>🏆 D1, D2, D3, NAIA &amp; NJCAA Schools</div>
+        <div>🌍 Athletes from 20+ Countries</div>
       </div>
     </div>
   </section>
@@ -555,24 +776,24 @@
   <section class="stats">
     <div class="container">
       <div class="stat-card">
-        <div class="stat-number">500+</div>
+        <div class="stat-number">750+</div>
         <div class="stat-label">College Coaches</div>
-        <div class="stat-desc">In our coach database</div>
+        <div class="stat-desc">Verified contacts across all 5 divisions</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">7 Min</div>
-        <div class="stat-label">Profile to Launch</div>
-        <div class="stat-desc">From signup to campaign</div>
+        <div class="stat-number">15 Min</div>
+        <div class="stat-label">To Complete Your Profile</div>
+        <div class="stat-desc">Your campaign launches the next day</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">$99</div>
         <div class="stat-label">Starting Price</div>
-        <div class="stat-desc">Way cheaper than recruiters</div>
+        <div class="stat-desc">Recruiting agencies charge $2,000+</div>
       </div>
       <div class="stat-card">
         <div class="stat-number">93%</div>
-        <div class="stat-label">Success Rate</div>
-        <div class="stat-desc">Get replies from coaches</div>
+        <div class="stat-label">Get 10+ Replies</div>
+        <div class="stat-desc">Of campaigns receive 10 or more coach replies</div>
       </div>
     </div>
   </section>
@@ -580,37 +801,61 @@
   <!-- HOW IT WORKS -->
   <section class="how-it-works" id="how-it-works">
     <h2 class="section-title">How PlayPortal Works</h2>
-    
+
     <div class="steps">
       <div class="step">
         <div class="step-number">1</div>
         <h3>Complete Your Profile</h3>
-        <p>Tell us about yourself - academics, tennis stats, achievements. 7 easy steps, takes 15 minutes.</p>
+        <p>Tell us about yourself — academics, tennis results, UTR/rankings, video links. 7 easy steps, takes about 15 minutes.</p>
       </div>
       <div class="step">
         <div class="step-number">2</div>
         <h3>Choose Your Reach</h3>
-        <p>Pick your preferred divisions. Basic (1), Standard (3), or Premium (all 5 divisions).</p>
+        <p>Pick the divisions you want to target. Basic (1 division), Standard (3), or Premium (all 5 divisions).</p>
       </div>
       <div class="step">
         <div class="step-number">3</div>
-        <h3>We Write Your Email</h3>
-        <p>Our team creates a personalized recruiting email that stands out. You review and approve it.</p>
+        <h3>Secure Checkout</h3>
+        <p>Pay securely via PayPal or debit/credit card. You'll instantly receive your dedicated PlayPortal recruiting inbox.</p>
       </div>
       <div class="step">
         <div class="step-number">4</div>
-        <h3>Campaign Launches</h3>
-        <p>Your email goes out to hundreds of coaches tomorrow. Start getting responses.</p>
+        <h3>We Write Your Email</h3>
+        <p>Our team crafts a personalized recruiting email built around your results and goals. You review and approve it before anything is sent.</p>
       </div>
       <div class="step">
         <div class="step-number">5</div>
-        <h3>Secure Payment</h3>
-        <p>Secure payment via PayPal or Debit/Credit card. Get your email credentials instantly.</p>
+        <h3>Your Campaign Launches</h3>
+        <p>Your approved email goes out to coaches in your chosen divisions within 24 hours, sent from your recruiting inbox.</p>
       </div>
       <div class="step">
         <div class="step-number">6</div>
-        <h3>Stay Alert</h3>
-        <p>Watch out for coaches' responses in your inbox and respond to them.</p>
+        <h3>Talk to Coaches</h3>
+        <p>Replies land in your recruiting inbox. You take the conversation from there — and we're here if you need help responding.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAMPLE EMAIL -->
+  <section class="sample-email">
+    <div class="container">
+      <h2 class="section-title">See What Coaches Receive</h2>
+      <p class="section-subtitle">Every campaign email is written by our team around your real results and your intended start — fall or spring intake. Here's an example of what lands in a coach's inbox.</p>
+
+      <div class="email-preview">
+        <div class="email-preview-header">
+          <div><strong>From:</strong> Alex Martins</div>
+          <div><strong>To:</strong> Head coach email address</div>
+          <div><strong>Subject:</strong> Fall 2027 Recruit</div>
+        </div>
+        <div class="email-preview-body">
+          <p>Dear Coach [Last Name],</p>
+          <p>My name is Alex Martins, an 18-year-old player from [Country] looking to join a college program for Fall 2027. I'm currently UTR 11.2, ranked #14 nationally in my age group, and I've reached the semifinals of two ITF J100 events this season. My preferred surface is hard court, and I play an aggressive baseline game.</p>
+          <p>Academically, I hold a 3.8 GPA and I'm taking the SAT this October. My family can invest up to $30,000 per year toward tuition and expenses, so I'm looking for a program where athletic and academic scholarships can cover the remainder.</p>
+          <p>You can find my match video and full player profile here: [links]. I'll have my NCAA eligibility registration completed before applications open.</p>
+          <p>I'd welcome the chance to talk about your roster needs for Fall 2027 — I'm available for a call any time that suits your schedule.</p>
+          <p>Best regards,<br>Alex Martins<br>[Phone / WhatsApp]</p>
+        </div>
       </div>
     </div>
   </section>
@@ -618,9 +863,16 @@
   <!-- TESTIMONIALS CAROUSEL -->
   <section class="testimonials">
     <h2 class="section-title">Athletes Getting Recruited Worldwide</h2>
-    
+
     <div class="carousel-container">
       <div class="carousel" id="testimonialCarousel">
+        <!--
+          TODO: Strengthen these testimonials by adding real first names and
+          committed schools (with the athlete's permission), e.g.:
+          <div class="testimonial-author">Tomas K. 🇬🇧 United Kingdom</div>
+          <div class="testimonial-school">Committed to [University], NCAA D1</div>
+          A named athlete with a real school is worth more than five anonymous quotes.
+        -->
         <div class="testimonial-slide">
           <div class="testimonial">
             <div class="stars">★★★★★</div>
@@ -675,20 +927,20 @@
   </section>
 
   <!-- PRICING -->
-  <section class="pricing">
+  <section class="pricing" id="pricing">
     <h2 class="section-title">Simple Pricing</h2>
-    
+
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-title">BASIC</div>
         <div class="price-amount">$99</div>
-        <div class="price-desc">1 Division</div>
+        <div class="price-desc">1 Division — one-time payment</div>
         <ul class="price-features">
           <li>Contact coaches in 1 division of your choice</li>
-          <li>Personalized email</li>
-          <li>Campaign launch</li>
-          <li>Email credentials</li>
-          <li>Full support</li>
+          <li>Personalized email written by our team</li>
+          <li>Campaign launch within 24 hours</li>
+          <li>Dedicated recruiting inbox</li>
+          <li>Full support throughout</li>
         </ul>
         <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
       </div>
@@ -696,13 +948,13 @@
       <div class="price-card featured">
         <div class="price-title">STANDARD</div>
         <div class="price-amount">$150</div>
-        <div class="price-desc">3 Divisions</div>
+        <div class="price-desc">3 Divisions — one-time payment</div>
         <ul class="price-features">
           <li>Contact coaches in 3 divisions of your choice</li>
-          <li>Personalized email</li>
-          <li>Campaign launch</li>
-          <li>Email credentials</li>
-          <li>Full support</li>
+          <li>Personalized email written by our team</li>
+          <li>Campaign launch within 24 hours</li>
+          <li>Dedicated recruiting inbox</li>
+          <li>Full support throughout</li>
         </ul>
         <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
       </div>
@@ -710,15 +962,80 @@
       <div class="price-card">
         <div class="price-title">PREMIUM</div>
         <div class="price-amount">$215</div>
-        <div class="price-desc">All Divisions</div>
+        <div class="price-desc">All 5 Divisions — one-time payment</div>
         <ul class="price-features">
           <li>Contact coaches in all 5 divisions</li>
-          <li>Personalized email</li>
-          <li>Campaign launch</li>
-          <li>Email credentials</li>
-          <li>Full support</li>
+          <li>Personalized email written by our team</li>
+          <li>Campaign launch within 24 hours</li>
+          <li>Dedicated recruiting inbox</li>
+          <li>Full support throughout</li>
         </ul>
         <a href="signup.html" class="btn btn-primary" style="width: 100%;">Get Started</a>
+      </div>
+    </div>
+
+    <p class="pricing-note">One-time payment. No subscriptions, no hidden fees. See our <a href="refund.html">refund policy</a> for details.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <button class="faq-question">Is contacting coaches this way allowed under NCAA rules?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Yes. If you're not currently enrolled at a university — high school athletes, gap-year players, international prospects — you're allowed to contact college coaches at any time, and coaches expect it. If you're already enrolled at a university and want to change schools, you can contact coaches once you've entered the transfer portal. PlayPortal simply helps you do the outreach well and at scale. You'll still need to register with the NCAA Eligibility Center (or NAIA equivalent) separately to be eligible to compete.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">What is the "dedicated recruiting inbox"?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          When you sign up, we set up a professional email inbox used exclusively for your recruiting campaign. Your campaign is sent from this address and all coach replies arrive there, so nothing gets buried in your personal email. You receive the login credentials right after checkout and keep full access throughout your recruiting process.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Where does your coach database come from?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Our database covers over 750 tennis coaches across NCAA Division 1, 2, and 3, NAIA, and NJCAA programs. Contacts are compiled from official athletic department staff directories and verified regularly, so your email reaches the coaches who actually make recruiting decisions.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">How many replies can I expect?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Every campaign we've run has received coach replies, and 93% receive 10 or more. How many you get depends on your level, results, budget, and which divisions you target — a realistic division selection is the biggest factor. Replies arrive directly in your recruiting inbox, and if you'd like guidance on how to respond to coaches, our support team is there to help.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Do I need a certain level to use PlayPortal?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          College tennis spans a huge range of levels — from top-100 ITF juniors at D1 powerhouses to solid club-level players at D3 and NJCAA programs. If you compete in tournaments and have results to show, there's likely a division that fits you. During profile review we'll flag it honestly if we think your target divisions are unrealistic.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">I'm an international athlete. Does this work for me?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Absolutely — a large share of our athletes are international, and US college coaches actively recruit overseas. Your profile should include your national/international rankings, UTR if available, and match video. Keep in mind you'll separately need to handle NCAA/NAIA eligibility, English tests (TOEFL/SAT requirements vary by school), and an F-1 student visa once admitted.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">How fast will I hear back from coaches?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          Your campaign launches within 24 hours of approval, and the first replies typically arrive within hours of launch. From there, the pace depends on the conversations: some athletes commit to a program within weeks, others take a couple of months of back-and-forth and offers. Starting around 3 months before your intended enrollment is enough time to run the full process comfortably.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Can I get a refund?<span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          You can cancel for a full refund any time before your campaign launches. Once your campaign has been sent to coaches, the service has been delivered in full — your personalized email has been written, your recruiting inbox created, and your profile distributed — so launched campaigns are non-refundable. See our <a href="refund.html">refund policy</a> for the full terms.
+        </div></div>
       </div>
     </div>
   </section>
@@ -727,23 +1044,50 @@
   <section class="cta-final">
     <div class="container">
       <h2>Ready to Take Control of Your Recruiting?</h2>
-      <p>Join 200+ athletes who are getting recruited RIGHT NOW.</p>
+      <p>Join 200+ tennis athletes who took their recruiting into their own hands.</p>
       <a href="signup.html" class="btn btn-secondary" style="font-size: 16px; padding: 1rem 2rem;">Start Your Campaign Today</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <p>PlayPortal © 2024 | Empower Your Recruiting Journey | Questions? Contact playportal.club@gmail.com</p>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">PlayPortal</div>
+        <p>Helping tennis athletes worldwide connect directly with US college coaches — without expensive recruiting agencies.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a href="signup.html">Get Started</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="terms.html">Terms of Service</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="refund.html">Refund Policy</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="mailto:playportal.club@gmail.com">playportal.club@gmail.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>PlayPortal © 2026 | Empower Your Recruiting Journey</p>
+    </div>
   </footer>
 
   <script>
+    // Testimonial carousel
     let currentSlide = 0;
     const slides = document.querySelectorAll('.testimonial-slide');
     const totalSlides = slides.length;
     const dotsContainer = document.getElementById('carouselDots');
 
-    // Create dots
     for (let i = 0; i < totalSlides; i++) {
       const dot = document.createElement('div');
       dot.className = 'dot' + (i === 0 ? ' active' : '');
@@ -754,7 +1098,7 @@
     function showSlide(n) {
       slides.forEach(slide => slide.classList.remove('active'));
       document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('active'));
-      
+
       slides[n].classList.add('active');
       document.querySelectorAll('.dot')[n].classList.add('active');
     }
@@ -771,6 +1115,27 @@
 
     showSlide(0);
     setInterval(nextSlide, 5000);
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const answer = item.querySelector('.faq-answer');
+        const isOpen = item.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-answer').style.maxHeight = null;
+        });
+
+        // Open clicked one
+        if (!isOpen) {
+          item.classList.add('open');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        }
+      });
+    });
   </script>
 
 </body>
