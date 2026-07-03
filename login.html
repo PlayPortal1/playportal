@@ -11,10 +11,10 @@
   <div class="header">
     <div class="header-content">
       <a href="index.html" style="text-decoration: none; cursor: pointer;">
-  <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
-</a>
+        <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
+      </a>
       <div class="user-info">
-        <div id="userStatus">Not logged in</div>
+        <div id="userStatus">Welcome back</div>
       </div>
     </div>
   </div>
@@ -22,100 +22,179 @@
   <div id="loginScreen" class="container">
     <div class="card" style="max-width: 500px; margin: 3rem auto;">
       <h1 style="font-size: 28px; font-weight: 700; text-align: center; margin: 0 0 0.5rem 0;">Sign In</h1>
-      <p style="text-align: center; color: #64748b; margin: 0 0 2rem 0;">Enter your credentials</p>
+      <p style="text-align: center; color: #64748b; margin: 0 0 2rem 0;">Welcome back to PlayPortal</p>
+
+      <div id="formError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 13px; color: #b91c1c;"></div>
+      <div id="formSuccess" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 13px; color: #065f46;"></div>
 
       <form onsubmit="handleLogin(event)">
         <div style="margin-bottom: 1.5rem;">
-          <label>Email Address</label>
-          <input type="email" id="loginEmail" placeholder="test@example.com">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required>
         </div>
 
-        <div style="margin-bottom: 2rem;">
-          <label>Password</label>
-          <input type="password" id="loginPassword" placeholder="••••••••">
+        <div style="margin-bottom: 0.75rem;">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
         </div>
 
-        <button type="submit" class="btn-primary">SIGN IN</button>
+        <div style="text-align: right; margin-bottom: 1.5rem;">
+          <a href="#" onclick="forgotPassword(event)" style="font-size: 12px; color: #2563eb; text-decoration: underline;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="loginBtn">SIGN IN</button>
       </form>
 
       <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
         <span style="font-size: 12px; color: #64748b;">Don't have an account? </span>
         <a href="signup.html" style="color: #2563eb; text-decoration: underline;">Create one</a>
       </div>
-
-      <div style="background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 1rem; margin-top: 2rem; text-align: center;">
-        <div style="font-size: 12px; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem;">Test Credentials:</div>
-        <div style="font-size: 13px; color: #1e40af;">
-          <strong>Email:</strong> test@example.com<br>
-          <strong>Password:</strong> Test123456
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="dashboardScreen" class="container hidden">
-    <div class="card">
-      <h1>Dashboard</h1>
-      <p id="userEmail"></p>
-      <button onclick="handleLogout()" class="btn-secondary">LOG OUT</button>
     </div>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    const ADMIN_EMAIL = 'playportal.club@gmail.com';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
-      authDomain: "playportal-bf6d4.firebaseapp.com",
-      projectId: "playportal-bf6d4",
-      storageBucket: "playportal-bf6d4.firebasestorage.app",
-      messagingSenderId: "419889829572",
-      appId: "1:419889829572:web:f341cf03579997830c5b91",
-      databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
-    };
+    let auth = null;
+    let signInWithEmailAndPassword = null;
+    let sendPasswordResetEmail = null;
+    let appReady = false;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    function showError(message) {
+      const box = document.getElementById('formError');
+      document.getElementById('formSuccess').style.display = 'none';
+      box.textContent = message;
+      box.style.display = 'block';
+    }
+
+    function showSuccess(message) {
+      const box = document.getElementById('formSuccess');
+      document.getElementById('formError').style.display = 'none';
+      box.textContent = message;
+      box.style.display = 'block';
+    }
+
+    function friendlyError(error) {
+      switch (error.code) {
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+        case 'auth/user-not-found':
+          return 'Incorrect email or password. Please try again, or use "Forgot password?" below.';
+        case 'auth/invalid-email':
+          return 'That email address doesn\'t look right. Please check it and try again.';
+        case 'auth/too-many-requests':
+          return 'Too many failed attempts. Please wait a few minutes, or reset your password.';
+        case 'auth/user-disabled':
+          return 'This account has been disabled. Contact us at playportal.club@gmail.com.';
+        case 'auth/network-request-failed':
+          return 'Connection problem. Check your internet and try again.';
+        default:
+          return 'Something went wrong signing in. Please try again.';
+      }
+    }
+
+    function redirectByRole(user) {
+      if (user.email === ADMIN_EMAIL) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'profile-setup.html';
+      }
+    }
 
     window.handleLogin = function(event) {
       if (event) event.preventDefault();
-      
-      const email = document.getElementById('loginEmail').value;
+      if (!appReady) { showError('Still connecting, one moment...'); return; }
+
+      const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+
+      document.getElementById('formError').style.display = 'none';
 
       if (!email || !password) {
-        alert('Please enter email and password');
+        showError('Please enter your email and password.');
         return;
       }
 
+      btn.disabled = true;
+      btn.textContent = 'SIGNING IN...';
+
       signInWithEmailAndPassword(auth, email, password)
-  .then(userCredential => {
-    if (userCredential.user.email === 'playportal.club@gmail.com') {
-      window.location.href = 'admin.html';
-    } else {
-      window.location.href = 'profile-setup.html';
-    }
-  });
+        .then(userCredential => {
+          redirectByRole(userCredential.user);
+        })
+        .catch(error => {
+          btn.disabled = false;
+          btn.textContent = 'SIGN IN';
+          showError(friendlyError(error));
+        });
     };
 
-    window.handleLogout = function() {
-      signOut(auth).then(() => {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('dashboardScreen').classList.add('hidden');
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
-      });
-    };
+    window.forgotPassword = function(event) {
+      if (event) event.preventDefault();
+      if (!appReady) { showError('Still connecting, one moment...'); return; }
 
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboardScreen').classList.remove('hidden');
-        document.getElementById('userEmail').textContent = 'Welcome, ' + user.email;
-        document.getElementById('userStatus').textContent = '✓ ' + user.email;
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) {
+        showError('Type your email address in the field above first, then click "Forgot password?" again.');
+        document.getElementById('loginEmail').focus();
+        return;
       }
-    });
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          showSuccess('Password reset email sent to ' + email + '. Check your inbox (and spam folder), follow the link, then sign in with your new password.');
+        })
+        .catch(error => {
+          if (error.code === 'auth/invalid-email') {
+            showError('That email address doesn\'t look right. Please check it.');
+          } else if (error.code === 'auth/too-many-requests') {
+            showError('Too many reset requests. Please wait a few minutes and try again.');
+          } else {
+            // Firebase intentionally doesn't reveal whether an account exists,
+            // so treat other outcomes as success for the user's privacy.
+            showSuccess('If an account exists for ' + email + ', a password reset email has been sent. Check your inbox and spam folder.');
+          }
+        });
+    };
+
+    async function startApp() {
+      try {
+        const [appMod, authMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js")
+        ]);
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+          authDomain: "playportal-bf6d4.firebaseapp.com",
+          projectId: "playportal-bf6d4",
+          storageBucket: "playportal-bf6d4.firebasestorage.app",
+          messagingSenderId: "419889829572",
+          appId: "1:419889829572:web:f341cf03579997830c5b91",
+          databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = appMod.initializeApp(firebaseConfig);
+        auth = authMod.getAuth(app);
+        signInWithEmailAndPassword = authMod.signInWithEmailAndPassword;
+        sendPasswordResetEmail = authMod.sendPasswordResetEmail;
+
+        authMod.onAuthStateChanged(auth, user => {
+          appReady = true;
+          if (user) {
+            // Already signed in — go straight to the right place
+            document.getElementById('userStatus').textContent = '\u2713 ' + user.email;
+            redirectByRole(user);
+          }
+        });
+      } catch (err) {
+        console.error('Firebase failed to load:', err);
+        showError('Could not connect to the server. Check your internet connection (and any ad-blocker), then refresh the page.');
+      }
+    }
+
+    startApp();
   </script>
 
 </body>
