@@ -11,8 +11,8 @@
   <div class="header">
     <div class="header-content">
       <a href="index.html" style="text-decoration: none; cursor: pointer;">
-  <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
-</a>
+        <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
+      </a>
       <div class="user-info">
         <div id="userEmail">Admin</div>
         <button onclick="logout()" class="btn-secondary" style="padding: 0.5rem 1.5rem; border-radius: 6px;">🚪 Logout</button>
@@ -21,15 +21,15 @@
   </div>
 
   <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; padding: 2rem; max-width: 1400px; margin: 0 auto;">
-    
+
     <!-- SIDEBAR -->
     <div style="background: white; border-radius: 12px; padding: 2rem; height: fit-content; border: 1px solid #e2e8f0;">
       <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 1.5rem; text-transform: uppercase;">Navigation</div>
-      
-      <div class="sidebar-btn active" onclick="switchTab('dashboard')">📊 Dashboard</div>
-      <div class="sidebar-btn" onclick="switchTab('campaigns')">📧 Campaigns</div>
-      <div class="sidebar-btn" onclick="switchTab('templates')">📝 Email Templates</div>
-      <div class="sidebar-btn" onclick="switchTab('notifications')">🔔 Notifications</div>
+
+      <div class="sidebar-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</div>
+      <div class="sidebar-btn" onclick="switchTab('campaigns', this)">📧 Campaigns</div>
+      <div class="sidebar-btn" onclick="switchTab('templates', this)">📝 Email Templates</div>
+      <div class="sidebar-btn" onclick="switchTab('notifications', this)">🔔 Notifications</div>
 
       <style>
         .sidebar-btn {
@@ -51,11 +51,20 @@
           color: white;
           border-color: #2563eb;
         }
+        .status-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
       </style>
     </div>
 
     <!-- MAIN CONTENT -->
     <div>
+      <div id="pageError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 13px; color: #b91c1c;"></div>
+
       <!-- DASHBOARD TAB -->
       <div id="dashboard" class="tab">
         <h1 style="margin-bottom: 2rem; font-size: 28px;">Dashboard</h1>
@@ -68,22 +77,22 @@
             <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Registered athletes</div>
           </div>
 
-          <div style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #f472b6;">
-            <div style="font-size: 12px; font-weight: 700; color: #be185d; margin-bottom: 0.5rem;">PENDING APPROVAL</div>
-            <div style="font-size: 32px; font-weight: 800; color: #be185d;" id="kpi-pending">0</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Waiting for email</div>
+          <div style="background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #fdba74;">
+            <div style="font-size: 12px; font-weight: 700; color: #c2410c; margin-bottom: 0.5rem;">EMAILS TO WRITE</div>
+            <div style="font-size: 32px; font-weight: 800; color: #c2410c;" id="kpi-towrite">0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Paid &amp; waiting (incl. change requests)</div>
           </div>
 
           <div style="background: linear-gradient(135deg, #dffcf0 0%, #bbf7d0 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #86efac;">
-            <div style="font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 0.5rem;">ACTIVE CAMPAIGNS</div>
-            <div style="font-size: 32px; font-weight: 800; color: #15803d;" id="kpi-active">0</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Sending now</div>
+            <div style="font-size: 12px; font-weight: 700; color: #15803d; margin-bottom: 0.5rem;">READY TO SEND</div>
+            <div style="font-size: 32px; font-weight: 800; color: #15803d;" id="kpi-ready">0</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">Approved by athlete</div>
           </div>
 
           <div style="background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%); border-radius: 12px; padding: 1.5rem; border: 2px solid #fbbf24;">
             <div style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 0.5rem;">TOTAL REVENUE</div>
             <div style="font-size: 32px; font-weight: 800; color: #92400e;" id="kpi-revenue">$0</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">From packages</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 0.5rem;">From completed payments</div>
           </div>
         </div>
 
@@ -106,10 +115,13 @@
             <div>
               <label style="font-size: 12px; font-weight: 700; color: #64748b;">Filter by Status</label>
               <select id="filter-status" onchange="filterCampaigns()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; margin-top: 0.5rem;">
-                <option value="">All Status</option>
-                <option value="pending">Pending Email</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
+                <option value="">All Statuses</option>
+                <option value="incomplete">Not Paid Yet</option>
+                <option value="needs_email">Paid — Write Email</option>
+                <option value="review">Awaiting Athlete Review</option>
+                <option value="changes">Changes Requested</option>
+                <option value="ready">Approved — Send Campaign</option>
+                <option value="launched">Launched</option>
               </select>
             </div>
             <div>
@@ -135,7 +147,7 @@
         <!-- CREATE NEW TEMPLATE -->
         <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
           <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 1.5rem;">Create New Template</h2>
-          
+
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Template Name</label>
             <input type="text" id="template-name" placeholder="e.g., D1 Recruitment Email" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
@@ -143,13 +155,13 @@
 
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email Subject</label>
-            <input type="text" id="template-subject" placeholder="e.g., Tennis Prospect - Your Name" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <input type="text" id="template-subject" placeholder="e.g., Fall 2027 Recruit" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
           </div>
 
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email Body</label>
-            <textarea id="template-body" placeholder="Use [ATHLETE_NAME], [SCHOOL], [GPA], [UTR] for placeholders" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 200px; font-family: monospace; font-size: 12px;"></textarea>
-            <div style="font-size: 11px; color: #64748b; margin-top: 0.5rem;">Available placeholders: [ATHLETE_NAME], [SCHOOL], [GPA], [UTR], [OPPORTUNITY_TYPE]</div>
+            <textarea id="template-body" placeholder="Use [ATHLETE_NAME], [SCHOOL], [GPA], [UTR], [BUDGET], [VIDEO] for placeholders" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; height: 200px; font-family: monospace; font-size: 12px;"></textarea>
+            <div style="font-size: 11px; color: #64748b; margin-top: 0.5rem;">Available placeholders: [ATHLETE_NAME], [SCHOOL], [GPA], [UTR], [WTN], [BUDGET], [VIDEO], [COUNTRY], [OPPORTUNITY_TYPE]</div>
           </div>
 
           <button onclick="saveTemplate()" class="btn-primary" style="padding: 0.75rem 2rem;">💾 Save Template</button>
@@ -170,9 +182,9 @@
 
         <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
           <button onclick="filterNotifications('all')" class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 12px;">All</button>
-          <button onclick="filterNotifications('signup')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">New Signups</button>
-          <button onclick="filterNotifications('pending')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Pending Email</button>
-          <button onclick="filterNotifications('active')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Active Campaigns</button>
+          <button onclick="filterNotifications('needs_email')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Emails to Write</button>
+          <button onclick="filterNotifications('changes')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Change Requests</button>
+          <button onclick="filterNotifications('ready')" style="padding: 0.5rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 12px;">Ready to Send</button>
         </div>
 
         <div id="notifications-list">
@@ -183,26 +195,55 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { getDatabase, ref, get, set, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    // NOTE ON SECURITY: the email check below only hides this page from
+    // non-admins. Real protection MUST come from Firebase Database Rules —
+    // only the admin account should be allowed to read the full /users list
+    // and write other users' data. Verify this in Firebase Console → Rules.
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
-      authDomain: "playportal-bf6d4.firebaseapp.com",
-      projectId: "playportal-bf6d4",
-      storageBucket: "playportal-bf6d4.firebasestorage.app",
-      messagingSenderId: "419889829572",
-      appId: "1:419889829572:web:f341cf03579997830c5b91",
-      databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+    const ADMIN_EMAIL = 'playportal.club@gmail.com';
+
+    const packagePrice = { basic: 99, standard: 150, premium: 215 };
+
+    const STATUS_META = {
+      incomplete:  { label: 'Not Paid Yet',              bg: '#f3f4f6', fg: '#4b5563' },
+      needs_email: { label: 'PAID — Write Email',        bg: '#ffedd5', fg: '#c2410c' },
+      review:      { label: 'Awaiting Athlete Review',   bg: '#dbeafe', fg: '#1e40af' },
+      changes:     { label: 'Changes Requested',         bg: '#fef3c7', fg: '#92400e' },
+      ready:       { label: 'Approved — Send Campaign',  bg: '#dcfce7', fg: '#15803d' },
+      launched:    { label: 'Launched',                  bg: '#ccfbf1', fg: '#0f766e' }
     };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
 
     let allUsers = {};
     let allCampaigns = [];
+
+    // Firebase handles, set after dynamic import
+    let database = null;
+    let ref = null, get = null, set = null, remove = null, update = null;
+    let auth = null, signOut = null;
+
+    function esc(v) {
+      return (v ?? '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return 'N/A';
+      const d = new Date(iso);
+      return isNaN(d) ? 'N/A' : d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // The single source of truth for where a user is in the pay-first flow
+    function deriveStatus(user) {
+      if (user.emailsSent) return 'launched';
+      if (user.emailApproved) return 'ready';
+      if (user.emailSuggestedChanges) return 'changes';
+      if (user.emailTemplate && user.emailTemplate.content) return 'review';
+      if (user.status === 'completed') return 'needs_email';
+      return 'incomplete';
+    }
 
     window.logout = function() {
       signOut(auth).then(() => {
@@ -210,14 +251,14 @@
       });
     };
 
-    window.switchTab = function(tabName) {
+    window.switchTab = function(tabName, btn) {
       document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
-      document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
-      
-      document.getElementById(tabName).style.display = 'block';
-      event.target.classList.add('active');
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
 
-      if (tabName === 'campaigns') displayCampaigns(allCampaigns);
+      document.getElementById(tabName).style.display = 'block';
+      if (btn) btn.classList.add('active');
+
+      if (tabName === 'campaigns') filterCampaigns();
       if (tabName === 'templates') loadTemplates();
       if (tabName === 'notifications') loadNotifications();
     };
@@ -243,7 +284,7 @@
         document.getElementById('template-subject').value = '';
         document.getElementById('template-body').value = '';
         loadTemplates();
-      });
+      }).catch(err => alert('Error saving template: ' + err.message));
     };
 
     window.filterCampaigns = function() {
@@ -252,7 +293,7 @@
 
       let filtered = allCampaigns.filter(c => {
         if (status && c.status !== status) return false;
-        if (email && !c.email.toLowerCase().includes(email)) return false;
+        if (email && !(c.email || '').toLowerCase().includes(email)) return false;
         return true;
       });
 
@@ -264,41 +305,41 @@
     };
 
     function loadAllData() {
-  console.log('loadAllData called');
-  get(ref(database, 'users')).then(snapshot => {
-    console.log('Firebase data received:', snapshot.val());
-    allUsers = snapshot.val() || {};
-    allCampaigns = [];
-        
+      get(ref(database, 'users')).then(snapshot => {
+        allUsers = snapshot.val() || {};
+        allCampaigns = [];
+
         let totalUsers = 0;
-        let pending = 0;
-        let active = 0;
+        let toWrite = 0;
+        let ready = 0;
         let revenue = 0;
         let recentList = [];
-
-        const packagePrice = { basic: 99, standard: 150, premium: 215 };
 
         Object.keys(allUsers).forEach(uid => {
           const user = allUsers[uid];
           totalUsers++;
 
-          if (user.package) revenue += packagePrice[user.package] || 0;
+          // Revenue counts only completed payments, at the amount actually recorded
+          if (user.status === 'completed') {
+            revenue += Number(user.amountPaid) || packagePrice[user.package] || 0;
+          }
 
-          const name = (user.firstName || '') + ' ' + (user.lastName || '');
+          const status = deriveStatus(user);
+          const name = ((user.firstName || '') + ' ' + (user.lastName || '')).trim() || '(no name)';
           const campaignData = {
             uid: uid,
-            name: name.trim(),
-            email: user.email,
+            name: name,
+            email: user.email || '',
             package: user.package || 'N/A',
             opportunity: user.opportunityType || 'N/A',
-            status: !user.emailApproved ? 'pending' : user.emailsSent ? 'completed' : 'active',
+            status: status,
             createdAt: user.createdAt
           };
 
           allCampaigns.push(campaignData);
 
-          if (!user.emailApproved) pending++;
-          else if (user.emailApproved && !user.emailsSent) active++;
+          if (status === 'needs_email' || status === 'changes') toWrite++;
+          if (status === 'ready') ready++;
 
           if (user.createdAt) recentList.push(campaignData);
         });
@@ -307,13 +348,27 @@
         recentList = recentList.slice(0, 5);
 
         document.getElementById('kpi-total').textContent = totalUsers;
-        document.getElementById('kpi-pending').textContent = pending;
-        document.getElementById('kpi-active').textContent = active;
+        document.getElementById('kpi-towrite').textContent = toWrite;
+        document.getElementById('kpi-ready').textContent = ready;
         document.getElementById('kpi-revenue').textContent = '$' + revenue;
 
         displayRecentSignups(recentList);
-        displayCampaigns(allCampaigns);
+        filterCampaigns();
+      }).catch(err => {
+        console.error('Error loading users:', err);
+        showPageError('Could not load user data: ' + err.message);
       });
+    }
+
+    function showPageError(message) {
+      const box = document.getElementById('pageError');
+      box.textContent = message;
+      box.style.display = 'block';
+    }
+
+    function statusBadge(status) {
+      const meta = STATUS_META[status] || STATUS_META.incomplete;
+      return `<div class="status-badge" style="background: ${meta.bg}; color: ${meta.fg};">${meta.label}</div>`;
     }
 
     function displayRecentSignups(list) {
@@ -325,12 +380,12 @@
           html += `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e2e8f0;">
               <div>
-                <div style="font-weight: 600;">${user.name}</div>
-                <div style="font-size: 12px; color: #64748b;">${user.email}</div>
+                <div style="font-weight: 600;">${esc(user.name)}</div>
+                <div style="font-size: 12px; color: #64748b;">${esc(user.email)}</div>
               </div>
               <div style="text-align: right;">
-                <div style="font-size: 12px; font-weight: 600; color: #2563eb;">${user.package}</div>
-                <div style="font-size: 11px; color: #64748b;">${user.opportunity}</div>
+                <div style="font-size: 12px; font-weight: 600; color: #2563eb;">${esc(user.package)}</div>
+                <div style="font-size: 11px; color: #64748b;">${esc(user.opportunity)}</div>
               </div>
             </div>
           `;
@@ -340,42 +395,34 @@
     }
 
     function displayCampaigns(list) {
-  let html = '';
-  if (list.length === 0) {
-    html = '<p style="color: #64748b;">No campaigns</p>';
-  } else {
-    list.forEach(campaign => {
-      const user = allUsers[campaign.uid];
-      const isPaid = user && user.status === 'completed';
-      const statusColor = campaign.status === 'pending' ? '#dbeafe' : campaign.status === 'active' ? '#dcfce7' : '#fef3c7';
-      const statusText = campaign.status === 'pending' ? 'Pending Email' : campaign.status === 'active' ? 'Active' : 'Completed';
-      
-      html += `
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;" 
-             onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'" 
-             onmouseout="this.style.boxShadow='none'"
-             onclick="openProfileDetail('${campaign.uid}')">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div>
-                <h3 style="margin: 0; font-size: 16px; font-weight: 700;">${campaign.name}</h3>
-                <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${campaign.email}</p>
+      let html = '';
+      if (list.length === 0) {
+        html = '<p style="color: #64748b;">No campaigns match this filter</p>';
+      } else {
+        list.forEach(campaign => {
+          html += `
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.3s;"
+                 onmouseover="this.style.boxShadow='0 8px 16px rgba(0,0,0,0.1)'"
+                 onmouseout="this.style.boxShadow='none'"
+                 onclick="openProfileDetail('${esc(campaign.uid)}')">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="margin: 0; font-size: 16px; font-weight: 700;">${esc(campaign.name)}</h3>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #64748b;">${esc(campaign.email)}</p>
+                </div>
+                ${statusBadge(campaign.status)}
               </div>
-              ${isPaid ? '<div style="font-size: 20px;">✅</div>' : ''}
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+                <div><strong>Package:</strong> ${esc(campaign.package)}</div>
+                <div><strong>Opportunity:</strong> ${esc(campaign.opportunity)}</div>
+              </div>
+              <div style="margin-top: 1rem; font-size: 12px; color: #2563eb; font-weight: 600;">👁️ Click to manage →</div>
             </div>
-            <div style="background: ${statusColor}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 11px; font-weight: 700;">${statusText}</div>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
-            <div><strong>Package:</strong> ${campaign.package}</div>
-            <div><strong>Opportunity:</strong> ${campaign.opportunity}</div>
-          </div>
-          <div style="margin-top: 1rem; font-size: 12px; color: #2563eb; font-weight: 600;">👁️ Click to manage →</div>
-        </div>
-      `;
-    });
-  }
-  document.getElementById('campaigns-list').innerHTML = html;
-}
+          `;
+        });
+      }
+      document.getElementById('campaigns-list').innerHTML = html;
+    }
 
     function loadTemplates() {
       get(ref(database, 'templates')).then(snapshot => {
@@ -389,9 +436,10 @@
             const template = templates[key];
             html += `
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
-                <h3 style="margin: 0 0 0.5rem 0; font-size: 14px; font-weight: 700;">${template.name}</h3>
-                <p style="margin: 0; font-size: 12px; color: #64748b; white-space: pre-wrap; font-family: monospace;">${template.subject}</p>
-                <button onclick="deleteTemplate('${key}')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ Delete</button>
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 14px; font-weight: 700;">${esc(template.name)}</h3>
+                <p style="margin: 0 0 0.75rem 0; font-size: 12px; color: #64748b;"><strong>Subject:</strong> ${esc(template.subject)}</p>
+                <p style="margin: 0; font-size: 12px; color: #64748b; white-space: pre-wrap; font-family: monospace; max-height: 150px; overflow-y: auto; background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e2e8f0;">${esc(template.body)}</p>
+                <button onclick="deleteTemplate('${esc(key)}')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ Delete</button>
               </div>
             `;
           });
@@ -414,46 +462,33 @@
 
       Object.keys(allUsers).forEach(uid => {
         const user = allUsers[uid];
-        
-        if (filter === 'signup' || filter === 'all') {
-          notifications.push({
-            type: 'signup',
-            message: `New signup: ${user.firstName} ${user.lastName}`,
-            time: user.createdAt,
-            icon: '👤'
-          });
+        const status = deriveStatus(user);
+        const name = ((user.firstName || '') + ' ' + (user.lastName || '')).trim() || user.email || 'Unknown';
+
+        if ((filter === 'needs_email' || filter === 'all') && status === 'needs_email') {
+          notifications.push({ message: `${name} paid — write their recruiting email`, time: user.paidAt || user.createdAt, icon: '💰', uid });
         }
-        if ((filter === 'pending' || filter === 'all') && !user.emailApproved) {
-          notifications.push({
-            type: 'pending',
-            message: `${user.firstName} ${user.lastName} waiting for email`,
-            time: user.createdAt,
-            icon: '📧'
-          });
+        if ((filter === 'changes' || filter === 'all') && status === 'changes') {
+          notifications.push({ message: `${name} requested changes to their email`, time: user.emailChangesRequestedAt || user.createdAt, icon: '✏️', uid });
         }
-        if ((filter === 'active' || filter === 'all') && user.emailApproved && !user.emailsSent) {
-          notifications.push({
-            type: 'active',
-            message: `${user.firstName} ${user.lastName} campaign active`,
-            time: user.createdAt,
-            icon: '🚀'
-          });
+        if ((filter === 'ready' || filter === 'all') && status === 'ready') {
+          notifications.push({ message: `${name} approved their email — send the campaign`, time: user.emailApprovedAt || user.createdAt, icon: '🚀', uid });
         }
       });
 
       notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
 
       if (notifications.length === 0) {
-        html = '<p style="color: #64748b;">No notifications</p>';
+        html = '<p style="color: #64748b;">Nothing needs your attention right now 🎉</p>';
       } else {
         notifications.forEach(notif => {
           html += `
-            <div style="background: white; border-left: 4px solid #2563eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
+            <div style="background: white; border-left: 4px solid #2563eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer;" onclick="openProfileDetail('${esc(notif.uid)}')">
               <div style="display: flex; align-items: center; gap: 1rem;">
                 <span style="font-size: 24px;">${notif.icon}</span>
                 <div style="flex: 1;">
-                  <p style="margin: 0; font-size: 13px; font-weight: 600;">${notif.message}</p>
-                  <p style="margin: 0.25rem 0 0 0; font-size: 11px; color: #64748b;">Just now</p>
+                  <p style="margin: 0; font-size: 13px; font-weight: 600;">${esc(notif.message)}</p>
+                  <p style="margin: 0.25rem 0 0 0; font-size: 11px; color: #64748b;">${fmtDate(notif.time)}</p>
                 </div>
               </div>
             </div>
@@ -463,248 +498,343 @@
       document.getElementById('notifications-list').innerHTML = html;
     }
 
-window.openProfileDetail = function(uid) {
-  const user = allUsers[uid];
-  if (!user) return;
+    window.openProfileDetail = function(uid) {
+      const user = allUsers[uid];
+      if (!user) return;
 
-  const fullName = (user.firstName || '') + ' ' + (user.lastName || '');
-  
-  let detailHtml = `
-    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;" onclick="closeProfileDetail()">
-      <div style="background: white; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 2rem;" onclick="event.stopPropagation()">
-        
-        <!-- CLOSE BUTTON -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-          <h1 style="margin: 0; font-size: 24px; font-weight: 700;">${fullName}</h1>
-          <button onclick="closeProfileDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
-        </div>
+      const fullName = ((user.firstName || '') + ' ' + (user.lastName || '')).trim();
+      const firstName = (user.firstName || 'athlete');
+      const status = deriveStatus(user);
 
-        <p style="margin: 0 0 1.5rem 0; color: #64748b; font-size: 14px;">${user.email}</p>
-
-        <!-- PERSONAL INFO -->
-        <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📋 Personal Information</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
-            <div><strong>Gender:</strong> ${user.gender || 'N/A'}</div>
-            <div><strong>DOB:</strong> ${user.dob || 'N/A'}</div>
-            <div><strong>Package:</strong> ${user.package || 'N/A'}</div>
-            <div><strong>Opportunity:</strong> ${user.opportunityType || 'N/A'}</div>
-          </div>
-        </div>
-
-        <!-- ACADEMIC INFO -->
-        <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🎓 Academic Information</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
-            <div><strong>School:</strong> ${user.school || 'N/A'}</div>
-            <div><strong>Grad Year:</strong> ${user.gradYear || 'N/A'}</div>
-            <div><strong>GPA:</strong> ${user.gpa || 'N/A'}</div>
-            ${user.sat ? `<div><strong>SAT:</strong> ${user.sat}</div>` : ''}
-          </div>
-          ${user.academicAchievements ? `<div style="margin-top: 1rem; font-size: 12px; color: #475569;">📝 ${user.academicAchievements}</div>` : ''}
-        </div>
-
-        <!-- TENNIS INFO -->
-        <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🎾 Tennis Information</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
-            <div><strong>Years Playing:</strong> ${user.yearsPlaying || 'N/A'}</div>
-            <div><strong>Hand:</strong> ${user.playingHand || 'N/A'}</div>
-            <div><strong>UTR:</strong> ${user.utr || 'N/A'}</div>
-            <div><strong>WTN:</strong> ${user.wtn || 'N/A'}</div>
-          </div>
-          ${user.tennisAchievements ? `<div style="margin-top: 1rem; font-size: 12px; color: #475569;">🏆 ${user.tennisAchievements}</div>` : ''}
-        </div>
-
-        <!-- EMAIL TEMPLATE SECTION -->
-        <div style="background: #fff7ed; border: 2px solid #fed7aa; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📧 Email Template</h3>
-          <textarea id="emailContent-${uid}" placeholder="Paste the email template here..." style="width: 100%; padding: 0.75rem; border: 1px solid #fed7aa; border-radius: 6px; height: 120px; font-family: monospace; font-size: 12px;"></textarea>
-          <button onclick="sendEmailNotification('${uid}', '${fullName}')" style="width: 100%; padding: 0.75rem; margin-top: 1rem; background: #ff6b35; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">📧 Send Email to ${fullName.split(' ')[0]}</button>
-        </div>
-
-<!-- USER RESPONSE STATUS -->
-        <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📊 User Response</h3>
-          <div id="userResponseStatus-${uid}" style="font-size: 13px;">
-            ${user.emailApproved ? `
-              <div style="background: #dcfce7; border-left: 3px solid #10b981; padding: 1rem; border-radius: 6px;">
-                <strong style="color: #065f46;">✅ APPROVED</strong><br>
-                <span style="color: #047857; font-size: 12px;">User approved the template</span>
-              </div>
-            ` : user.emailSuggestedChanges ? `
-              <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 1rem; border-radius: 6px;">
-                <strong style="color: #92400e;">✏️ CHANGES SUGGESTED</strong><br>
-                <span style="color: #b45309; font-size: 12px;">User wants modifications</span><br>
-                <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 4px; border-left: 2px solid #f59e0b;">
-                  <strong style="color: #b45309; font-size: 11px;">Their Message:</strong><br>
-                  <span style="color: #75509f; font-size: 12px; white-space: pre-wrap;">${user.emailSuggestedChanges}</span>
-                </div>
-              </div>
-            ` : `
-              <div style="background: #f3f4f6; border-left: 3px solid #9ca3af; padding: 1rem; border-radius: 6px;">
-                <strong style="color: #4b5563;">⏳ PENDING</strong><br>
-                <span style="color: #6b7280; font-size: 12px;">Waiting for user response</span>
-              </div>
-            `}
-          </div>
-        </div>
-
-        <!-- STATUS UPDATE -->
-        <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
-          <div style="display: flex; gap: 1rem;">
-            <button onclick="updateStatus('${uid}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Email Approved</button>
-            <button onclick="markEmailsSent('${uid}', '${fullName}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Emails Sent</button>
-          </div>
-        </div>
-
-        <!-- CREDENTIALS SECTION -->
-        <div style="background: #f3e8ff; border: 2px solid #d8b4fe; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-          <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🔐 Credentials</h3>
-          
-          <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-            <div style="margin-bottom: 1rem;">
-              <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Email Address</label>
-              <input type="text" id="credEmail-${uid}" placeholder="athlete@gmail.com" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+      // Payment box, with a tamper check against the expected package price
+      const expected = packagePrice[user.package];
+      const paid = Number(user.amountPaid);
+      let paymentHtml;
+      if (user.status === 'completed') {
+        const mismatch = expected && paid && paid !== expected;
+        paymentHtml = `
+          <div style="background: ${mismatch ? '#fef2f2' : '#f0fdf4'}; border: 2px solid ${mismatch ? '#fecaca' : '#bbf7d0'}; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">💰 Payment</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+              <div><strong>Amount:</strong> ${paid ? '$' + paid : 'N/A'}${expected ? ' (expected $' + expected + ')' : ''}</div>
+              <div><strong>Method:</strong> ${esc(user.paymentMethod || 'N/A')}</div>
+              <div><strong>Date:</strong> ${fmtDate(user.paidAt)}</div>
+              <div style="word-break: break-all;"><strong>Ref:</strong> ${esc(user.paymentId || 'N/A')}</div>
             </div>
-            <div style="margin-bottom: 1rem;">
-              <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Password</label>
-              <input type="text" id="credPassword-${uid}" placeholder="Secure password" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
-            </div>
-            <button onclick="saveCredential('${uid}')" style="width: 100%; padding: 0.75rem; background: #a855f7; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">+ ADD CREDENTIAL</button>
-          </div>
-
-          <div id="credentialsList-${uid}" style="margin-top: 1rem;">
-            <p style="color: #64748b; font-size: 12px; margin: 0;">Loading credentials...</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  `;
-
-  document.body.insertAdjacentHTML('beforeend', detailHtml);
-  loadCredentials(uid);
-};
-
-
-window.closeProfileDetail = function() {
-  const modal = document.querySelector('div[onclick="closeProfileDetail()"]');
-  if (modal) modal.remove();
-};
-
-window.sendEmailNotification = function(uid, name) {
-  const emailContent = document.getElementById('emailContent-' + uid).value;
-  if (!emailContent.trim()) {
-    alert('Please paste the email template');
-    return;
-  }
-  
-  // Save template to Firebase for this user
-  set(ref(database, 'users/' + uid + '/emailTemplate'), {
-    content: emailContent,
-    status: 'pending_review',
-    createdAt: new Date().toISOString()
-  }).then(() => {
-    alert('✅ Email template sent to ' + name + '!\n\nThey can now review it when they log in.');
-    closeProfileDetail();
-    loadAllData();
-  }).catch(err => {
-    alert('Error: ' + err.message);
-  });
-};
-
-window.updateStatus = function(uid, newStatus) {
-  const statuses = {
-    'active': 'emailApproved',
-    'completed': 'emailsSent'
-  };
-  
-  update(ref(database, 'users/' + uid), {
-    [statuses[newStatus]]: true
-  }).then(() => {
-    alert('✅ Status updated!');
-    closeProfileDetail();
-    loadAllData();
-  });
-};
-
-window.markEmailsSent = function(uid, name) {
-  update(ref(database, 'users/' + uid), {
-    emailsSent: true,
-    emailsSentAt: new Date().toISOString()
-  }).then(() => {
-    alert('✅ Marked as sent! ' + name + ' can now proceed to payment.');
-    closeProfileDetail();
-    loadAllData();
-  });
-};
-
-window.saveCredential = function(uid) {
-  const email = document.getElementById('credEmail-' + uid).value.trim();
-  const password = document.getElementById('credPassword-' + uid).value.trim();
-  
-  if (!email || !password) {
-    alert('Please fill in both email and password');
-    return;
-  }
-  
-  const credentialId = Date.now();
-  update(ref(database, 'users/' + uid + '/credentials/' + credentialId), {
-    email: email,
-    password: password,
-    addedAt: new Date().toISOString()
-  }).then(() => {
-    document.getElementById('credEmail-' + uid).value = '';
-    document.getElementById('credPassword-' + uid).value = '';
-    loadCredentials(uid);
-  }).catch(err => {
-    alert('Error saving credential: ' + err.message);
-  });
-};
-
-window.loadCredentials = function(uid) {
-  get(ref(database, 'users/' + uid + '/credentials')).then(snapshot => {
-    const credentials = snapshot.val() || {};
-    let html = '';
-    
-    if (Object.keys(credentials).length === 0) {
-      html = '<p style="color: #64748b; font-size: 12px; margin: 0;">No credentials added yet</p>';
-    } else {
-      Object.keys(credentials).forEach(credId => {
-        const cred = credentials[credId];
-        html += `
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
-            <div style="flex: 1;">
-              <div style="font-size: 12px; font-weight: 600; color: #0f172a;">${cred.email}</div>
-              <div style="font-size: 11px; color: #64748b; margin-top: 0.25rem; font-family: monospace;">${cred.password}</div>
-            </div>
-            <button onclick="deleteCredential('${uid}', '${credId}')" style="padding: 0.5rem 0.75rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">🗑️</button>
+            ${mismatch ? '<div style="margin-top: 1rem; font-size: 12px; color: #b91c1c; font-weight: 700;">⚠️ AMOUNT MISMATCH — verify this payment in PayPal/Stripe before doing any work.</div>' : ''}
           </div>
         `;
-      });
-    }
-    document.getElementById('credentialsList-' + uid).innerHTML = html;
-  });
-};
+      } else {
+        paymentHtml = `
+          <div style="background: #f3f4f6; border: 2px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 14px; font-weight: 700;">💰 Payment</h3>
+            <div style="font-size: 13px; color: #6b7280;">Not paid yet — don't write their email or send anything until payment is completed.</div>
+          </div>
+        `;
+      }
 
-window.deleteCredential = function(uid, credId) {
-  if (confirm('Delete this credential?')) {
-    remove(ref(database, 'users/' + uid + '/credentials/' + credId)).then(() => {
+      const divisions = Array.isArray(user.selectedDivisions) && user.selectedDivisions.length > 0
+        ? user.selectedDivisions.map(d => d.toUpperCase()).join(', ')
+        : 'N/A';
+
+      const meta = STATUS_META[status];
+
+      let detailHtml = `
+        <div id="profileModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;" onclick="closeProfileDetail()">
+          <div style="background: white; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 2rem;" onclick="event.stopPropagation()">
+
+            <!-- HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: 700;">${esc(fullName) || '(no name)'}</h1>
+              <button onclick="closeProfileDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+              <p style="margin: 0; color: #64748b; font-size: 14px;">${esc(user.email)}</p>
+              <div class="status-badge" style="background: ${meta.bg}; color: ${meta.fg};">${meta.label}</div>
+            </div>
+
+            ${paymentHtml}
+
+            <!-- PERSONAL INFO -->
+            <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📋 Personal Information</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+                <div><strong>Gender:</strong> ${esc(user.gender || 'N/A')}</div>
+                <div><strong>DOB:</strong> ${esc(user.dob || 'N/A')}</div>
+                <div><strong>Country:</strong> ${esc(user.country || 'N/A')}</div>
+                <div><strong>Budget:</strong> ${esc(user.budget || 'N/A')}</div>
+                <div><strong>Package:</strong> ${esc(user.package || 'N/A')}</div>
+                <div><strong>Divisions:</strong> ${esc(divisions)}</div>
+                <div style="grid-column: 1 / -1;"><strong>Opportunity:</strong> ${esc(user.opportunityType || 'N/A')}</div>
+              </div>
+            </div>
+
+            <!-- ACADEMIC INFO -->
+            <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🎓 Academic Information</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+                <div><strong>School:</strong> ${esc(user.school || 'N/A')}</div>
+                <div><strong>Grad Year:</strong> ${esc(user.gradYear || 'N/A')}</div>
+                <div><strong>GPA:</strong> ${esc(user.gpa || 'N/A')}</div>
+                ${user.sat ? `<div><strong>SAT:</strong> ${esc(user.sat)}</div>` : ''}
+                ${user.currentDegree ? `<div><strong>Current Degree:</strong> ${esc(user.currentDegree)}</div>` : ''}
+                ${user.degreeStudied ? `<div><strong>Degree Studied:</strong> ${esc(user.degreeStudied)}</div>` : ''}
+                ${user.degreeWantToStudy ? `<div><strong>Wants to Study:</strong> ${esc(user.degreeWantToStudy)}</div>` : ''}
+              </div>
+              ${user.academicAchievements ? `<div style="margin-top: 1rem; font-size: 12px; color: #475569; white-space: pre-wrap;">📝 ${esc(user.academicAchievements)}</div>` : ''}
+            </div>
+
+            <!-- TENNIS INFO -->
+            <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🎾 Tennis Information</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 13px;">
+                <div><strong>Years Playing:</strong> ${esc(user.yearsPlaying || 'N/A')}</div>
+                <div><strong>Hand:</strong> ${esc(user.playingHand || 'N/A')}</div>
+                <div><strong>UTR:</strong> ${esc(user.utr || 'N/A')}</div>
+                <div><strong>WTN:</strong> ${esc(user.wtn || 'N/A')}</div>
+                <div style="grid-column: 1 / -1;"><strong>Video:</strong> ${user.videoLink ? `<a href="${esc(user.videoLink)}" target="_blank" rel="noopener" style="color: #2563eb;">${esc(user.videoLink)}</a>` : 'N/A'}</div>
+              </div>
+              ${user.tennisAchievements ? `<div style="margin-top: 1rem; font-size: 12px; color: #475569; white-space: pre-wrap;">🏆 ${esc(user.tennisAchievements)}</div>` : ''}
+            </div>
+
+            <!-- EMAIL TEMPLATE SECTION -->
+            <div style="background: #fff7ed; border: 2px solid #fed7aa; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📧 Email Template</h3>
+              <textarea id="emailContent-${esc(uid)}" placeholder="Paste the email template here..." style="width: 100%; padding: 0.75rem; border: 1px solid #fed7aa; border-radius: 6px; height: 160px; font-family: monospace; font-size: 12px;"></textarea>
+              <button onclick="sendEmailNotification('${esc(uid)}')" style="width: 100%; padding: 0.75rem; margin-top: 1rem; background: #ff6b35; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">📧 Send Template to ${esc(firstName)} for Review</button>
+            </div>
+
+            <!-- USER RESPONSE STATUS -->
+            <div style="background: #f0f9ff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">📊 Athlete Response</h3>
+              <div style="font-size: 13px;">
+                ${user.emailApproved ? `
+                  <div style="background: #dcfce7; border-left: 3px solid #10b981; padding: 1rem; border-radius: 6px;">
+                    <strong style="color: #065f46;">✅ APPROVED</strong><br>
+                    <span style="color: #047857; font-size: 12px;">Approved ${fmtDate(user.emailApprovedAt)} — send the campaign, then mark it below.</span>
+                  </div>
+                ` : user.emailSuggestedChanges ? `
+                  <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 1rem; border-radius: 6px;">
+                    <strong style="color: #92400e;">✏️ CHANGES REQUESTED</strong> <span style="color: #b45309; font-size: 11px;">(${fmtDate(user.emailChangesRequestedAt)})</span>
+                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 4px; border-left: 2px solid #f59e0b;">
+                      <span style="color: #78350f; font-size: 12px; white-space: pre-wrap;">${esc(user.emailSuggestedChanges)}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem; font-size: 11px; color: #b45309;">Sending a new template above will clear this request and reset their review.</div>
+                  </div>
+                ` : user.emailTemplate && user.emailTemplate.content ? `
+                  <div style="background: #f3f4f6; border-left: 3px solid #9ca3af; padding: 1rem; border-radius: 6px;">
+                    <strong style="color: #4b5563;">⏳ AWAITING REVIEW</strong><br>
+                    <span style="color: #6b7280; font-size: 12px;">Template sent ${fmtDate(user.emailTemplate.createdAt)} — waiting for the athlete to approve.</span>
+                  </div>
+                ` : `
+                  <div style="background: #f3f4f6; border-left: 3px solid #9ca3af; padding: 1rem; border-radius: 6px;">
+                    <strong style="color: #4b5563;">✍️ NO TEMPLATE YET</strong><br>
+                    <span style="color: #6b7280; font-size: 12px;">${user.status === 'completed' ? 'They have paid — write and send their template above.' : 'They have not paid yet.'}</span>
+                  </div>
+                `}
+              </div>
+            </div>
+
+            <!-- STATUS UPDATE -->
+            <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
+              <div style="display: flex; gap: 1rem;">
+                <button onclick="updateStatus('${esc(uid)}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Mark Approved (override)</button>
+                <button onclick="markEmailsSent('${esc(uid)}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">🚀 Campaign Sent</button>
+              </div>
+            </div>
+
+            <!-- CREDENTIALS SECTION -->
+            <div style="background: #f3e8ff; border: 2px solid #d8b4fe; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🔐 Recruiting Inbox Credentials</h3>
+
+              <div style="background: white; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                  <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Email Address</label>
+                  <input type="text" id="credEmail-${esc(uid)}" placeholder="athlete@gmail.com" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                  <label style="display: block; font-weight: 600; font-size: 12px; margin-bottom: 0.5rem; color: #0f172a;">Password</label>
+                  <input type="text" id="credPassword-${esc(uid)}" placeholder="Secure password" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+                </div>
+                <button onclick="saveCredential('${esc(uid)}')" style="width: 100%; padding: 0.75rem; background: #a855f7; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">+ ADD CREDENTIAL</button>
+              </div>
+
+              <div id="credentialsList-${esc(uid)}" style="margin-top: 1rem;">
+                <p style="color: #64748b; font-size: 12px; margin: 0;">Loading credentials...</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', detailHtml);
+
+      // Prefill the template box with what was previously sent (safe: set as value, not HTML)
+      if (user.emailTemplate && user.emailTemplate.content) {
+        document.getElementById('emailContent-' + uid).value = user.emailTemplate.content;
+      }
+
       loadCredentials(uid);
-    });
-  }
-};
+    };
 
-    onAuthStateChanged(auth, user => {
-      if (!user || user.email !== 'playportal.club@gmail.com') {
-        window.location.href = 'login.html';
+    window.closeProfileDetail = function() {
+      const modal = document.getElementById('profileModal');
+      if (modal) modal.remove();
+    };
+
+    window.sendEmailNotification = function(uid) {
+      const emailContent = document.getElementById('emailContent-' + uid).value;
+      if (!emailContent.trim()) {
+        alert('Please paste the email template');
         return;
       }
-      document.getElementById('userEmail').textContent = '✓ ' + user.email;
-      loadAllData();
-    });
+
+      // Sending a (new) template resets any previous approval / change request
+      update(ref(database, 'users/' + uid), {
+        emailTemplate: {
+          content: emailContent,
+          status: 'pending_review',
+          createdAt: new Date().toISOString()
+        },
+        emailSuggestedChanges: null,
+        emailApproved: null
+      }).then(() => {
+        alert('✅ Template sent! The athlete can now review it when they log in.');
+        closeProfileDetail();
+        loadAllData();
+      }).catch(err => {
+        alert('Error: ' + err.message);
+      });
+    };
+
+    window.updateStatus = function(uid, newStatus) {
+      const statuses = {
+        'active': 'emailApproved',
+        'completed': 'emailsSent'
+      };
+
+      update(ref(database, 'users/' + uid), {
+        [statuses[newStatus]]: true
+      }).then(() => {
+        alert('✅ Status updated!');
+        closeProfileDetail();
+        loadAllData();
+      });
+    };
+
+    window.markEmailsSent = function(uid) {
+      update(ref(database, 'users/' + uid), {
+        emailsSent: true,
+        emailsSentAt: new Date().toISOString()
+      }).then(() => {
+        alert('✅ Campaign marked as launched!\n\nDon\'t forget to add their recruiting inbox credentials below so they can see coach replies.');
+        loadAllData();
+        // Keep the modal open so credentials can be added right away
+      });
+    };
+
+    window.saveCredential = function(uid) {
+      const email = document.getElementById('credEmail-' + uid).value.trim();
+      const password = document.getElementById('credPassword-' + uid).value.trim();
+
+      if (!email || !password) {
+        alert('Please fill in both email and password');
+        return;
+      }
+
+      const credentialId = Date.now();
+      update(ref(database, 'users/' + uid + '/credentials/' + credentialId), {
+        email: email,
+        password: password,
+        addedAt: new Date().toISOString()
+      }).then(() => {
+        document.getElementById('credEmail-' + uid).value = '';
+        document.getElementById('credPassword-' + uid).value = '';
+        loadCredentials(uid);
+      }).catch(err => {
+        alert('Error saving credential: ' + err.message);
+      });
+    };
+
+    window.loadCredentials = function(uid) {
+      get(ref(database, 'users/' + uid + '/credentials')).then(snapshot => {
+        const credentials = snapshot.val() || {};
+        let html = '';
+
+        if (Object.keys(credentials).length === 0) {
+          html = '<p style="color: #64748b; font-size: 12px; margin: 0;">No credentials added yet</p>';
+        } else {
+          Object.keys(credentials).forEach(credId => {
+            const cred = credentials[credId];
+            html += `
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 600; color: #0f172a; word-break: break-all;">${esc(cred.email)}</div>
+                  <div style="font-size: 11px; color: #64748b; margin-top: 0.25rem; font-family: monospace; word-break: break-all;">${esc(cred.password)}</div>
+                </div>
+                <button onclick="deleteCredential('${esc(uid)}', '${esc(credId)}')" style="padding: 0.5rem 0.75rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;">🗑️</button>
+              </div>
+            `;
+          });
+        }
+        document.getElementById('credentialsList-' + uid).innerHTML = html;
+      });
+    };
+
+    window.deleteCredential = function(uid, credId) {
+      if (confirm('Delete this credential?')) {
+        remove(ref(database, 'users/' + uid + '/credentials/' + credId)).then(() => {
+          loadCredentials(uid);
+        });
+      }
+    };
+
+    async function startApp() {
+      try {
+        const [appMod, authMod, dbMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js")
+        ]);
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+          authDomain: "playportal-bf6d4.firebaseapp.com",
+          projectId: "playportal-bf6d4",
+          storageBucket: "playportal-bf6d4.firebasestorage.app",
+          messagingSenderId: "419889829572",
+          appId: "1:419889829572:web:f341cf03579997830c5b91",
+          databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = appMod.initializeApp(firebaseConfig);
+        auth = authMod.getAuth(app);
+        signOut = authMod.signOut;
+        database = dbMod.getDatabase(app);
+        ref = dbMod.ref;
+        get = dbMod.get;
+        set = dbMod.set;
+        remove = dbMod.remove;
+        update = dbMod.update;
+
+        authMod.onAuthStateChanged(auth, user => {
+          if (!user || user.email !== ADMIN_EMAIL) {
+            window.location.href = 'login.html';
+            return;
+          }
+          document.getElementById('userEmail').textContent = '\u2713 ' + user.email;
+          loadAllData();
+        });
+      } catch (err) {
+        console.error('Firebase failed to load:', err);
+        showPageError('Could not connect to the server. Check your internet connection (and any ad-blocker), then refresh the page.');
+      }
+    }
+
+    startApp();
   </script>
 
 </body>
