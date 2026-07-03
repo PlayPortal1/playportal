@@ -127,17 +127,25 @@
       if (!validateStep()) return;
       saveStep();
 
-      userData.currentStep = currentStep < 7 ? currentStep + 1 : 7;
+      // Don't advance the stored step past package selection until payment is made
+      let nextStored = currentStep + 1;
+      if (currentStep === 5 && userData.status !== 'completed') nextStored = 5;
+      if (nextStored > 7) nextStored = 7;
+      userData.currentStep = nextStored;
 
       update(ref(database, 'users/' + currentUser.uid), userData).catch(err => {
         console.error('Error saving:', err);
       });
 
+      if (currentStep === 5 && userData.status !== 'completed') {
+        // Payment comes before we write the email
+        window.location.href = 'payment.html';
+        return;
+      }
+
       if (currentStep < 7) {
         currentStep++;
         displayStep();
-      } else {
-        completeProfile();
       }
     };
 
@@ -300,9 +308,10 @@
       document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
 
       let nextBtnText = 'NEXT STEP →';
-      if (currentStep === 7) nextBtnText = 'COMPLETE & PAY →';
+      if (currentStep === 5 && userData.status !== 'completed') nextBtnText = 'CONTINUE TO PAYMENT →';
 
       document.getElementById('nextBtn').textContent = nextBtnText;
+      document.getElementById('nextBtn').style.display = currentStep === 7 ? 'none' : 'block';
       document.getElementById('nextBtn').disabled = currentStep === 6;
       if (currentStep === 6) {
         document.getElementById('nextBtn').style.opacity = '0.5';
@@ -486,6 +495,16 @@
       // STEP 5: Package Selection
       if (currentStep === 5) {
         title = 'Select Your Package';
+        if (userData.status === 'completed') {
+          const paidNames = { basic: 'Basic — $99', standard: 'Standard — $150', premium: 'Premium — $215' };
+          const paidDivs = (userData.selectedDivisions || []).map(d => d.toUpperCase()).join(', ');
+          html = `
+            <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
+              <div style="font-weight: 700; margin-bottom: 0.5rem; color: #065f46;">\u2705 Package purchased</div>
+              <div style="font-size: 13px; color: #475569;">${paidNames[userData.package] || 'Package'} \u2014 Divisions: ${esc(paidDivs) || 'N/A'}.<br>Your package is locked in. Continue to the next step to review your recruiting email.</div>
+            </div>
+          `;
+        } else {
         html = `
           <p style="font-size: 14px; color: #475569; margin-bottom: 1.5rem;">Choose your package:</p>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
@@ -536,6 +555,7 @@
             </div>
           ` : ''}
         `;
+        }
       }
 
       // STEP 6: Email Review
@@ -601,11 +621,24 @@
         title = 'Campaign Status';
 
         if (userData.emailsSent) {
+          const credsArr = userData.credentials ? Object.values(userData.credentials) : [];
+          const credsHtml = credsArr.length > 0 ? `
+              <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; text-align: left;">
+                <div style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 1rem;">YOUR RECRUITING INBOX</div>
+                ${credsArr.map(cred => `
+                  <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Email Account</div>
+                    <div style="font-size: 14px; font-weight: 600; word-break: break-all;">${esc(cred.email)}</div>
+                    <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-top: 0.5rem;">Password</div>
+                    <div style="font-size: 14px; font-weight: 600; word-break: break-all; font-family: monospace;">${esc(cred.password)}</div>
+                  </div>
+                `).join('')}
+              </div>` : '';
           html = `
             <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center;">
               <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
-              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign is Complete!</h2>
-              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Emails have been sent to coaches. You can now proceed to payment.</p>
+              <h2 style="font-size: 20px; font-weight: 700; color: #1d4ed8; margin: 0 0 0.75rem 0;">Your Campaign Has Launched!</h2>
+              <p style="font-size: 14px; color: #1e40af; margin: 0 0 2rem 0;">Your email has been sent to coaches. Watch your recruiting inbox for replies.</p>
 
               <div style="background: white; border-radius: 12px; padding: 1.5rem;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
@@ -620,9 +653,11 @@
                 </div>
               </div>
 
+              ${credsHtml}
+
               <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
                 <div style="font-size: 12px; color: #065f46;">
-                  <strong>✅ All set!</strong> Your campaign has been sent. Proceed to complete your payment.
+                  <strong>✅ All set!</strong> Log in to your recruiting inbox and reply to coaches as their responses come in.
                 </div>
               </div>
             </div>
@@ -646,7 +681,7 @@
                   </div>
                   <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 8px;">
                     <div style="font-size: 12px; color: #065f46;">
-                      <strong>📧 Once complete,</strong> you'll receive an email and can proceed to payment.
+                      <strong>📧 Once complete,</strong> your recruiting inbox credentials will appear here and replies will start arriving.
                     </div>
                   </div>
                 </div>
@@ -655,26 +690,10 @@
           `;
         }
 
-        document.getElementById('nextBtn').disabled = !userData.emailsSent;
-        if (!userData.emailsSent) {
-          document.getElementById('nextBtn').style.opacity = '0.5';
-          document.getElementById('nextBtn').style.cursor = 'not-allowed';
-        } else {
-          document.getElementById('nextBtn').style.opacity = '1';
-          document.getElementById('nextBtn').style.cursor = 'pointer';
-        }
       }
 
       document.getElementById('stepTitle').textContent = title;
       document.getElementById('stepContent').innerHTML = html;
-    }
-
-    function completeProfile() {
-      update(ref(database, 'users/' + currentUser.uid), userData).then(() => {
-        window.location.href = 'payment.html';
-      }).catch(err => {
-        alert('Error: ' + err.message);
-      });
     }
 
     window.approveEmailTemplate = function() {
@@ -752,6 +771,11 @@
               } else if (userData.opportunityType) {
                 currentStep = 2;
               }
+            }
+
+            // Under the pay-first flow, nobody proceeds past package selection unpaid
+            if (currentStep > 5 && userData.status !== 'completed') {
+              currentStep = 5;
             }
 
             appReady = true;

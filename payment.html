@@ -12,10 +12,10 @@
   <div class="header">
     <div class="header-content">
       <a href="index.html" style="text-decoration: none; cursor: pointer;">
-  <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
-</a>
+        <img src="logo.png" alt="PlayPortal" style="height: 90px; width: auto;">
+      </a>
       <div class="user-info">
-        <div id="userEmail">Not logged in</div>
+        <div id="userEmail">Loading...</div>
         <div style="font-size: 12px; color: #64748b; margin-top: 0.25rem;">Payment</div>
       </div>
     </div>
@@ -23,25 +23,27 @@
 
   <div class="container">
     <div class="card" style="max-width: 600px; margin: 0 auto;">
-      
+
       <h1 style="margin-bottom: 0.5rem;">Complete Your Payment</h1>
-      <p style="color: #64748b; margin-bottom: 2rem;">Choose your payment method - PayPal or Debit Card</p>
+      <p style="color: #64748b; margin-bottom: 2rem;">Choose your payment method - PayPal or Debit/Credit Card</p>
+
+      <div id="pageError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 13px; color: #b91c1c;"></div>
 
       <!-- ORDER SUMMARY -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
         <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">Order Summary</h3>
-        
+
         <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem;">
           <div>
-            <div style="font-size: 12px; font-weight: 600; color: #0f172a;" id="packageName">Standard Package</div>
-            <div style="font-size: 11px; color: #64748b;" id="packageDivisions">3 Divisions (D1, D2, NAIA)</div>
+            <div style="font-size: 12px; font-weight: 600; color: #0f172a;" id="packageName">Loading...</div>
+            <div style="font-size: 11px; color: #64748b;" id="packageDivisions"></div>
           </div>
-          <div style="font-weight: 700; color: #2563eb;" id="packagePrice">$99.00</div>
+          <div style="font-weight: 700; color: #2563eb;" id="packagePrice"></div>
         </div>
 
         <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700;">
           <div>TOTAL</div>
-          <div style="color: #2563eb; font-size: 18px;" id="totalPrice">$99.00</div>
+          <div style="color: #2563eb; font-size: 18px;" id="totalPrice"></div>
         </div>
       </div>
 
@@ -53,7 +55,7 @@
 
       <!-- PAYPAL BUTTON -->
       <div id="paypal-container" style="display: block;">
-        <div id="paypal-button-container" style="margin-bottom: 2rem;"></div>
+        <div id="paypal-button-container" style="margin-bottom: 1rem;"></div>
       </div>
 
       <!-- STRIPE FORM -->
@@ -63,14 +65,22 @@
         <button onclick="processStripePayment()" id="stripe-button" style="width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1rem;">PAY NOW</button>
       </div>
 
+      <!-- LEGAL CONSENT -->
+      <p style="text-align: center; font-size: 11px; color: #94a3b8; margin: 0 0 1.5rem 0; line-height: 1.6;">
+        🔒 Payments are processed securely by PayPal or Stripe — we never see or store your card details.<br>
+        By completing your purchase you agree to our
+        <a href="terms.html" target="_blank" style="color: #2563eb;">Terms of Service</a> and
+        <a href="refund.html" target="_blank" style="color: #2563eb;">Refund Policy</a>.
+      </p>
+
       <!-- BENEFITS -->
       <div style="background: #f0f9ff; border-left: 4px solid #2563eb; padding: 1.5rem; border-radius: 8px;">
-        <h3 style="margin: 0 0 1rem 0; font-size: 13px; font-weight: 700; color: #1e40af;">✓ What You Get After Payment:</h3>
+        <h3 style="margin: 0 0 1rem 0; font-size: 13px; font-weight: 700; color: #1e40af;">✓ What Happens After Payment:</h3>
         <ul style="margin: 0; padding-left: 1.5rem; color: #1e40af; font-size: 12px; line-height: 1.8;">
-          <li>📧 Dedicated email account (e.g., yourname.athlete@gmail.com)</li>
-          <li>🔑 Secure password & login credentials</li>
-          <li>🚀 Hundreds of emails sent to college coaches</li>
-        </ul>   
+          <li>✍️ Our team writes your personalized recruiting email (24–48 hours)</li>
+          <li>👀 You review and approve it before anything is sent</li>
+          <li>🚀 Your campaign launches within 24 hours of approval, with your dedicated recruiting inbox</li>
+        </ul>
       </div>
 
       <!-- BACK BUTTON -->
@@ -81,110 +91,46 @@
   </div>
 
   <script src="https://www.paypal.com/sdk/js?client-id=AfrLcP9W72Nvcn0ToQvOqBNo6iSAfpYi0SKUuYSiyWPkxFZVYXnFtQ4UCqPE8mO9JvT8De3tOhBHswRQ"></script>
-  
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
-      authDomain: "playportal-bf6d4.firebaseapp.com",
-      projectId: "playportal-bf6d4",
-      storageBucket: "playportal-bf6d4.firebasestorage.app",
-      messagingSenderId: "419889829572",
-      appId: "1:419889829572:web:f341cf03579997830c5b91",
-      databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+  <script type="module">
+    // UI helpers defined first so nothing depends on Firebase having loaded.
+
+    const packagePrices = {
+      basic: 99,
+      standard: 150,
+      premium: 215
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
+    const divisionNames = {
+      d1: 'NCAA D1',
+      d2: 'NCAA D2',
+      d3: 'NCAA D3',
+      naia: 'NAIA',
+      juco: 'JUCO'
+    };
 
     let currentUser = null;
     let userData = null;
     let stripe = null;
     let elements = null;
     let cardElement = null;
-    
-    const packagePrices = {
-      basic: 90,
-      standard: 150,
-      premium: 215  
-    };
 
-    // Initialize Stripe
-    stripe = Stripe('pk_live_51TjbhQHDQZrEEQQ9qSqscOhbbArdC9pNmrNUlEhRKs6K3pxkQ1cQA2X5GjX1n1vAdaJEO2zUvgUERX4JT8lVlXUy00iW2U41vV');
-    elements = stripe.elements();
-    cardElement = elements.create('card');
+    // Firebase handles, set after dynamic import:
+    let database = null;
+    let ref = null, get = null, update = null;
 
-    // Check authentication
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        alert('Please log in first');
-        window.location.href = 'login.html';
-        return;
-      }
+    function esc(v) {
+      return (v ?? '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
 
-      currentUser = user;
-      document.getElementById('userEmail').textContent = '✓ ' + user.email;
-
-      // Load user data and setup payments
-      get(ref(database, 'users/' + user.uid)).then(snapshot => {
-        userData = snapshot.val();
-        if (userData) {
-          setupPayment();
-        }
-      });
-    });
-
-    function setupPayment() {
-      const pkg = userData.package || 'standard';
-      const price = packagePrices[pkg];
-      const packageInfo = {
-        basic: { name: 'Basic Package', divisions: '1 Division (NCAA D1)' },
-        standard: { name: 'Standard Package', divisions: '3 Divisions (D1, D2, NAIA)' },
-        premium: { name: 'Premium Package', divisions: 'All 5 Divisions' }
-      };
-
-      const pkgInfo = packageInfo[pkg];
-      document.getElementById('packageName').textContent = pkgInfo.name;
-      document.getElementById('packageDivisions').textContent = pkgInfo.divisions;
-      document.getElementById('packagePrice').textContent = '$' + price + '.00';
-      document.getElementById('totalPrice').textContent = '$' + price + '.00';
-
-      // PayPal button
-      paypal.Buttons({
-        createOrder: function(data, actions) {
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: price.toString()
-              },
-              description: pkgInfo.name
-            }]
-          });
-        },
-        onApprove: function(data, actions) {
-          return actions.order.capture().then(function(orderData) {
-            completePayment(orderData);
-          });
-        },
-        onError: function(err) {
-          alert('Payment error: ' + err);
-        }
-      }).render('#paypal-button-container');
-
-      // Mount Stripe card element
-      cardElement.mount('#card-element');
-      cardElement.addEventListener('change', function(event) {
-        const displayError = document.getElementById('card-errors');
-        if (event.error) {
-          displayError.textContent = event.error.message;
-        } else {
-          displayError.textContent = '';
-        }
-      });
+    function showPageError(message) {
+      const box = document.getElementById('pageError');
+      box.textContent = message;
+      box.style.display = 'block';
     }
 
     window.switchPaymentMethod = function(method) {
@@ -205,140 +151,296 @@
       }
     };
 
-    window.processStripePayment = async function() {
-  document.getElementById('stripe-button').disabled = true;
-  document.getElementById('stripe-button').textContent = 'Processing...';
-
-  const price = packagePrices[userData.package || 'standard'];
-
-  try {
-    // Create Payment Intent on backend
-    const response = await fetch('/api/stripe-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: price,
-        currency: 'usd',
-        description: (userData.package || 'standard') + ' Package'
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error);
-    }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: { email: currentUser.email }
+    function setupPayment() {
+      if (userData.status === 'completed') {
+        document.querySelector('.card').innerHTML = `
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">\u2705</div>
+            <h1 style="margin: 0 0 0.5rem 0; color: #10b981;">Payment Already Received</h1>
+            <p style="color: #64748b; margin: 0 0 2rem 0;">You've already paid for your campaign \u2014 no further payment is needed.</p>
+            <a href="profile-setup.html" style="display: inline-block; background: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">RETURN TO MY PROFILE</a>
+          </div>
+        `;
+        return;
       }
-    });
 
-    if (error) {
-      document.getElementById('card-errors').textContent = error.message;
-      document.getElementById('stripe-button').disabled = false;
-      document.getElementById('stripe-button').textContent = 'PAY NOW';
-      return;
+      const pkg = userData.package || 'standard';
+      const price = packagePrices[pkg];
+      const packageInfo = {
+        basic: { name: 'Basic Package' },
+        standard: { name: 'Standard Package' },
+        premium: { name: 'Premium Package' }
+      };
+
+      // Show the athlete's actual chosen divisions, not a hardcoded example
+      let divisionsText;
+      if (Array.isArray(userData.selectedDivisions) && userData.selectedDivisions.length > 0) {
+        divisionsText = userData.selectedDivisions.map(d => divisionNames[d] || d.toUpperCase()).join(', ');
+      } else {
+        divisionsText = pkg === 'premium' ? 'All 5 Divisions' : pkg === 'standard' ? '3 Divisions' : '1 Division';
+      }
+
+      document.getElementById('packageName').textContent = packageInfo[pkg].name;
+      document.getElementById('packageDivisions').textContent = divisionsText;
+      document.getElementById('packagePrice').textContent = '$' + price + '.00';
+      document.getElementById('totalPrice').textContent = '$' + price + '.00';
+
+      // PayPal button
+      if (typeof paypal !== 'undefined') {
+        paypal.Buttons({
+          createOrder: function(data, actions) {
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  value: price.toString()
+                },
+                description: packageInfo[pkg].name
+              }]
+            });
+          },
+          onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+              completePayment({ id: orderData.id, source: 'paypal' });
+            });
+          },
+          onError: function(err) {
+            showPageError('PayPal reported a problem processing the payment. Please try again, or use the Debit Card option.');
+            console.error('PayPal error:', err);
+          }
+        }).render('#paypal-button-container');
+      } else {
+        document.getElementById('paypal-button-container').innerHTML =
+          '<div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 1rem; font-size: 13px; color: #92400e;">PayPal could not load. Check your connection or ad-blocker and refresh, or pay by card instead.</div>';
+      }
+
+      // Stripe card element
+      if (typeof Stripe !== 'undefined') {
+        stripe = Stripe('pk_live_51TjbhQHDQZrEEQQ9qSqscOhbbArdC9pNmrNUlEhRKs6K3pxkQ1cQA2X5GjX1n1vAdaJEO2zUvgUERX4JT8lVlXUy00iW2U41vV');
+        elements = stripe.elements();
+        cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+        cardElement.addEventListener('change', function(event) {
+          document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+        });
+      } else {
+        document.getElementById('stripe-container').innerHTML =
+          '<div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 1rem; font-size: 13px; color: #92400e;">Card payment could not load. Check your connection or ad-blocker and refresh, or pay with PayPal instead.</div>';
+      }
     }
 
-    // Payment successful
-    completePayment({ id: paymentIntent.id, source: 'stripe' });
+    window.processStripePayment = async function() {
+      const btn = document.getElementById('stripe-button');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
 
-  } catch (error) {
-    document.getElementById('card-errors').textContent = error.message;
-    document.getElementById('stripe-button').disabled = false;
-    document.getElementById('stripe-button').textContent = 'PAY NOW';
-  }
-};
+      const price = packagePrices[userData.package || 'standard'];
 
-    function completePayment(orderData) {
-      // Load credentials from Firebase (admin provided)
-      get(ref(database, 'users/' + currentUser.uid + '/credentials')).then(snapshot => {
-        const credentialsData = snapshot.val() || {};
-        const credentialsArray = Object.values(credentialsData);
+      try {
+        // Create Payment Intent on backend
+        const response = await fetch('/api/stripe-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: price,
+            currency: 'usd',
+            description: (userData.package || 'standard') + ' Package',
+            uid: currentUser.uid
+          })
+        });
 
-        if (credentialsArray.length === 0) {
-          alert('⚠️ No credentials found. Please ask admin to add credentials.');
-          document.getElementById('stripe-button').disabled = false;
-          document.getElementById('stripe-button').textContent = 'PAY NOW';
+        if (!response.ok) {
+          let msg = 'Card payment is temporarily unavailable. Please pay with PayPal instead.';
+          try {
+            const errData = await response.json();
+            if (errData.error) msg = errData.error;
+          } catch (e) { /* non-JSON response, keep friendly message */ }
+          throw new Error(msg);
+        }
+
+        const data = await response.json();
+
+        // Confirm payment with Stripe
+        const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { email: currentUser.email }
+          }
+        });
+
+        if (error) {
+          document.getElementById('card-errors').textContent = error.message;
+          btn.disabled = false;
+          btn.textContent = 'PAY NOW';
           return;
         }
 
-        // Mark user as paid
-        update(ref(database, 'users/' + currentUser.uid), {
-          status: 'completed',
-          paymentId: orderData.id,
-          paymentMethod: orderData.source || 'paypal',
-          paidAt: new Date().toISOString()
-        }).then(() => {
-          // Show success with admin-provided credentials
-          showSuccessScreen(credentialsArray);
-        }).catch(error => {
-          alert('Error saving payment: ' + error.message);
-          document.getElementById('stripe-button').disabled = false;
-          document.getElementById('stripe-button').textContent = 'PAY NOW';
+        completePayment({ id: paymentIntent.id, source: 'stripe' });
+
+      } catch (error) {
+        document.getElementById('card-errors').textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'PAY NOW';
+      }
+    };
+
+    function completePayment(orderData) {
+      // 1) ALWAYS record the payment first, so a paid user is never left unrecorded.
+      const paymentRecord = {
+        status: 'completed',
+        paymentId: orderData.id,
+        paymentMethod: orderData.source || 'paypal',
+        amountPaid: packagePrices[userData.package || 'standard'],
+        paidAt: new Date().toISOString(),
+        currentStep: 6
+      };
+
+      update(ref(database, 'users/' + currentUser.uid), paymentRecord)
+        .then(() => get(ref(database, 'users/' + currentUser.uid + '/credentials')))
+        .then(snapshot => {
+          const credentialsArray = Object.values(snapshot.val() || {});
+          showSuccessScreen(credentialsArray, orderData.id);
+        })
+        .catch(error => {
+          console.error('Post-payment error:', error);
+          // Payment went through even if our recording/lookup failed.
+          // Never show the user a dead end after taking their money.
+          showSuccessScreen([], orderData.id);
         });
-      }).catch(error => {
-        alert('Error loading credentials: ' + error.message);
-        document.getElementById('stripe-button').disabled = false;
-        document.getElementById('stripe-button').textContent = 'PAY NOW';
-      });
     }
 
-    function showSuccessScreen(credentialsArray) {
+    function showSuccessScreen(credentialsArray, paymentId) {
+      let credentialsHtml;
+
+      if (credentialsArray.length > 0) {
+        credentialsHtml = `
+          <div id="credentialsDisplay" style="margin-bottom: 1.5rem;">
+            ${credentialsArray.map((cred, index) => `
+              <div style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
+                <div style="font-size: 12px; color: #64748b; font-weight: 700; margin-bottom: 0.5rem;">CREDENTIAL ${index + 1}</div>
+
+                <div style="margin-bottom: 1rem;">
+                  <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Email Account</div>
+                  <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all;">${esc(cred.email)}</div>
+                  <button class="copy-btn" data-copy="${esc(cred.email)}" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
+                </div>
+
+                <div>
+                  <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Password</div>
+                  <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all; font-family: monospace;">${esc(cred.password)}</div>
+                  <button class="copy-btn" data-copy="${esc(cred.password)}" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 1rem; border-radius: 6px;">
+            <div style="font-size: 12px; color: #065f46; line-height: 1.6;">
+              <strong>📧 Next Steps:</strong><br>
+              1. Copy your credentials above<br>
+              2. Log in to your recruiting email account<br>
+              3. Watch for coaches' responses and stay in touch with them<br>
+              <br>
+              You're all set!
+            </div>
+          </div>
+        `;
+      } else {
+        credentialsHtml = `
+          <div style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: left;">
+            <div style="font-size: 14px; color: #0f172a; line-height: 1.8;">
+              <strong>Here's what happens next:</strong><br>
+              <span style="font-size: 13px; color: #475569;">
+              1. Our team writes your personalized recruiting email — expect it within 24–48 hours.<br>
+              2. You'll review and approve it on your profile page before anything is sent.<br>
+              3. Once approved, your campaign launches within 24 hours and your recruiting inbox credentials appear on your profile.<br><br>
+              Questions? Contact us at <a href="mailto:playportal.club@gmail.com" style="color: #2563eb;">playportal.club@gmail.com</a> with your payment reference below.</span>
+            </div>
+          </div>
+          <a href="profile-setup.html" style="display: inline-block; background: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 0.5rem;">RETURN TO MY PROFILE</a>
+        `;
+      }
+
       document.querySelector('.card').innerHTML = `
         <div style="text-align: center;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
           <h1 style="margin: 0 0 0.5rem 0; color: #10b981;">Payment Successful!</h1>
-          <p style="color: #64748b; margin: 0 0 2rem 0;">Your campaign is ready to launch</p>
+          <p style="color: #64748b; margin: 0 0 2rem 0;">Thank you \u2014 your campaign is now in motion</p>
 
-          <div style="background: #d1fae5; border: 2px solid #6ee7b7; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
-            <h3 style="color: #065f46; margin: 0 0 1.5rem 0;">Your Campaign Credentials</h3>
-            
-            <div id="credentialsDisplay" style="margin-bottom: 1.5rem;">
-              ${credentialsArray.map((cred, index) => `
-                <div style="background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
-                  <div style="font-size: 12px; color: #64748b; font-weight: 700; margin-bottom: 0.5rem;">CREDENTIAL ${index + 1}</div>
-                  
-                  <div style="margin-bottom: 1rem;">
-                    <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Email Account</div>
-                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all;">${cred.email}</div>
-                    <button onclick="copyToClipboard('${cred.email}')" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
-                  </div>
-
-                  <div>
-                    <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Password</div>
-                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; word-break: break-all; font-family: monospace;">${cred.password}</div>
-                    <button onclick="copyToClipboard('${cred.password}')" style="margin-top: 0.5rem; background: #dbeafe; color: #2563eb; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 COPY</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-
-            <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
-              <div style="font-size: 12px; color: #065f46; line-height: 1.6;">
-                <strong>📧 Next Steps:</strong><br>
-1. Copy your credentials above<br>
-2. Log in to your Gmail account<br>
-3. Wait for the coaches' responses and stay in touch with them<br>
-<br>
-You're all set!
-              </div>
-            </div>
-
-           
+          <div style="background: #d1fae5; border: 2px solid #6ee7b7; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;">
+            <h3 style="color: #065f46; margin: 0 0 1.5rem 0;">What's Next</h3>
+            ${credentialsHtml}
           </div>
+
+          <div style="font-size: 11px; color: #94a3b8;">Payment reference: <span style="font-family: monospace;">${esc(paymentId)}</span> — save this for your records.</div>
         </div>
       `;
+
+      // Copy buttons (delegated, safe for any characters in credentials)
+      document.querySelector('.card').addEventListener('click', function(e) {
+        const btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+          const original = btn.textContent;
+          btn.textContent = '✓ COPIED';
+          setTimeout(() => { btn.textContent = original; }, 1500);
+        });
+      });
     }
 
-    window.copyToClipboard = function(text) {
-      navigator.clipboard.writeText(text);
-      alert('✓ Copied to clipboard!');
-    };
+    async function startApp() {
+      try {
+        const [appMod, authMod, dbMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"),
+          import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js")
+        ]);
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyClVcliLB_iOqbXCilNYSAclIOK5TyBJz0",
+          authDomain: "playportal-bf6d4.firebaseapp.com",
+          projectId: "playportal-bf6d4",
+          storageBucket: "playportal-bf6d4.firebasestorage.app",
+          messagingSenderId: "419889829572",
+          appId: "1:419889829572:web:f341cf03579997830c5b91",
+          databaseURL: "https://playportal-bf6d4-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = appMod.initializeApp(firebaseConfig);
+        const auth = authMod.getAuth(app);
+        database = dbMod.getDatabase(app);
+        ref = dbMod.ref;
+        get = dbMod.get;
+        update = dbMod.update;
+
+        authMod.onAuthStateChanged(auth, user => {
+          if (!user) {
+            window.location.href = 'login.html';
+            return;
+          }
+
+          currentUser = user;
+          document.getElementById('userEmail').textContent = '\u2713 ' + user.email;
+
+          get(ref(database, 'users/' + user.uid)).then(snapshot => {
+            userData = snapshot.val();
+            if (userData) {
+              setupPayment();
+            } else {
+              showPageError('We could not find your profile. Please complete your profile first.');
+            }
+          }).catch(err => {
+            console.error('Error loading profile:', err);
+            showPageError('Could not load your order details. Please refresh the page.');
+          });
+        });
+      } catch (err) {
+        console.error('Firebase failed to load:', err);
+        document.getElementById('userEmail').textContent = '\u26a0 Connection error';
+        showPageError('Could not connect to the server. Check your internet connection (and any ad-blocker), then refresh the page.');
+      }
+    }
+
+    startApp();
   </script>
 
 </body>
