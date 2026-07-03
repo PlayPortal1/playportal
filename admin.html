@@ -639,10 +639,8 @@
             <!-- STATUS UPDATE -->
             <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
               <h3 style="margin: 0 0 1rem 0; font-size: 14px; font-weight: 700;">🚀 Update Campaign Status</h3>
-              <div style="display: flex; gap: 1rem;">
-                <button onclick="updateStatus('${esc(uid)}', 'active')" style="flex: 1; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">✅ Mark Approved (override)</button>
-                <button onclick="markEmailsSent('${esc(uid)}')" style="flex: 1; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">🚀 Campaign Sent</button>
-              </div>
+              <button onclick="markEmailsSent('${esc(uid)}')" style="width: 100%; padding: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">🚀 Campaign Sent</button>
+              <div style="font-size: 11px; color: #64748b; margin-top: 0.75rem;">Click after you've sent the campaign emails to coaches. This updates the athlete's dashboard to "launched" — then add their inbox credentials below.</div>
             </div>
 
             <!-- CREDENTIALS SECTION -->
@@ -707,21 +705,6 @@
         loadAllData();
       }).catch(err => {
         alert('Error: ' + err.message);
-      });
-    };
-
-    window.updateStatus = function(uid, newStatus) {
-      const statuses = {
-        'active': 'emailApproved',
-        'completed': 'emailsSent'
-      };
-
-      update(ref(database, 'users/' + uid), {
-        [statuses[newStatus]]: true
-      }).then(() => {
-        alert('✅ Status updated!');
-        closeProfileDetail();
-        loadAllData();
       });
     };
 
