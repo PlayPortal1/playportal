@@ -431,6 +431,68 @@
       border-radius: 5px;
     }
 
+    /* FOUNDER */
+    .founder {
+      padding: 4rem 2rem;
+    }
+
+    .founder-card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    .founder-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+
+    .founder-text {
+      padding: 2.5rem;
+    }
+
+    .founder-text .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ff6b35;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .founder-text h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+
+    .founder-text p {
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .founder-card {
+        grid-template-columns: 1fr;
+      }
+      .founder-photo {
+        max-height: 380px;
+      }
+      .founder-text {
+        padding: 1.75rem;
+      }
+    }
+
     /* PRICING */
     .pricing {
       padding: 4rem 2rem;
@@ -745,6 +807,7 @@
         <a href="#how-it-works" class="nav-link">How It Works</a>
         <a href="#pricing" class="nav-link">Pricing</a>
         <a href="#faq" class="nav-link">FAQ</a>
+        <a href="about.html" class="nav-link">About</a>
         <div class="header-buttons">
           <a href="login.html" class="btn btn-secondary">Sign In</a>
           <a href="signup.html" class="btn btn-primary">Get Started</a>
@@ -765,7 +828,7 @@
       </div>
 
       <div class="trust-badge">
-        <div>🎾 200+ Tennis Athletes Recruited</div>
+        <div>🎾 75+ Tennis Athletes Recruited</div>
         <div>🏆 D1, D2, D3, NAIA &amp; NJCAA Schools</div>
         <div>🌍 Athletes from 20+ Countries</div>
       </div>
@@ -926,6 +989,20 @@
     </div>
   </section>
 
+  <!-- FOUNDER -->
+  <section class="founder">
+    <div class="founder-card">
+      <img src="eduardo.jpg" alt="Eduardo Cabral, founder of PlayPortal" class="founder-photo">
+      <div class="founder-text">
+        <div class="eyebrow">Who's behind PlayPortal</div>
+        <h2>Built by someone who's been in your shoes</h2>
+        <p>I'm Eduardo Cabral, from Portugal. I went through the US college recruiting process myself as an international athlete — and played NCAA Division 1 tennis at Eastern Kentucky and Fairleigh Dickinson, then Division 2 at Northwood for my graduate degree.</p>
+        <p>Every profile, every recruiting email, every campaign on PlayPortal is handled personally by me — not an agency, not an algorithm.</p>
+        <a href="about.html" class="btn btn-primary">Read My Story</a>
+      </div>
+    </div>
+  </section>
+
   <!-- PRICING -->
   <section class="pricing" id="pricing">
     <h2 class="section-title">Simple Pricing</h2>
@@ -1044,7 +1121,7 @@
   <section class="cta-final">
     <div class="container">
       <h2>Ready to Take Control of Your Recruiting?</h2>
-      <p>Join 200+ tennis athletes who took their recruiting into their own hands.</p>
+      <p>Join 75+ tennis athletes who took their recruiting into their own hands.</p>
       <a href="signup.html" class="btn btn-secondary" style="font-size: 16px; padding: 1rem 2rem;">Start Your Campaign Today</a>
     </div>
   </section>
@@ -1059,6 +1136,7 @@
       <div class="footer-links">
         <div class="footer-col">
           <h4>Platform</h4>
+          <a href="about.html">About</a>
           <a href="#how-it-works">How It Works</a>
           <a href="#pricing">Pricing</a>
           <a href="#faq">FAQ</a>

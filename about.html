@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - PlayPortal</title>
+  <meta name="description" content="PlayPortal was founded by Eduardo Cabral, a Portuguese athlete who played NCAA Division 1 and Division 2 college tennis and now helps athletes worldwide get recruited.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      color: #0f172a;
+      line-height: 1.7;
+      background: #f8fafc;
+    }
+    header {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      padding: 1rem 2rem;
+    }
+    header .inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b35 0%, #f85e1f 100%);
+      color: white;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
+    }
+    .about-container {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    .hero-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      margin-bottom: 2rem;
+    }
+    .hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+    .hero-text {
+      padding: 2.5rem;
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ff6b35;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .hero-text p {
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 1rem;
+    }
+    .cred-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .cred {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .cred .big {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 0.25rem;
+    }
+    .cred .small {
+      font-size: 12px;
+      color: #64748b;
+    }
+    .story-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .story-card h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 1rem;
+    }
+    .story-card p {
+      font-size: 14.5px;
+      color: #334155;
+      margin-bottom: 1rem;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat .num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffa500;
+    }
+    .stat .label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 0.25rem;
+    }
+    .cta-card {
+      background: linear-gradient(135deg, #1e40af 0%, #ff6b35 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .cta-card h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .cta-card p {
+      font-size: 14px;
+      opacity: 0.95;
+      margin-bottom: 1.5rem;
+    }
+    .cta-card .btn {
+      background: white;
+      color: #1e40af;
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      padding: 2rem;
+    }
+    footer a { margin: 0 0.75rem; color: #1e40af; font-weight: 600; }
+    @media (max-width: 768px) {
+      .hero-card { grid-template-columns: 1fr; }
+      .hero-photo { max-height: 420px; }
+      .hero-text { padding: 1.75rem; }
+      .story-card { padding: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="inner">
+      <a href="index.html"><img src="logo.png" alt="PlayPortal" style="height: 70px; width: auto;"></a>
+      <a href="signup.html" class="btn">Get Started</a>
+    </div>
+  </header>
+
+  <div class="about-container">
+
+    <!-- HERO -->
+    <div class="hero-card">
+      <img src="eduardo.jpg" alt="Eduardo Cabral, founder of PlayPortal" class="hero-photo">
+      <div class="hero-text">
+        <div class="eyebrow">The person behind PlayPortal</div>
+        <h1>Hi, I'm Eduardo Cabral</h1>
+        <p>I'm a tennis player from Portugal who went through the US college recruiting process myself — as an international athlete with no agency, no connections, and no idea how it worked at the start.</p>
+        <p>It worked out: I played <strong>NCAA Division 1</strong> tennis at Eastern Kentucky University and Fairleigh Dickinson University, and <strong>Division 2</strong> at Northwood University for my graduate degree. Along the way I also coached players of different levels and ages in the United States.</p>
+        <p>PlayPortal is everything I learned from that journey, turned into a service for athletes like you.</p>
+      </div>
+    </div>
+
+    <!-- CREDENTIALS -->
+    <div class="cred-strip">
+      <div class="cred">
+        <div class="big">NCAA D1</div>
+        <div class="small">Eastern Kentucky University</div>
+      </div>
+      <div class="cred">
+        <div class="big">NCAA D1</div>
+        <div class="small">Fairleigh Dickinson University</div>
+      </div>
+      <div class="cred">
+        <div class="big">NCAA D2</div>
+        <div class="small">Northwood University (graduate)</div>
+      </div>
+      <div class="cred">
+        <div class="big">US Coach</div>
+        <div class="small">Coached players of all levels &amp; ages</div>
+      </div>
+    </div>
+
+    <!-- STORY -->
+    <div class="story-card">
+      <h2>Why I built PlayPortal</h2>
+      <p>Recruiting agencies charge thousands of dollars for something that, honestly, doesn't need to cost that much. But my problem with agencies isn't only the price — it's the approach. I don't believe you need someone to do the whole process <em>for</em> you.</p>
+      <p>When I was being recruited, being directly involved and in contact with coaches and university staff made the process personal. Those people guided me through everything I needed — and when I arrived on campus, I already knew them. That head start matters more than most athletes realize.</p>
+      <p>Here's the truth about recruiting: <strong>it's mostly marketing.</strong> It's about getting yourself in front of as many coaches as possible, and there's no better way to do that than reaching out to all of them — then filtering through the responses to find the university that's genuinely right for you. That's exactly what PlayPortal is built to do: maximum visibility, at a price that makes sense, with you in control of the conversations.</p>
+    </div>
+
+    <div class="story-card">
+      <h2>Who handles your campaign</h2>
+      <p>Me. Not a call center, not an algorithm, not an "account team." I personally review every profile, write every recruiting email, and manage every campaign that goes out. When you have a question, the person who answers is the same person who played this sport at the level you're aiming for and sat exactly where you're sitting.</p>
+      <p>For a big agency you're one file in a stack. Here, I know your name, your game, and your goals — because there's no one between us.</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat">
+        <div class="num">75+</div>
+        <div class="label">Athletes helped</div>
+      </div>
+      <div class="stat">
+        <div class="num">3</div>
+        <div class="label">Years running</div>
+      </div>
+      <div class="stat">
+        <div class="num">5</div>
+        <div class="label">Divisions covered</div>
+      </div>
+      <div class="stat">
+        <div class="num">🇵🇹</div>
+        <div class="label">Founded in Portugal</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-card">
+      <h2>Your recruiting journey starts with one email</h2>
+      <p>Let's get you in front of the coaches who are looking for a player exactly like you.</p>
+      <a href="signup.html" class="btn">Start Your Campaign</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>PlayPortal © 2026</p>
+    <p>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="refund.html">Refund Policy</a>
+    </p>
+  </footer>
+
+</body>
+</html>
