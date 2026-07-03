@@ -403,10 +403,12 @@
       if (currentStep === 3) {
         title = 'Academic Information';
         let schoolLabel = 'High School';
+        let schoolPlaceholder = 'e.g., Lincoln High School';
         let extraFields = '';
 
         if (selectedOpportunity === 'transfer') {
           schoolLabel = 'Current University';
+          schoolPlaceholder = 'e.g., University of Florida';
           extraFields = `
             <div>
               <label>Degree You're Studying</label>
@@ -414,6 +416,8 @@
             </div>
           `;
         } else if (selectedOpportunity === 'graduate' || selectedOpportunity === 'coach') {
+          schoolLabel = 'University';
+          schoolPlaceholder = 'e.g., University of Florida';
           extraFields = `
             <div>
               <label>Degree You Studied</label>
@@ -430,7 +434,7 @@
           <div class="grid-2">
             <div>
               <label>${schoolLabel}</label>
-              <input type="text" id="school" placeholder="University Name" value="${esc(userData.school)}">
+              <input type="text" id="school" placeholder="${schoolPlaceholder}" value="${esc(userData.school)}">
             </div>
             <div>
               <label>Graduation Year</label>
